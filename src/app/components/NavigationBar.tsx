@@ -1,7 +1,8 @@
 import React from "react";
 import Drawer from "./Drawer";
+import Image from "next/image";
 
-function NavigationBar() {
+function NavigationBar({ children }: { children: React.ReactNode }) {
   return (
     <div className="drawer">
       <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
@@ -29,7 +30,9 @@ function NavigationBar() {
               </svg>
             </label>
           </div>
-          <div className="mx-2 flex-1 px-2">Navbar Title</div>
+          <div className="mx-2 flex-1 px-2">
+            <Image src="/tum-logo.png" alt="tum-logo" width={30} height={30} />
+          </div>
           <div className="hidden flex-none lg:block">
             <ul className="menu menu-horizontal">
               {/* Navbar menu content here */}
@@ -43,7 +46,7 @@ function NavigationBar() {
           </div>
         </div>
         {/* Page content here */}
-        Content
+        {children}
       </div>
       <div className="drawer-side">
         <label
