@@ -1,10 +1,9 @@
 import React from "react";
-import Drawer from "./Drawer";
 import Image from "next/image";
 
 function NavigationBar({ children }: { children: React.ReactNode }) {
   return (
-    <div className="drawer">
+    <div className="drawer" data-theme="dark">
       <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
       <div className="drawer-content flex flex-col">
         {/* Navbar */}
