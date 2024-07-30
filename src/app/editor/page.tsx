@@ -16,7 +16,9 @@ const Home: NextPage = () => {
   //state to hold output data. we'll use this for rendering later
   const [data, setData] = useState<OutputData>();
   return (
-    <EditorBlock data={data} onChange={setData} holder="editorjs-container" />
+    <main className="">
+      <EditorBlock data={data} onChange={setData} holder="editorjs-container" />
+    </main>
   );
 };
 

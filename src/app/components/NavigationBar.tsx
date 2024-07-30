@@ -3,7 +3,7 @@ import Image from "next/image";
 
 function NavigationBar({ children }: { children: React.ReactNode }) {
   return (
-    <div className="drawer" data-theme="dark">
+    <div className="drawer m-0 h-full" data-theme="dark">
       <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
       <div className="drawer-content flex flex-col">
         {/* Navbar */}
