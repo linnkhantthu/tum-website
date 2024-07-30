@@ -30,7 +30,7 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
             </label>
           </div>
           <div className="mx-2 flex-1 px-2">
-            <Image src="/tum-logo.png" alt="tum-logo" width={30} height={30} />
+            <Image src="/tum-logo.png" alt="tum-logo" width={50} height={50} />
           </div>
           <div className="hidden flex-none lg:block">
             <ul className="menu menu-horizontal">
