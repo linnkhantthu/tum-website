@@ -1,19 +1,29 @@
 import Header from "@editorjs/header";
 import List from "@editorjs/list";
+// @ts-ignore
 import Table from "@editorjs/table";
+// @ts-ignore
 import Quote from "@editorjs/quote";
 import ImageTool from "@editorjs/image";
+// @ts-ignore
 import Marker from "@editorjs/marker";
 import NestedList from "@editorjs/nested-list";
+// @ts-ignore
 import Checklist from "@editorjs/checklist";
+// @ts-ignore
 import LinkTool from "@editorjs/link";
+// @ts-ignore
 import Embed from "@editorjs/embed";
+// @ts-ignore
 import Delimiter from "@editorjs/delimiter";
+// @ts-ignore
 import Warning from "@editorjs/warning";
-import CodeTool from "@editorjs/code";
+// @ts-ignore
 import RawTool from "@editorjs/raw";
+// @ts-ignore
 import AttachesTool from "@editorjs/attaches";
 import InlineCode from "@editorjs/inline-code";
+// @ts-ignore
 import Paragraph from "@editorjs/paragraph";
 
 export const EDITOR_TOOLS = {
@@ -23,6 +33,7 @@ export const EDITOR_TOOLS = {
   },
   header: {
     class: Header,
+    inlineToolbar: ["marker", "link"],
     shortcut: "CTRL+SHIFT+H",
     config: {
       defaultLevel: 1,
@@ -49,6 +60,10 @@ export const EDITOR_TOOLS = {
         byUrl: "http://localhost:8008/fetchUrl", // Your endpoint that provides uploading by Url
       },
     },
+  },
+  inlineCode: {
+    class: InlineCode,
+    shortcut: "CMD+SHIFT+G",
   },
   marker: {
     class: Marker,
@@ -89,9 +104,6 @@ export const EDITOR_TOOLS = {
       endpoint: "http://localhost:8008/uploadFile",
     },
   },
-  inlineCode: {
-    class: InlineCode,
-    shortcut: "CMD+SHIFT+M",
-  },
   paragraph: Paragraph,
+  autofocus: true,
 };

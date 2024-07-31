@@ -8,7 +8,7 @@ import { useState } from "react";
 
 // important that we use dynamic loading here
 // editorjs should only be rendered on the client side.
-const EditorBlock = dynamic(() => import("../components/Editor/Editor"), {
+const EditorBlock = dynamic(() => import("../components/editor/Editor"), {
   ssr: false,
 });
 

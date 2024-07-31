@@ -20,6 +20,7 @@ const EditorBlock = ({ data, onChange, holder }: Props) => {
     if (!ref.current) {
       const editor = new EditorJS({
         holder: holder,
+        // @ts-ignore
         tools: EDITOR_TOOLS,
         data,
         async onChange(api, event) {

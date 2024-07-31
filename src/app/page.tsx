@@ -1,4 +1,3 @@
-import Image from "next/image";
 import MainPagePosts from "./components/MainPagePosts";
 
 export default function Home() {

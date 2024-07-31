@@ -45,7 +45,7 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
           </div>
         </div>
         {/* Page content here */}
-        {children}
+        <div className=" text-pretty">{children}</div>
       </div>
       <div className="drawer-side">
         <label
