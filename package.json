@@ -19,6 +19,8 @@
   },
   "devDependencies": {
     "@editorjs/code": "^2.9.0",
+    "@editorjs/image": "^2.9.3",
+    "@editorjs/marker": "^1.4.0",
     "@editorjs/quote": "^2.6.0",
     "@editorjs/table": "^2.3.0",
     "@types/node": "^20",

@@ -24,6 +24,7 @@ const EditorBlock = ({ data, onChange, holder }: Props) => {
         data,
         async onChange(api, event) {
           const data = await api.saver.save();
+          console.log(data);
           onChange(data);
         },
       });
