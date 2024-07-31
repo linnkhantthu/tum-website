@@ -4,6 +4,17 @@ import Table from "@editorjs/table";
 import Quote from "@editorjs/quote";
 import ImageTool from "@editorjs/image";
 import Marker from "@editorjs/marker";
+import NestedList from "@editorjs/nested-list";
+import Checklist from "@editorjs/checklist";
+import LinkTool from "@editorjs/link";
+import Embed from "@editorjs/embed";
+import Delimiter from "@editorjs/delimiter";
+import Warning from "@editorjs/warning";
+import CodeTool from "@editorjs/code";
+import RawTool from "@editorjs/raw";
+import AttachesTool from "@editorjs/attaches";
+import InlineCode from "@editorjs/inline-code";
+import Paragraph from "@editorjs/paragraph";
 
 export const EDITOR_TOOLS = {
   list: {
@@ -43,4 +54,44 @@ export const EDITOR_TOOLS = {
     class: Marker,
     shortcut: "CTRL+SHIFT+M",
   },
+  nestedList: {
+    class: NestedList,
+    inlineToolbar: true,
+    config: {
+      defaultStyle: "unordered",
+    },
+  },
+  checklist: {
+    class: Checklist,
+    inlineToolbar: true,
+  },
+  linkTool: {
+    class: LinkTool,
+    config: {
+      endpoint: "http://localhost:8008/fetchUrl", // Your backend endpoint for url data fetching,
+    },
+  },
+  embed: Embed,
+  delimiter: Delimiter,
+  warning: {
+    class: Warning,
+    inlineToolbar: true,
+    shortcut: "CMD+SHIFT+W",
+    config: {
+      titlePlaceholder: "Title",
+      messagePlaceholder: "Message",
+    },
+  },
+  raw: RawTool,
+  attaches: {
+    class: AttachesTool,
+    config: {
+      endpoint: "http://localhost:8008/uploadFile",
+    },
+  },
+  inlineCode: {
+    class: InlineCode,
+    shortcut: "CMD+SHIFT+M",
+  },
+  paragraph: Paragraph,
 };
