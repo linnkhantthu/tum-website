@@ -7,7 +7,9 @@ export type FlashMessage = {
 
 export type User = {
   id: number;
+  email: string;
   username: string;
+  lastName: string;
   role: UserRole;
   sessionId: string;
   verified: boolean;
@@ -19,4 +21,26 @@ export interface responseModel {
   data?: any;
   isSuccess: boolean;
   message: string;
+}
+
+/**
+ * Results
+ */
+export enum Results {
+  REQUIRED_LOGIN = "You need to login to perform this action",
+  REQUIRED_LOGOUT = "You need to logged out in order to perform this action",
+  SUCCESS = "Operation succeed",
+  FAIL = "Operation failed",
+  SERVER_ERROR = "Server error",
+  CONNECTION_ERROR = "Connection error occcured",
+  AUTH_ERROR = "Username or password is incorrect",
+}
+
+/**
+ * Messages
+ */
+export enum Messages {
+  REQUIRED_LOGIN = "You need to login to perform this action",
+  REQUIRED_LOGOUT = "You need to logged out in order to perform this action",
+  INVALID_REQUEST = "Unauthorised Request",
 }
