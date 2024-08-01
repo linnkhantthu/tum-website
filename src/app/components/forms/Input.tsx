@@ -14,7 +14,7 @@ function Input({
 }) {
   return (
     <div className="p-1">
-      <label htmlFor="lastName" className=" label label-text">
+      <label htmlFor={id} className=" label label-text">
         {label}
       </label>
       <i className="absolute mt-4 ml-3">{Icon ? <Icon /> : ""}</i>
@@ -24,7 +24,7 @@ function Input({
         name={id}
         className="input input-info w-full px-10"
       />
-      <small className="label label-text text-error">Error Text</small>
+      {/* <small className="label label-text text-error">Error Text</small> */}
     </div>
   );
 }
