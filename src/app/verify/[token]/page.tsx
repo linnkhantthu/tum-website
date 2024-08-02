@@ -1,5 +1,6 @@
 "use client";
 
+import { Results } from "@/lib/models";
 import React, { useEffect, useState } from "react";
 
 function Verify({ params }: { params: { token: string } }) {
@@ -15,8 +16,8 @@ function Verify({ params }: { params: { token: string } }) {
       body: JSON.stringify({ token: params.token }),
     }).then((res) =>
       res.json().then((data) => {
-        console.log(isVerified);
-        if (data?.isVerified) {
+        console.log(data?.message);
+        if (data?.message === Results.SUCCESS) {
           setIsVerified(true);
           setIsSubmitting(false);
         } else {

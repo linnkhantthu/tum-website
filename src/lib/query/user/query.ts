@@ -6,9 +6,13 @@ import {
   generateToken,
   getExpireDate,
   sendMail,
-  sendMailWithNodemailer,
 } from "@/lib/utils";
 
+/**
+ * Get User by Email
+ * @param email
+ * @returns User | Undefined
+ */
 export async function getUserByEmail(email?: string) {
   if (email) {
     const data = await prisma.user.findFirst({
@@ -23,6 +27,11 @@ export async function getUserByEmail(email?: string) {
   return undefined;
 }
 
+/**
+ * Get User by Username
+ * @param username
+ * @returns User | undefined
+ */
 export async function getUserByUsername(username?: string) {
   if (username) {
     const data = await prisma.user.findFirst({
@@ -37,6 +46,11 @@ export async function getUserByUsername(username?: string) {
   return undefined;
 }
 
+/**
+ * Insert Reset Pwd Token by Email
+ * @param email
+ * @returns Token | undefined
+ */
 export async function insertResetPasswordTokenByEmail(email?: string) {
   let token: string | undefined = undefined;
   if (email) {
@@ -56,6 +70,11 @@ export async function insertResetPasswordTokenByEmail(email?: string) {
   return { token };
 }
 
+/**
+ * Insert Verify Token by Email
+ * @param email
+ * @returns Token | undefined
+ */
 export async function insertVerifyTokenByEmail(email?: string) {
   let token: string | undefined = undefined;
   if (email) {
@@ -80,6 +99,18 @@ export async function insertVerifyTokenByEmail(email?: string) {
   return { token };
 }
 
+/**
+ * Insert User
+ * @param email
+ * @param username
+ * @param firstName
+ * @param lastName
+ * @param dob
+ * @param nrcNo
+ * @param password
+ * @param host
+ * @returns user: User | undefined,  message: string
+ */
 export async function insertUser(
   email?: string,
   username?: string,
@@ -91,7 +122,7 @@ export async function insertUser(
   host?: string
 ) {
   let registeredUser: User | undefined = undefined;
-  let msg: string = "Please fill in all the field.";
+  let message: string = "Please fill in all the field.";
   const hashPassword = new HashPassword();
   if (
     email &&
@@ -132,7 +163,7 @@ export async function insertUser(
 
       if (user) {
         registeredUser = user as User;
-        msg = `Registered successfully as ${registeredUser.username}.`;
+        message = `Registered successfully as ${registeredUser.username}.`;
         const sentEmailId = await sendMail(
           user.email,
           "Todo: Verify your email",
@@ -157,23 +188,28 @@ export async function insertUser(
         //     buttonValue: "Verify",
         //   })
         // );
-        msg = sentEmailId
-          ? msg + ` And sent the verification link to ${user.email}.`
-          : msg + ` Failed to send the verification link to ${user.email}`;
+        message = sentEmailId
+          ? message + ` And sent the verification link to ${user.email}.`
+          : message + ` Failed to send the verification link to ${user.email}`;
         // return sentEmailId ? (user as User) : undefined;
       } else {
-        msg = "Failed to register the user.";
+        message = "Failed to register the user.";
       }
     } else {
       // msg = `User already exist with ${username} or ${email}.`;
-      msg = isUserExistsWithEmail
+      message = isUserExistsWithEmail
         ? Results.ACCOUNT_ALREADY_EXIST_WITH_EMAIL
         : Results.ACCOUNT_ALREADY_EXIST_WITH_USERNAME;
     }
   }
-  return { user: registeredUser, msg: msg };
+  return { user: registeredUser, msg: message };
 }
 
+/**
+ * Get User by Reset Pwd Token
+ * @param resetToken
+ * @returns User | undefined
+ */
 export async function getUserByResetPasswordToken(resetToken?: string) {
   if (resetToken) {
     const data = await prisma.user.findFirst({
@@ -191,6 +227,12 @@ export async function getUserByResetPasswordToken(resetToken?: string) {
   return undefined;
 }
 
+/**
+ * Get User by Verify Token and Verified
+ * @param verifyToken
+ * @param verified
+ * @returns User | null | undefuned
+ */
 export async function getUserByVerifyTokenAndVerified(
   verifyToken?: string,
   verified?: boolean
@@ -210,6 +252,11 @@ export async function getUserByVerifyTokenAndVerified(
   return undefined;
 }
 
+/**
+ * Update Verified by token
+ * @param verifyToken
+ * @returns User | undefined
+ */
 export async function updateVerifiedByVerifyToken(verifyToken?: string) {
   if (
     verifyToken &&
@@ -235,6 +282,12 @@ export async function updateVerifiedByVerifyToken(verifyToken?: string) {
   return undefined;
 }
 
+/**
+ * Update Password by Token
+ * @param token
+ * @param password
+ * @returns User | undefined
+ */
 export async function updatePasswordByResetPasswordToken(
   token?: string,
   password?: string
@@ -261,6 +314,11 @@ export async function updatePasswordByResetPasswordToken(
   return undefined;
 }
 
+/**
+ * Get User by ResetPWD token
+ * @param token
+ * @returns User | undefined
+ */
 export async function fetchUserByResetPasswordToken(token?: string) {
   if (token) {
     const data = await prisma.user.findFirst({
@@ -278,6 +336,11 @@ export async function fetchUserByResetPasswordToken(token?: string) {
   return undefined;
 }
 
+/**
+ * Insert Session by Email
+ * @param email
+ * @returns sessionId & message
+ */
 export async function insertSessionIdByEmail(email?: string) {
   let sessionId: string | undefined = undefined;
   let message: string = "Please provide required data to login.";

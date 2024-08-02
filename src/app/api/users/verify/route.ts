@@ -11,12 +11,23 @@ import {
 export async function POST(request: NextRequest) {
   let message = Results.FAIL;
   const response = new Response();
+  // Get session Data
   const session = await getSession(request, response);
+
+  // Get data from frontend
   const { token } = await request.json();
+
+  // Get Verified
   const user = await getUserByVerifyTokenAndVerified(token, false);
-  if (user) {
+
+  // If user exist with that token
+  if (user !== null && user !== undefined) {
+    // Get Verified
     const verifiedUser = await updateVerifiedByVerifyToken(token);
+
+    // If user verified successfully
     if (verifiedUser) {
+      // Update session data
       if (session.user) {
         session.user = verifiedUser as User;
         await session.save();
