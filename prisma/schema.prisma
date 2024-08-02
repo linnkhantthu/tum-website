@@ -19,7 +19,8 @@ model User {
   username                 String     @unique
   firstName                String
   lastName                 String
-  bod                      DateTime
+  dob                      DateTime
+  nrcNo                    String     @unique
   gender                   UserGender @default(PREFER_NOT_TO_SAY)
   password                 String
   joinedAt                 DateTime   @default(now())

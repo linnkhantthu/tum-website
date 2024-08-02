@@ -1,6 +1,6 @@
 import EmailTemplate from "@/emails/EmailTemplate";
 import prisma from "@/db";
-import { User } from "@/lib/models";
+import { Results, User } from "@/lib/models";
 import {
   HashPassword,
   generateToken,
@@ -85,34 +85,51 @@ export async function insertUser(
   username?: string,
   firstName?: string,
   lastName?: string,
-  bod?: Date,
+  dob?: Date,
+  nrcNo?: string,
   password?: string,
   host?: string
 ) {
   let registeredUser: User | undefined = undefined;
   let msg: string = "Please fill in all the field.";
-
   const hashPassword = new HashPassword();
-  if (firstName && lastName && email && username && password) {
-    const isUserExists = await prisma.user.findFirst({
+  if (
+    email &&
+    username &&
+    firstName &&
+    lastName &&
+    dob &&
+    nrcNo &&
+    password &&
+    host
+  ) {
+    const isUserExistsWithEmail = await prisma.user.findFirst({
       where: {
-        OR: [{ email: email }, { username: username }],
+        email: email,
       },
     });
-    if (isUserExists === null) {
+    const isUserExistsWithUsername = await prisma.user.findFirst({
+      where: {
+        username: username,
+      },
+    });
+    if (isUserExistsWithEmail === null || isUserExistsWithUsername === null) {
       const encryptedPassword = hashPassword.encrypt(password);
+      const fmtedDob = new Date(dob);
       const user = await prisma.user.create({
         data: {
           email: email,
           username: username,
           firstName: firstName,
           lastName: lastName,
-          bod: bod!,
+          dob: fmtedDob,
+          nrcNo: nrcNo,
           password: encryptedPassword,
           verifyToken: generateToken(),
           verifyTokenExpire: getExpireDate(1440),
         },
       });
+
       if (user) {
         registeredUser = user as User;
         msg = `Registered successfully as ${registeredUser.username}.`;
@@ -148,7 +165,10 @@ export async function insertUser(
         msg = "Failed to register the user.";
       }
     } else {
-      msg = `User already exist with ${username} or ${email}.`;
+      // msg = `User already exist with ${username} or ${email}.`;
+      msg = isUserExistsWithEmail
+        ? Results.ACCOUNT_ALREADY_EXIST_WITH_EMAIL
+        : Results.ACCOUNT_ALREADY_EXIST_WITH_USERNAME;
     }
   }
   return { user: registeredUser, msg: msg };

@@ -34,6 +34,8 @@ export enum Results {
   SERVER_ERROR = "Server error",
   CONNECTION_ERROR = "Connection error occcured",
   AUTH_ERROR = "Username or password is incorrect",
+  ACCOUNT_ALREADY_EXIST_WITH_USERNAME = "Account already exist with this username.",
+  ACCOUNT_ALREADY_EXIST_WITH_EMAIL = "Account already exist with this email.",
 }
 
 /**

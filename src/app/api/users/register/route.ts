@@ -16,14 +16,16 @@ export async function POST(request: NextRequest) {
 
   if (currentUser === undefined) {
     status = 200;
-    const { email, username, firstName, lastName, dob, password } =
+    const { email, username, firstName, lastName, dob, nrcNo, password } =
       await request.json();
+    console.log(dob);
     const { user: registeredUser } = await insertUser(
       email,
       username,
       firstName,
       lastName,
       dob,
+      nrcNo,
       password,
       request.headers.get("host")!
     );

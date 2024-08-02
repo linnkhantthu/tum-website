@@ -18,6 +18,7 @@ function AuthPage() {
           <RegisterForm
             isRegisterForm={isRegisterForm}
             setIsRegisterForm={setIsRegisterForm}
+            setFlashMessage={setFlashMessage}
           />
         ) : (
           <LoginForm

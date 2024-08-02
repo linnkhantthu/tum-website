@@ -8,6 +8,8 @@ function Input({
   Icon,
   value,
   controller,
+  error,
+  errorController,
 }: {
   label: string;
   type: string;
@@ -15,6 +17,8 @@ function Input({
   Icon?: IconType;
   value: any;
   controller: React.Dispatch<React.SetStateAction<any>>;
+  error?: string;
+  errorController?: React.Dispatch<React.SetStateAction<string | undefined>>;
 }) {
   return (
     <div className="p-1">
@@ -27,10 +31,16 @@ function Input({
         id={id}
         name={id}
         value={value}
-        onChange={(e) => controller(e.currentTarget.value)}
+        onChange={(e) => {
+          controller(e.currentTarget.value);
+        }}
         className="input input-info w-full px-10"
       />
-      {/* <small className="label label-text text-error">Error Text</small> */}
+      {error ? (
+        <small className="label label-text text-error">{error}</small>
+      ) : (
+        ""
+      )}
     </div>
   );
 }

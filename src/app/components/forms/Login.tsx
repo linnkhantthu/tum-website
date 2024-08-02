@@ -1,6 +1,6 @@
-import React from "react";
-import { FaUserCircle, FaUserTie } from "react-icons/fa";
-import { MdEmail, MdPerson, MdSecurity, MdPassword } from "react-icons/md";
+import React, { useState } from "react";
+import { FaUserCircle } from "react-icons/fa";
+import { MdPassword } from "react-icons/md";
 import Btn from "./Btn";
 import Input from "./Input";
 
@@ -11,6 +11,9 @@ function LoginForm({
   isRegisterForm: boolean;
   setIsRegisterForm: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
+  const [emailOrUsername, emailOrUsernameController] = useState("");
+  const [password, passwordController] = useState("");
+
   const submitForm = () => {};
   return (
     <>
@@ -26,14 +29,16 @@ function LoginForm({
           type={"text"}
           id={"email_or_username"}
           Icon={FaUserCircle}
+          value={emailOrUsername}
+          controller={emailOrUsernameController}
         />
-        <Input label={"Birth Date"} type={"date"} id={"dob"} />
-        <Input label={"NRC No#"} type={"text"} id={"nrcNo"} Icon={MdSecurity} />
         <Input
           label={"Password"}
           type={"password"}
           id={"password"}
           Icon={MdPassword}
+          value={password}
+          controller={passwordController}
         />
         <span className="flex flex-row pt-3">
           <input
