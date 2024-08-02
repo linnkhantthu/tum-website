@@ -1,3 +1,5 @@
+// User Verification Page
+
 "use client";
 
 import { Results } from "@/lib/models";
@@ -6,6 +8,7 @@ import React, { useEffect, useState } from "react";
 function Verify({ params }: { params: { token: string } }) {
   const [isSubmitting, setIsSubmitting] = useState(true);
   const [isVerified, setIsVerified] = useState(false);
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     fetch("/api/users/verify", {
@@ -16,32 +19,34 @@ function Verify({ params }: { params: { token: string } }) {
       body: JSON.stringify({ token: params.token }),
     }).then((res) =>
       res.json().then((data) => {
-        console.log(data?.message);
         if (data?.message === Results.SUCCESS) {
           setIsVerified(true);
           setIsSubmitting(false);
         } else {
           setIsSubmitting(false);
         }
+        setMessage(data?.message);
       })
     );
   }, []);
   return (
-    <div>
-      {isSubmitting ? (
-        <>
-          <p>Verifying ...</p>
-        </>
-      ) : (
-        <>
-          {isVerified ? (
-            <p className="text-success">Verified successfully</p>
-          ) : (
-            <p className="text-error">The token is expired</p>
-          )}
-          <a href="/">Start Using</a>
-        </>
-      )}
+    <div className="flex flex-row justify-center">
+      <div className="flex flex-col mt-20">
+        {isSubmitting ? (
+          <>
+            <p>Verifying ...</p>
+          </>
+        ) : (
+          <>
+            {isVerified ? (
+              <p className="text-success">Verified successfully</p>
+            ) : (
+              <p className="text-error">{message}</p>
+            )}
+            <a href="/">Start Using</a>
+          </>
+        )}
+      </div>
     </div>
   );
 }

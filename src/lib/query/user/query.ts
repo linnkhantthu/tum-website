@@ -27,6 +27,21 @@ export async function getUserByEmail(email?: string) {
   return undefined;
 }
 
+export async function getUserByEmailOrUsername(emailOrUsername?: string) {
+  if (emailOrUsername) {
+    const data = await prisma.user.findFirst({
+      where: {
+        username: emailOrUsername,
+      },
+    });
+    console.log(data);
+    if (data !== null) {
+      return data;
+    }
+  }
+  return undefined;
+}
+
 /**
  * Get User by Username
  * @param username
@@ -245,6 +260,18 @@ export async function getUserByVerifyTokenAndVerified(
         verifyTokenExpire: {
           gt: new Date(),
         },
+      },
+    });
+    return user;
+  }
+  return undefined;
+}
+
+export async function getUserByVerificationToken(verifyToken?: string) {
+  if (verifyToken) {
+    const user = await prisma.user.findFirst({
+      where: {
+        verifyToken: verifyToken,
       },
     });
     return user;

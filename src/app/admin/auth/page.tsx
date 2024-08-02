@@ -24,6 +24,7 @@ function AuthPage() {
           <LoginForm
             isRegisterForm={isRegisterForm}
             setIsRegisterForm={setIsRegisterForm}
+            setFlashMessage={setFlashMessage}
           />
         )}
       </fieldset>

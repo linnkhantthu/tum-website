@@ -17,5 +17,5 @@ export const middleware = async (req: NextRequest) => {
 
 export const config = {
   // matcher: ["/", "/purchase/:path*"],
-  matcher: ["/"],
+  matcher: ["/admin/auth/"],
 };

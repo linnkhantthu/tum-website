@@ -4,12 +4,13 @@ import { createResponse, getSession } from "@/lib/session";
 import prisma from "@/db";
 import {
   fetchUserByResetPasswordToken,
+  getUserByVerificationToken,
   getUserByVerifyTokenAndVerified,
   updateVerifiedByVerifyToken,
 } from "@/lib/query/user/query";
 
 export async function POST(request: NextRequest) {
-  let message = Results.FAIL;
+  let message: string = Results.FAIL;
   const response = new Response();
   // Get session Data
   const session = await getSession(request, response);
@@ -18,22 +19,30 @@ export async function POST(request: NextRequest) {
   const { token } = await request.json();
 
   // Get Verified
-  const user = await getUserByVerifyTokenAndVerified(token, false);
+  const user = await getUserByVerificationToken(token);
 
   // If user exist with that token
   if (user !== null && user !== undefined) {
-    // Get Verified
-    const verifiedUser = await updateVerifiedByVerifyToken(token);
+    if (user.verified === false && user.verifyTokenExpire! > new Date()) {
+      // Get Verified
+      const verifiedUser = await updateVerifiedByVerifyToken(token);
 
-    // If user verified successfully
-    if (verifiedUser) {
-      // Update session data
-      if (session.user) {
-        session.user = verifiedUser as User;
-        await session.save();
+      // If user verified successfully
+      if (verifiedUser) {
+        // Update session data
+        if (session.user) {
+          session.user = verifiedUser as User;
+          await session.save();
+        }
+        message = Results.SUCCESS;
       }
-      message = Results.SUCCESS;
+    } else {
+      message = user.verified
+        ? "You are already verified."
+        : "The token is expired please request a new token.";
     }
+  } else {
+    message = "Please ask for the new token";
   }
   return createResponse(
     response,
