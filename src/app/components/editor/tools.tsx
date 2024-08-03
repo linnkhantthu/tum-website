@@ -105,5 +105,4 @@ export const EDITOR_TOOLS = {
     },
   },
   paragraph: Paragraph,
-  autofocus: true,
 };
