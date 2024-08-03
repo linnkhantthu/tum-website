@@ -53,7 +53,7 @@ function ForgotPassword() {
           handleSubmit={handleSubmit}
         />
       ) : (
-        redirect("/todos")
+        redirect("/")
       )}
     </>
   );

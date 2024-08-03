@@ -1,7 +1,12 @@
+"use client";
+
 import React from "react";
 import Image from "next/image";
+import useUser from "@/lib/useUser";
+import Loading from "./Loading";
 
 function NavigationBar({ children }: { children: React.ReactNode }) {
+  const { data, isLoading, isError } = useUser();
   return (
     <div className="drawer m-0 h-full" data-theme="dark">
       <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
@@ -56,10 +61,18 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
         <ul className="menu bg-base-200 min-h-full w-80 p-4">
           {/* Sidebar content here */}
           <li>
-            <a>Sidebar Item 1</a>
+            <a href="/editor">Editor</a>
           </li>
           <li>
-            <a>Sidebar Item 2</a>
+            {isLoading ? (
+              <Loading />
+            ) : isError ? (
+              <span>An error occurred.</span>
+            ) : data.isLoggedIn ? (
+              <a href="/users/auth/logout">Logout</a>
+            ) : (
+              <a href="/users/auth/">Login/Register</a>
+            )}
           </li>
         </ul>
       </div>

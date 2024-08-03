@@ -5,6 +5,7 @@ import {
   HashPassword,
   generateToken,
   getExpireDate,
+  isEmail,
   sendMail,
 } from "@/lib/utils";
 
@@ -28,13 +29,22 @@ export async function getUserByEmail(email?: string) {
 }
 
 export async function getUserByEmailOrUsername(emailOrUsername?: string) {
+  let data = null;
   if (emailOrUsername) {
-    const data = await prisma.user.findFirst({
-      where: {
-        username: emailOrUsername,
-      },
-    });
-    console.log(data);
+    const isItEmail = isEmail(emailOrUsername);
+    if (isItEmail === null) {
+      data = await prisma.user.findFirst({
+        where: {
+          username: emailOrUsername,
+        },
+      });
+    } else {
+      data = await prisma.user.findFirst({
+        where: {
+          email: emailOrUsername,
+        },
+      });
+    }
     if (data !== null) {
       return data;
     }

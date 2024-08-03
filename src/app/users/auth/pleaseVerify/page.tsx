@@ -2,7 +2,7 @@
 
 import useUser from "@/lib/useUser";
 import React, { useState } from "react";
-import Loading from "../components/Loading";
+import Loading from "../../../components/Loading";
 import { redirect } from "next/navigation";
 import { FlashMessage, responseModel } from "@/lib/models";
 
