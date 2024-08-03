@@ -23,6 +23,12 @@ export interface responseModel {
   message: string;
 }
 
+export type Block = {
+  id: string;
+  type: string;
+  data: [Object];
+};
+
 /**
  * Results
  */

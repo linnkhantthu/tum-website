@@ -32,6 +32,15 @@ model User {
   verifyTokenExpire        DateTime?
   resetPasswordToken       String?    @unique
   resetPasswordTokenExpire DateTime?
+  Article                  Article[]
+}
+
+model Article {
+  id      Int      @id @default(autoincrement())
+  date    DateTime @default(now())
+  content Json
+  author  User     @relation(fields: [userId], references: [id])
+  userId  Int
 }
 
 enum UserRole {
