@@ -52,7 +52,7 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
         {/* Page content here */}
         <div className=" text-pretty">{children}</div>
       </div>
-      <div className="drawer-side">
+      <div className="drawer-side z-10">
         <label
           htmlFor="my-drawer-3"
           aria-label="close sidebar"
