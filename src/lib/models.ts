@@ -1,3 +1,4 @@
+import { OutputData } from "@editorjs/editorjs";
 import { UserRole } from "@prisma/client";
 
 export type FlashMessage = {
@@ -23,10 +24,12 @@ export interface responseModel {
   message: string;
 }
 
-export type Block = {
-  id: string;
-  type: string;
-  data: [Object];
+export type Article = {
+  id: number;
+  date: Date;
+  content: OutputData;
+  userId: number;
+  author: User;
 };
 
 /**

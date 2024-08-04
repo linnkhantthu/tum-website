@@ -18,23 +18,23 @@ const EditorBlock = dynamic(
 
 import React from "react";
 
-function ArticleById({ params }: { params: { id: string } }) {
+function Articles({ params }: { params: { id: string } }) {
   //state to hold output data. we'll use this for rendering later
   const [data, setData] = useState<OutputData>();
   const [isLoading, setIsLoading] = useState(true);
   const fetchData = async () => {
-    const res = await fetch(`/api/article?id=${params.id}`, {
+    const res = await fetch(`/api/articles`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
     });
     if (res.ok) {
-      const { article, message } = await res.json();
-      console.log("Article: ", article.content);
-      if (article) {
+      const { articles, message } = await res.json();
+      console.log("Article: ", articles.content);
+      if (articles) {
         setIsLoading(false);
-        setData(article.content);
+        setData(articles.content);
       }
     } else {
       const { message } = await res.json();
@@ -62,4 +62,4 @@ function ArticleById({ params }: { params: { id: string } }) {
   );
 }
 
-export default ArticleById;
+export default Articles;

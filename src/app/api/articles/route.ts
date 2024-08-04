@@ -1,8 +1,9 @@
 import prisma from "@/db";
 import {
   getArticleById,
+  getArticles,
   insertArticleByUsername,
-} from "@/lib/query/article/article";
+} from "@/lib/query/article/query";
 import { createResponse, getSession } from "@/lib/session";
 import { NextRequest } from "next/server";
 
@@ -49,13 +50,17 @@ export async function GET(request: NextRequest) {
   //   console.log(typeof data);
   const { searchParams } = new URL(request.url);
   const articleId = searchParams.get("id");
-  const article = await getArticleById(parseInt(articleId!));
-  if (article) {
+  const articles =
+    articleId !== null
+      ? await getArticleById(parseInt(articleId))
+      : await getArticles();
+  if (articles) {
+    console.log(articles);
     return createResponse(
       response,
       JSON.stringify({
-        article: article,
-        message: "Fetched article successfully.",
+        articles: articles,
+        message: "Fetched articles successfully.",
       }),
       {
         status: 200,
