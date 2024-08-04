@@ -31,6 +31,7 @@ const EditorBlock = ({ data, onChange, holder }: Props) => {
 
   //initialize editorjs
   useEffect(() => {
+    console.log(`http://${window.location.host}/api/articles/uploadImage`);
     //initialize editor if we don't have a reference
     if (!ref.current) {
       const editor = new EditorJS({
