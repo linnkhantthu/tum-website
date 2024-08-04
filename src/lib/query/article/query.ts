@@ -1,5 +1,5 @@
 import prisma from "@/db";
-import { Article } from "@/lib/models";
+import { Article, User } from "@/lib/models";
 
 /**
  * Get User by Email
@@ -29,15 +29,34 @@ export async function insertArticleByUsername(
 export async function getArticleById(id: number) {
   const article = await prisma.article.findFirst({
     where: { id: id },
-    include: { author: true },
+    select: {
+      id: true,
+      date: true,
+      content: true,
+      author: {
+        select: {
+          id: true,
+          email: true,
+          username: true,
+          lastName: true,
+          role: true,
+          sessionId: true,
+          verified: true,
+        },
+      },
+    },
   });
-  return article as unknown as Article;
+  return article;
 }
 
 export async function getArticles(take = 10) {
   const article = await prisma.article.findMany({
     take: take,
-    include: { author: true },
+    select: {
+      author: {
+        select: { username: true },
+      },
+    },
   });
   return article;
 }

@@ -25,10 +25,9 @@ export interface responseModel {
 }
 
 export type Article = {
-  id: number;
+  id: number | undefined;
   date: Date;
   content: OutputData;
-  userId: number;
   author: User;
 };
 

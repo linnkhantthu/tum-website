@@ -31,9 +31,10 @@ function ArticleById({ params }: { params: { id: string } }) {
       },
     });
     if (res.ok) {
-      const { articles, message } = await res.json();
-      console.log(message);
-      console.log("Article: ", articles);
+      const { articles, message }: { articles: Article; message: string } =
+        await res.json();
+      // console.log(message);
+      // console.log("Article: ", typeof articles);
       if (articles) {
         setIsLoading(false);
         setData(articles.content);
