@@ -4,7 +4,7 @@ import List from "@editorjs/list";
 import Table from "@editorjs/table";
 // @ts-ignore
 import Quote from "@editorjs/quote";
-import ImageTool from "@editorjs/image";
+import Image from "@editorjs/image";
 // @ts-ignore
 import Marker from "@editorjs/marker";
 import NestedList from "@editorjs/nested-list";
@@ -25,6 +25,14 @@ import AttachesTool from "@editorjs/attaches";
 import InlineCode from "@editorjs/inline-code";
 // @ts-ignore
 import Paragraph from "@editorjs/paragraph";
+
+class CustomImageTool extends Image {
+  removed() {
+    const { file } = this._data;
+    console.log("Data: ", file);
+  }
+}
+
 export const EDITOR_TOOLS = {
   list: {
     class: List,
@@ -52,7 +60,7 @@ export const EDITOR_TOOLS = {
     shortcut: "CTRL+SHIFT+Q",
   },
   image: {
-    class: ImageTool,
+    class: CustomImageTool,
     config: {
       endpoints: {
         byFile: `http://${window.location.host}/api/articles/uploadImage`, // Your backend file uploader endpoint
