@@ -4,6 +4,8 @@
 import React, { memo, useEffect, useRef } from "react";
 import EditorJS, { OutputData } from "@editorjs/editorjs";
 import { EDITOR_TOOLS } from "./tools";
+import Dialog from "./Dialog";
+import { Article } from "@/lib/models";
 
 //props
 type Props = {
@@ -16,14 +18,26 @@ const EditorBlock = ({ data, onChange, holder }: Props) => {
   /**
    * Upload
    */
-  const upload = async () => {
-    const res = await fetch("/api/editor", {
+  const uploader = async () => {
+    const res = await fetch("/api/articles/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
     });
+    if (res.ok) {
+      const { article, message }: { article: Article; message: string } =
+        await res.json();
+      onChange(article.content);
+      return true;
+    }
+    return false;
+  };
+
+  const publish = async () => {
+    // @ts-ignore
+    document.getElementById("my_modal_3")?.showModal();
   };
 
   //add a reference to editor
@@ -58,13 +72,14 @@ const EditorBlock = ({ data, onChange, holder }: Props) => {
   return (
     <div className="flex flex-col h-full w-full">
       <div className="flex flex-row justify-end m-3">
-        <button onClick={upload} className="btn btn-primary">
-          Upload
+        <button onClick={publish} className="btn btn-primary">
+          Publish
         </button>
       </div>
       <div className="flex flex-row">
         <div className="w-full" id={holder} />
       </div>
+      <Dialog uploader={uploader} />
     </div>
   );
 };

@@ -17,6 +17,22 @@ export async function insertArticleByUsername(
     if (author !== null) {
       const data = await prisma.article.create({
         data: { content: content, userId: author.id },
+        select: {
+          id: true,
+          date: true,
+          content: true,
+          author: {
+            select: {
+              id: true,
+              email: true,
+              username: true,
+              lastName: true,
+              role: true,
+              sessionId: true,
+              verified: true,
+            },
+          },
+        },
       });
       if (data !== null) {
         return data;
