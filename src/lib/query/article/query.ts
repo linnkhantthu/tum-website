@@ -15,11 +15,12 @@ export async function insertArticleByUsername(
     });
     if (author !== null) {
       const data = await prisma.article.create({
-        data: { content: content, userId: author.id },
+        data: { content: content, userId: author.id, isPublished: true },
         select: {
           id: true,
           date: true,
           content: true,
+          isPublished: true,
           author: {
             select: {
               id: true,
@@ -43,11 +44,12 @@ export async function insertArticleByUsername(
 
 export async function getArticleById(id: number) {
   const article = await prisma.article.findFirst({
-    where: { id: id },
+    where: { AND: { id: id, isPublished: true } },
     select: {
       id: true,
       date: true,
       content: true,
+      isPublished: true,
       author: {
         select: {
           id: true,
@@ -64,10 +66,17 @@ export async function getArticleById(id: number) {
   return article;
 }
 
-export async function getArticles(take = 10) {
+export async function getArticles(take = -8) {
   const article = await prisma.article.findMany({
     take: take,
+    where: {
+      isPublished: true,
+    },
     select: {
+      id: true,
+      date: true,
+      content: true,
+      isPublished: true,
       author: {
         select: { username: true },
       },

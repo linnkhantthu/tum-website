@@ -1,6 +1,30 @@
-import MainPagePosts from "./components/MainPagePosts";
+"use client";
+
+import { useEffect, useState } from "react";
+import MainPageArticles from "./components/MainPagePosts";
+import { Article } from "@/lib/models";
+import { OutputData } from "@editorjs/editorjs";
 
 export default function Home() {
+  const [articles, setArticles] = useState<Article[]>([]);
+
+  useEffect(() => {
+    fetch("/api/articles/", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then(
+        ({ articles, message }: { articles: Article[]; message: string }) => {
+          if (articles) {
+            setArticles([...articles]);
+          }
+        }
+      );
+  }, []);
+
   return (
     <main className="flex flex-col items-center justify-between">
       <div className="carousel w-full h-min">
@@ -62,10 +86,25 @@ export default function Home() {
         </div>
       </div>
       <div className="w-full p-10 h-fit flex flex-row flex-wrap">
-        <MainPagePosts />
-        <MainPagePosts />
-        <MainPagePosts />
-        <MainPagePosts />
+        {articles.map((article) => {
+          const blocks = article.content.blocks;
+          const image = blocks.filter((value) => value.type === "image")[0];
+          const header = blocks.filter((value) => value.type === "header")[0];
+          const paragraph = blocks.filter(
+            (value) => value.type === "paragraph"
+          )[0];
+
+          const title = header ? header.data.text : "Title";
+          const content = paragraph ? paragraph.data.text : "Content";
+          return (
+            <MainPageArticles
+              key={`article-${article.id}`}
+              image={image}
+              title={title}
+              content={content}
+            />
+          );
+        })}
       </div>
     </main>
   );

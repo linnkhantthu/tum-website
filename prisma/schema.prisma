@@ -36,11 +36,12 @@ model User {
 }
 
 model Article {
-  id      Int      @id @default(autoincrement())
-  date    DateTime @default(now())
-  content Json
-  author  User     @relation(fields: [userId], references: [id])
-  userId  Int
+  id          Int      @id @default(autoincrement())
+  date        DateTime @default(now())
+  content     Json
+  isPublished Boolean  @default(false)
+  author      User     @relation(fields: [userId], references: [id])
+  userId      Int
 }
 
 enum UserRole {
