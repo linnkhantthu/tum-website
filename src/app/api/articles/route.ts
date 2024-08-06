@@ -14,7 +14,6 @@ export async function POST(request: NextRequest) {
   const session = await getSession(request, response);
   let { user: currentUser } = session;
   const data = await request.json();
-  //   console.log(typeof data);
 
   const article = await insertArticleByUsername(currentUser?.username, data);
   if (article) {
@@ -47,7 +46,6 @@ export async function GET(request: NextRequest) {
   // Create session
   const session = await getSession(request, response);
   let { user: currentUser } = session;
-  //   console.log(typeof data);
   const { searchParams } = new URL(request.url);
   const articleId = searchParams.get("id");
   const articles =
@@ -55,7 +53,6 @@ export async function GET(request: NextRequest) {
       ? await getArticleById(parseInt(articleId))
       : await getArticles();
   if (articles) {
-    console.log(articles);
     return createResponse(
       response,
       JSON.stringify({

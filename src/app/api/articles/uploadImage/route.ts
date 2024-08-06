@@ -17,7 +17,6 @@ export async function POST(request: NextRequest) {
   const buffer = Buffer.from(await image.arrayBuffer());
   const filename = generateToken() + ".jpg";
   writeFileSync(path.join(process.cwd(), "public/images/" + filename), buffer);
-  console.log(request.headers.get("host"));
   return createResponse(
     response,
     JSON.stringify({

@@ -1,5 +1,4 @@
 import prisma from "@/db";
-import { Article, User } from "@/lib/models";
 
 /**
  * Get User by Email
