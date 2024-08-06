@@ -28,8 +28,17 @@ import Paragraph from "@editorjs/paragraph";
 
 class CustomImageTool extends Image {
   removed() {
+    // @ts-ignore
     const { file } = this._data;
-    console.log("Data: ", file);
+    const url: string = file.url;
+    const filename = url.split("images/")[1].replace('"', "");
+    fetch("/api/articles/uploadImage/", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ filename: filename }),
+    });
   }
 }
 

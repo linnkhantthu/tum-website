@@ -1,6 +1,6 @@
 import { createResponse, getSession } from "@/lib/session";
 import { generateToken } from "@/lib/utils";
-import { writeFileSync } from "fs";
+import { rmSync, writeFileSync } from "fs";
 import { NextRequest } from "next/server";
 import path from "path";
 
@@ -27,6 +27,29 @@ export async function POST(request: NextRequest) {
         // ... and any additional fields you want to store, such as width, height, color, extension, etc
       },
     }),
+    {
+      status: 200,
+    }
+  );
+}
+
+export async function DELETE(request: NextRequest) {
+  // Create response
+  const response = new Response();
+  // Create session
+  const session = await getSession(request, response);
+  let { user: currentUser } = session;
+  const { filename } = await request.json();
+  rmSync(path.join(process.cwd(), "public/images/" + filename), {
+    force: true,
+  });
+  return createResponse(
+    response,
+    JSON.stringify(
+      JSON.stringify({
+        success: true,
+      })
+    ),
     {
       status: 200,
     }
