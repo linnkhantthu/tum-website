@@ -24,11 +24,10 @@ const EditorBlock = ({ data, onChange, holder }: Props) => {
   /**
    * Upload
    */
-  const uploader = async (isPublished = false) => {
-    console.log(isPublished ? "Publishing..." : "Saving");
+  const uploader = async (isPublished = false, isSave: boolean) => {
     // Setting Status
-    setSaveBtnStatus(isPublished ? "Save" : "Saving...");
-    setPublishBtnStatus(isPublished ? "Publishing" : "Publish");
+    setSaveBtnStatus(isSave ? "Saving..." : "Save");
+    setPublishBtnStatus(!isSave ? "Publishing" : "Publish");
 
     // Send and fetch data
     const res = await fetch("/api/articles/", {
@@ -49,11 +48,11 @@ const EditorBlock = ({ data, onChange, holder }: Props) => {
       // onChange(article.content);
       setCurrentArticleId(article.id);
       // Set Status
-      console.log(isPublished);
-      setSaveBtnStatus(isPublished ? "Save" : "Saved");
-      setIsPublishBtnDisabled(!isPublished);
-      setPublishBtnStatus(isPublished ? "Published" : "Publish");
-      setIsPublishBtnDisabled(isPublished);
+      console.log(isSave);
+      setSaveBtnStatus(isSave ? "Saved" : "Save");
+      setIsSaveBtnDisabled(isSave);
+      setPublishBtnStatus(article.isPublished ? "Published" : "Publish");
+      setIsPublishBtnDisabled(article.isPublished);
       return true;
     }
     return false;
@@ -102,7 +101,7 @@ const EditorBlock = ({ data, onChange, holder }: Props) => {
     <div className="flex flex-col h-full w-full">
       <div className="flex flex-row justify-end m-3">
         <button
-          onClick={() => uploader(isPublishBtnDisabled)}
+          onClick={() => uploader(isPublishBtnDisabled, true)}
           className="btn btn-primary mr-3"
           disabled={isSaveBtnDisabled}
         >

@@ -3,7 +3,10 @@ import React from "react";
 function Dialog({
   uploader,
 }: {
-  uploader: (isPublished?: boolean) => Promise<boolean>;
+  uploader: (
+    isPublished: boolean | undefined,
+    isSave: boolean
+  ) => Promise<boolean>;
 }) {
   return (
     <div>
@@ -22,7 +25,7 @@ function Dialog({
               <button className="btn btn-error btn-sm mr-2">Cancel</button>
               <button
                 onClick={() => {
-                  uploader(true);
+                  uploader(true, false);
                 }}
                 className="btn btn-success btn-sm"
               >
