@@ -1,6 +1,10 @@
 import React from "react";
 
-function Dialog({ uploader }: { uploader: () => Promise<boolean> }) {
+function Dialog({
+  uploader,
+}: {
+  uploader: (isPublished?: boolean) => Promise<boolean>;
+}) {
   return (
     <div>
       {/* You can open the modal using document.getElementById('ID').showModal() method */}
@@ -16,7 +20,12 @@ function Dialog({ uploader }: { uploader: () => Promise<boolean> }) {
           <p className="">
             <form method="dialog" className="flex flex-row w-full justify-end">
               <button className="btn btn-error btn-sm mr-2">Cancel</button>
-              <button onClick={uploader} className="btn btn-success btn-sm">
+              <button
+                onClick={() => {
+                  uploader(true);
+                }}
+                className="btn btn-success btn-sm"
+              >
                 Publish
               </button>
             </form>

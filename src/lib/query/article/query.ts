@@ -6,6 +6,7 @@ import prisma from "@/db";
  * @returns User | Undefined
  */
 export async function insertArticleByUsername(
+  isPublished = false,
   username?: string,
   content?: object
 ) {
@@ -15,7 +16,7 @@ export async function insertArticleByUsername(
     });
     if (author !== null) {
       const data = await prisma.article.create({
-        data: { content: content, userId: author.id, isPublished: true },
+        data: { content: content, userId: author.id, isPublished: isPublished },
         select: {
           id: true,
           date: true,
@@ -83,4 +84,38 @@ export async function getArticles(take = -8) {
     },
   });
   return article;
+}
+
+export async function updateArticleById(
+  articleId: number,
+  data: object,
+  isPublished = false
+) {
+  try {
+    const article = await prisma.article.update({
+      select: {
+        id: true,
+        date: true,
+        content: true,
+        isPublished: true,
+        author: {
+          select: {
+            id: true,
+            email: true,
+            username: true,
+            lastName: true,
+            role: true,
+            sessionId: true,
+            verified: true,
+          },
+        },
+      },
+      where: { id: articleId },
+      data: { content: data, isPublished: isPublished },
+    });
+    return article;
+  } catch (error) {
+    console.log(error);
+    return undefined;
+  }
 }

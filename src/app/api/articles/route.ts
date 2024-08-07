@@ -3,6 +3,7 @@ import {
   getArticleById,
   getArticles,
   insertArticleByUsername,
+  updateArticleById,
 } from "@/lib/query/article/query";
 import { createResponse, getSession } from "@/lib/session";
 import { NextRequest } from "next/server";
@@ -13,9 +14,17 @@ export async function POST(request: NextRequest) {
   // Create session
   const session = await getSession(request, response);
   let { user: currentUser } = session;
-  const data = await request.json();
+  const {
+    data,
+    isPublished,
+    articleId,
+  }: { data: object; isPublished: boolean; articleId: number | undefined } =
+    await request.json();
 
-  const article = await insertArticleByUsername(currentUser?.username, data);
+  // Create new article
+  const article = articleId
+    ? await updateArticleById(articleId, data, isPublished)
+    : await insertArticleByUsername(isPublished, currentUser?.username, data);
   if (article) {
     return createResponse(
       response,
