@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import MainPageArticles from "./components/MainPagePosts";
+import VCard from "./components/VCard";
 import { Article } from "@/lib/models";
 import { OutputData } from "@editorjs/editorjs";
 
@@ -97,7 +97,7 @@ export default function Home() {
           const title = header ? header.data.text : "Title";
           const content = paragraph ? paragraph.data.text : "Content";
           return (
-            <MainPageArticles
+            <VCard
               key={`article-${article.id}`}
               image={image}
               title={title}

@@ -6,6 +6,9 @@ import EditorJS, { OutputData } from "@editorjs/editorjs";
 import { EDITOR_TOOLS } from "./tools";
 import Dialog from "./Dialog";
 import { Article } from "@/lib/models";
+import useUser from "@/lib/useUser";
+import Loading from "../Loading";
+import { useRouter } from "next/navigation";
 
 //props
 type Props = {
@@ -15,6 +18,9 @@ type Props = {
 };
 
 const EditorBlock = ({ data, onChange, holder }: Props) => {
+  const { data: userData, isLoading, isError } = useUser();
+  const { push } = useRouter();
+
   const [currentArticleId, setCurrentArticleId] = useState<number>();
   const [isSaveBtnDisabled, setIsSaveBtnDisabled] = useState(false);
   const [isPublishBtnDisabled, setIsPublishBtnDisabled] = useState(false);
@@ -98,28 +104,38 @@ const EditorBlock = ({ data, onChange, holder }: Props) => {
   }, [data]);
 
   return (
-    <div className="flex flex-col h-full w-full">
-      <div className="flex flex-row justify-end m-3">
-        <button
-          onClick={() => uploader(isPublishBtnDisabled, true)}
-          className="btn btn-primary mr-3"
-          disabled={isSaveBtnDisabled}
-        >
-          {saveBtnStatus}
-        </button>
-        <button
-          onClick={publish}
-          className="btn btn-success"
-          disabled={isPublishBtnDisabled}
-        >
-          {publishBtnStatus}
-        </button>
-      </div>
-      <div className="flex flex-row">
-        <div className="w-full" id={holder} />
-      </div>
-      <Dialog uploader={uploader} />
-    </div>
+    <>
+      {isLoading ? (
+        <Loading />
+      ) : isError ? (
+        "An Error occurred."
+      ) : userData.isLoggedIn ? (
+        <div className="flex flex-col h-full w-full">
+          <div className="flex flex-row justify-end m-3">
+            <button
+              onClick={() => uploader(isPublishBtnDisabled, true)}
+              className="btn btn-primary mr-3"
+              disabled={isSaveBtnDisabled}
+            >
+              {saveBtnStatus}
+            </button>
+            <button
+              onClick={publish}
+              className="btn btn-success"
+              disabled={isPublishBtnDisabled}
+            >
+              {publishBtnStatus}
+            </button>
+          </div>
+          <div className="flex flex-row">
+            <div className="w-full" id={holder} />
+          </div>
+          <Dialog uploader={uploader} />
+        </div>
+      ) : (
+        push("/")
+      )}
+    </>
   );
 };
 
