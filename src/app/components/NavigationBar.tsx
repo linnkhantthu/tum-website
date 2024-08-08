@@ -72,7 +72,7 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
           ) : data.isLoggedIn ? (
             <>
               <li>
-                <a href="/editor">Editor</a>
+                <a href="/editor/new">Editor</a>
               </li>
               <li>
                 <a href="/users/auth/logout">Logout</a>

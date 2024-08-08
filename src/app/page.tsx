@@ -86,25 +86,31 @@ export default function Home() {
         </div>
       </div>
       <div className="w-full p-10 h-fit flex flex-row flex-wrap">
-        {articles.map((article) => {
-          const blocks = article.content.blocks;
-          const image = blocks.filter((value) => value.type === "image")[0];
-          const header = blocks.filter((value) => value.type === "header")[0];
-          const paragraph = blocks.filter(
-            (value) => value.type === "paragraph"
-          )[0];
+        {articles.length === 0 ? (
+          <div className="flex flex-row justify-center items-center w-full">
+            No articles yet
+          </div>
+        ) : (
+          articles.map((article) => {
+            const blocks = article.content.blocks;
+            const image = blocks.filter((value) => value.type === "image")[0];
+            const header = blocks.filter((value) => value.type === "header")[0];
+            const paragraph = blocks.filter(
+              (value) => value.type === "paragraph"
+            )[0];
 
-          const title = header ? header.data.text : "Title";
-          const content = paragraph ? paragraph.data.text : "Content";
-          return (
-            <VCard
-              key={`article-${article.id}`}
-              image={image}
-              title={title}
-              content={content}
-            />
-          );
-        })}
+            const title = header ? header.data.text : "Title";
+            const content = paragraph ? paragraph.data.text : "Content";
+            return (
+              <VCard
+                key={`article-${article.id}`}
+                image={image}
+                title={title}
+                content={content}
+              />
+            );
+          })
+        )}
       </div>
     </main>
   );
