@@ -68,11 +68,11 @@ export async function getArticleById(id: string) {
   return article;
 }
 
-export async function getArticles(take = -8) {
+export async function getArticles(take = -8, isPublished = true) {
   const article = await prisma.article.findMany({
     take: take,
     where: {
-      isPublished: true,
+      isPublished: isPublished,
     },
     select: {
       id: true,

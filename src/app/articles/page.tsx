@@ -15,7 +15,7 @@ function Articles() {
   const [isLoading, setIsLoading] = useState(true);
   const [isDraft, setIsDraft] = useState<boolean>(false);
   const fetchData = async () => {
-    const res = await fetch(`/api/articles`, {
+    const res = await fetch(`/api/articles?isPublished=${true}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -67,14 +67,15 @@ function Articles() {
               </div>
             ) : (
               articles.map((article) => {
-                const blocks = article.content.blocks;
-                const image = blocks.filter(
+                const blocks =
+                  article.content === null ? undefined : article.content.blocks;
+                const image = blocks?.filter(
                   (value) => value.type === "image"
                 )[0];
-                const header = blocks.filter(
+                const header = blocks?.filter(
                   (value) => value.type === "header"
                 )[0];
-                const paragraph = blocks.filter(
+                const paragraph = blocks?.filter(
                   (value) => value.type === "paragraph"
                 )[0];
 

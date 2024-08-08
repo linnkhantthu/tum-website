@@ -57,8 +57,11 @@ export async function GET(request: NextRequest) {
   let { user: currentUser } = session;
   const { searchParams } = new URL(request.url);
   const articleId = searchParams.get("id");
+  const isPublished = searchParams.get("isPublished") === "true";
   const articles =
-    articleId !== null ? await getArticleById(articleId) : await getArticles();
+    articleId !== null
+      ? await getArticleById(articleId)
+      : await getArticles(-8, isPublished);
   if (articles) {
     return createResponse(
       response,

@@ -14,10 +14,9 @@ function Filter({
   const [isHidden, setIsHidden] = useState(false);
 
   const fetchData = async (isDraft: boolean) => {
-    const draftUrl = "/api/articles?isPublished=false";
-    const publishUrl = "/api/articles/";
+    const url = `/api/articles?isPublished=${!isDraft}`;
 
-    const res = await fetch(isDraft ? draftUrl : publishUrl, {
+    const res = await fetch(url, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -53,7 +52,7 @@ function Filter({
             <li className={isDraft ? "bg-base-100" : ""}>
               <a onClick={() => fetchData(!isDraft)}>
                 Drafts
-                <FaCheck className="text-right" />
+                {isDraft ? <FaCheck className="text-right" /> : ""}
               </a>
             </li>
           </ul>
