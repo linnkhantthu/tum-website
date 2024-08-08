@@ -3,13 +3,12 @@
 import { useEffect, useState } from "react";
 import VCard from "./components/VCard";
 import { Article } from "@/lib/models";
-import { OutputData } from "@editorjs/editorjs";
 
 export default function Home() {
   const [articles, setArticles] = useState<Article[]>([]);
 
   useEffect(() => {
-    fetch("/api/articles/", {
+    fetch(`/api/articles?isPublished=${true}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -92,10 +91,13 @@ export default function Home() {
           </div>
         ) : (
           articles.map((article) => {
-            const blocks = article.content.blocks;
-            const image = blocks.filter((value) => value.type === "image")[0];
-            const header = blocks.filter((value) => value.type === "header")[0];
-            const paragraph = blocks.filter(
+            const blocks =
+              article.content === null ? undefined : article.content.blocks;
+            const image = blocks?.filter((value) => value.type === "image")[0];
+            const header = blocks?.filter(
+              (value) => value.type === "header"
+            )[0];
+            const paragraph = blocks?.filter(
               (value) => value.type === "paragraph"
             )[0];
 
