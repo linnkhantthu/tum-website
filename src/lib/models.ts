@@ -25,7 +25,7 @@ export interface responseModel {
 }
 
 export type Article = {
-  id: number | undefined;
+  id: string | undefined;
   isPublished: boolean;
   date: Date;
   content: OutputData;

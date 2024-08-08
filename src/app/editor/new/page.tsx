@@ -1,25 +1,39 @@
 "use client";
 
-//index.tsx
-import { OutputData } from "@editorjs/editorjs";
-import type { NextPage } from "next";
-import dynamic from "next/dynamic";
-import { useState } from "react";
+import Loading from "@/app/components/Loading";
+import { Article } from "@/lib/models";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
-// important that we use dynamic loading here
-// editorjs should only be rendered on the client side.
-const EditorBlock = dynamic(() => import("../../components/editor/Editor"), {
-  ssr: false,
-});
+function NewEditor() {
+  const { push } = useRouter();
+  const [articleId, setArticleId] = useState<string>();
+  const [label, setLabel] = useState<string>("Creating a new article");
 
-const Home: NextPage = () => {
-  //state to hold output data. we'll use this for rendering later
-  const [data, setData] = useState<OutputData>();
-  return (
-    <main>
-      <EditorBlock data={data} onChange={setData} holder="editorjs-container" />
-    </main>
+  useEffect(() => {
+    fetch("/api/articles/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({}),
+    }).then((res) =>
+      res
+        .json()
+        .then(({ article, message }: { article: Article; message: string }) => {
+          if (article) {
+            setArticleId(article.id);
+          }
+          setLabel(message);
+        })
+    );
+  }, []);
+
+  return articleId ? (
+    push(`/editor/new/${articleId}`)
+  ) : (
+    <Loading label={label} />
   );
-};
+}
 
-export default Home;
+export default NewEditor;

@@ -1,21 +1,7 @@
 "use client";
 
 import Loading from "@/app/components/Loading";
-//index.tsx
-import { OutputData } from "@editorjs/editorjs";
-import type { NextPage } from "next";
-import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
-
-// important that we use dynamic loading here
-// editorjs should only be rendered on the client side.
-const EditorBlock = dynamic(
-  () => import("@/app/components/editor/EditorReadOnly"),
-  {
-    ssr: false,
-  }
-);
-
 import React from "react";
 import HCard from "../components/HCard";
 import { Article } from "@/lib/models";

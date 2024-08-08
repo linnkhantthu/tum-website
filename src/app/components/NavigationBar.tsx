@@ -61,19 +61,28 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
         <ul className="menu bg-base-200 min-h-full w-80 p-4">
           {/* Sidebar content here */}
           <li>
-            <a href="/editor">Editor</a>
+            <a href="/articles">Articles</a>
           </li>
-          <li>
-            {isLoading ? (
-              <Loading />
-            ) : isError ? (
+          {isLoading ? (
+            <Loading />
+          ) : isError ? (
+            <li>
               <span>An error occurred.</span>
-            ) : data.isLoggedIn ? (
-              <a href="/users/auth/logout">Logout</a>
-            ) : (
+            </li>
+          ) : data.isLoggedIn ? (
+            <>
+              <li>
+                <a href="/editor">Editor</a>
+              </li>
+              <li>
+                <a href="/users/auth/logout">Logout</a>
+              </li>
+            </>
+          ) : (
+            <li>
               <a href="/users/auth/">Login/Register</a>
-            )}
-          </li>
+            </li>
+          )}
         </ul>
       </div>
     </div>

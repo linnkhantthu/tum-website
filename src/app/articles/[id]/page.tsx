@@ -4,7 +4,6 @@ import Loading from "@/app/components/Loading";
 import { Article } from "@/lib/models";
 //index.tsx
 import { OutputData } from "@editorjs/editorjs";
-import type { NextPage } from "next";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 

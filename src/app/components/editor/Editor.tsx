@@ -15,13 +15,14 @@ type Props = {
   data?: OutputData;
   onChange(val: OutputData): void;
   holder: string;
+  articleId: string;
 };
 
-const EditorBlock = ({ data, onChange, holder }: Props) => {
+const EditorBlock = ({ data, onChange, holder, articleId }: Props) => {
   const { data: userData, isLoading, isError } = useUser();
   const { push } = useRouter();
 
-  const [currentArticleId, setCurrentArticleId] = useState<number>();
+  const [currentArticleId, setCurrentArticleId] = useState<string>(articleId);
   const [isSaveBtnDisabled, setIsSaveBtnDisabled] = useState(false);
   const [isPublishBtnDisabled, setIsPublishBtnDisabled] = useState(false);
   const [saveBtnStatus, setSaveBtnStatus] = useState("Save");
@@ -52,7 +53,7 @@ const EditorBlock = ({ data, onChange, holder }: Props) => {
         await res.json();
 
       // onChange(article.content);
-      setCurrentArticleId(article.id);
+      setCurrentArticleId(article.id!);
       // Set Status
       console.log(isSave);
       setSaveBtnStatus(isSave ? "Saved" : "Save");

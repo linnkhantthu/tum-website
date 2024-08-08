@@ -18,13 +18,13 @@ export async function POST(request: NextRequest) {
     data,
     isPublished,
     articleId,
-  }: { data: object; isPublished: boolean; articleId: number | undefined } =
+  }: { data: object; isPublished: boolean; articleId: string | undefined } =
     await request.json();
 
   // Create new article
   const article = articleId
     ? await updateArticleById(articleId, data, isPublished)
-    : await insertArticleByUsername(isPublished, currentUser?.username, data);
+    : await insertArticleByUsername(currentUser?.username);
   if (article) {
     return createResponse(
       response,
@@ -58,9 +58,7 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const articleId = searchParams.get("id");
   const articles =
-    articleId !== null
-      ? await getArticleById(parseInt(articleId))
-      : await getArticles();
+    articleId !== null ? await getArticleById(articleId) : await getArticles();
   if (articles) {
     return createResponse(
       response,

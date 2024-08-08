@@ -9,7 +9,7 @@ function HCard({
   image: any;
   title: string;
   content: string;
-  articleId: number;
+  articleId: string;
 }) {
   console.log(`ID: ${articleId}: `, image);
   return (

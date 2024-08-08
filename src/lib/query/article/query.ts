@@ -5,22 +5,23 @@ import prisma from "@/db";
  * @param email
  * @returns User | Undefined
  */
-export async function insertArticleByUsername(
-  isPublished = false,
-  username?: string,
-  content?: object
-) {
-  if (username && content) {
+export async function insertArticleByUsername(username?: string) {
+  let data = null;
+  if (username) {
+    console.log("username: ", username);
     const author = await prisma.user.findFirst({
       where: { username: username },
     });
+
     if (author !== null) {
-      const data = await prisma.article.create({
-        data: { content: content, userId: author.id, isPublished: isPublished },
+      data = await prisma.article.create({
+        data: {
+          userId: author.id,
+        },
         select: {
           id: true,
           date: true,
-          content: true,
+          // content: true,
           isPublished: true,
           author: {
             select: {
@@ -43,7 +44,7 @@ export async function insertArticleByUsername(
   return undefined;
 }
 
-export async function getArticleById(id: number) {
+export async function getArticleById(id: string) {
   const article = await prisma.article.findFirst({
     where: { AND: { id: id, isPublished: true } },
     select: {
@@ -87,7 +88,7 @@ export async function getArticles(take = -8) {
 }
 
 export async function updateArticleById(
-  articleId: number,
+  articleId: string,
   data: object,
   isPublished = false
 ) {
