@@ -11,7 +11,6 @@ function HCard({
   content: string;
   articleId: string;
 }) {
-  console.log(`ID: ${articleId}: `, image);
   return (
     <div className="flex flex-row justify-center items-center w-full">
       <div className="card card-side bg-base-100 shadow-xl mx-4 mt-3 w-4/5">

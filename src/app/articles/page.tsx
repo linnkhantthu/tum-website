@@ -23,7 +23,7 @@ function Articles() {
     });
     if (res.ok) {
       const { articles, message } = await res.json();
-      console.log("Article: ", articles);
+
       if (articles) {
         setIsLoading(false);
         setArticles(articles);

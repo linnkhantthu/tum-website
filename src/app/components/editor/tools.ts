@@ -30,8 +30,10 @@ class CustomImageTool extends Image {
   removed() {
     // @ts-ignore
     const { file } = this._data;
+    console.log("File: ", file);
     const url: string = file.url;
-    const filename = url.split("images/")[1].replace('"', "");
+    // const filename = url.split("images/")[1].replace('"', "");
+    const filename = url.split("%2F")[1].split("?")[0];
     fetch("/api/articles/uploadImage/", {
       method: "DELETE",
       headers: {
