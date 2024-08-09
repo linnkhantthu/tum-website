@@ -1,7 +1,14 @@
 "use client";
 
 //./components/Editor
-import React, { memo, useEffect, useRef, useState } from "react";
+import React, {
+  Dispatch,
+  memo,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import EditorJS, { OutputData } from "@editorjs/editorjs";
 import { EDITOR_TOOLS } from "./tools";
 import Dialog from "./Dialog";
@@ -12,26 +19,41 @@ import { useRouter } from "next/navigation";
 
 //props
 type Props = {
-  data?: OutputData;
-  onChange(val: OutputData): void;
+  data: OutputData;
+  currentArticle: Article;
+  setCurrentArticle: Dispatch<SetStateAction<Article | undefined>>;
   holder: string;
-  articleId: string;
+  onChange(val: OutputData): void;
 };
 
-const EditorBlock = ({ data, onChange, holder, articleId }: Props) => {
+const EditorBlock = ({
+  data,
+  currentArticle,
+  setCurrentArticle,
+  holder,
+  onChange,
+}: Props) => {
   const { data: userData, isLoading, isError } = useUser();
   const { push } = useRouter();
 
-  const [currentArticleId, setCurrentArticleId] = useState<string>(articleId);
+  const [currentArticleId, setCurrentArticleId] = useState<string>(
+    currentArticle.id!
+  );
   const [isSaveBtnDisabled, setIsSaveBtnDisabled] = useState(false);
-  const [isPublishBtnDisabled, setIsPublishBtnDisabled] = useState(false);
+  const [isPublishBtnDisabled, setIsPublishBtnDisabled] = useState(
+    currentArticle.isPublished
+  );
   const [saveBtnStatus, setSaveBtnStatus] = useState("Save");
   const [publishBtnStatus, setPublishBtnStatus] = useState("Publish");
 
+  useEffect(() => {
+    setSaveBtnStatus("Save");
+    setIsSaveBtnDisabled(false);
+  }, [data]);
   /**
    * Upload
    */
-  const uploader = async (isPublished = false, isSave: boolean) => {
+  const uploader = async (isSave: boolean) => {
     // Setting Status
     setSaveBtnStatus(isSave ? "Saving..." : "Save");
     setPublishBtnStatus(!isSave ? "Publishing" : "Publish");
@@ -44,7 +66,7 @@ const EditorBlock = ({ data, onChange, holder, articleId }: Props) => {
       },
       body: JSON.stringify({
         data: data,
-        isPublished: isPublished,
+        isPublished: !isSave,
         articleId: currentArticleId,
       }),
     });
@@ -53,9 +75,8 @@ const EditorBlock = ({ data, onChange, holder, articleId }: Props) => {
         await res.json();
 
       // onChange(article.content);
-      setCurrentArticleId(article.id!);
+      // setCurrentArticle(article);
       // Set Status
-      console.log(isSave);
       setSaveBtnStatus(isSave ? "Saved" : "Save");
       setIsSaveBtnDisabled(isSave);
       setPublishBtnStatus(article.isPublished ? "Published" : "Publish");
@@ -99,11 +120,6 @@ const EditorBlock = ({ data, onChange, holder, articleId }: Props) => {
     };
   }, []);
 
-  useEffect(() => {
-    setSaveBtnStatus("Save");
-    setIsSaveBtnDisabled(false);
-  }, [data]);
-
   return (
     <>
       {isLoading ? (
@@ -114,7 +130,7 @@ const EditorBlock = ({ data, onChange, holder, articleId }: Props) => {
         <div className="flex flex-col h-full w-full">
           <div className="flex flex-row justify-end m-3">
             <button
-              onClick={() => uploader(isPublishBtnDisabled, true)}
+              onClick={() => uploader(true)}
               className="btn btn-primary mr-3"
               disabled={isSaveBtnDisabled}
             >

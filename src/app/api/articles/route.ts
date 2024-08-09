@@ -8,6 +8,11 @@ import {
 import { createResponse, getSession } from "@/lib/session";
 import { NextRequest } from "next/server";
 
+/**
+ *
+ * @param request
+ * @returns
+ */
 export async function POST(request: NextRequest) {
   // Create response
   const response = new Response();

@@ -4,9 +4,9 @@ import React from "react";
 import Image from "next/image";
 import useUser from "@/lib/useUser";
 import Loading from "./Loading";
+import NavbarComponents from "./NavbarComponents";
 
 function NavigationBar({ children }: { children: React.ReactNode }) {
-  const { data, isLoading, isError } = useUser();
   return (
     <div className="drawer m-0 min-h-screen" data-theme="dark">
       <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
@@ -38,15 +38,7 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
             <Image src="/tum-logo.png" alt="tum-logo" width={50} height={50} />
           </div>
           <div className="hidden flex-none lg:block">
-            <ul className="menu menu-horizontal">
-              {/* Navbar menu content here */}
-              <li>
-                <a>Navbar Item 1</a>
-              </li>
-              <li>
-                <a>Navbar Item 2</a>
-              </li>
-            </ul>
+            <NavbarComponents isMenuHorizontal={true} />
           </div>
         </div>
         {/* Page content here */}
@@ -58,32 +50,7 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
           aria-label="close sidebar"
           className="drawer-overlay"
         ></label>
-        <ul className="menu bg-base-200 min-h-full w-80 p-4">
-          {/* Sidebar content here */}
-          <li>
-            <a href="/articles">Articles</a>
-          </li>
-          {isLoading ? (
-            <Loading />
-          ) : isError ? (
-            <li>
-              <span>An error occurred.</span>
-            </li>
-          ) : data.isLoggedIn ? (
-            <>
-              <li>
-                <a href="/editor/new">Editor</a>
-              </li>
-              <li>
-                <a href="/users/auth/logout">Logout</a>
-              </li>
-            </>
-          ) : (
-            <li>
-              <a href="/users/auth/">Login/Register</a>
-            </li>
-          )}
-        </ul>
+        <NavbarComponents isMenuHorizontal={false} />
       </div>
     </div>
   );

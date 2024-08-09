@@ -8,7 +8,6 @@ import prisma from "@/db";
 export async function insertArticleByUsername(username?: string) {
   let data = null;
   if (username) {
-    console.log("username: ", username);
     const author = await prisma.user.findFirst({
       where: { username: username },
     });

@@ -11,6 +11,7 @@ function NewEditor() {
   const [label, setLabel] = useState<string>("Creating a new article");
 
   useEffect(() => {
+    // Create a new article without any data in block field
     fetch("/api/articles/", {
       method: "POST",
       headers: {
