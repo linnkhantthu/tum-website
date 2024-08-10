@@ -28,17 +28,17 @@ function EditorPage({ params }: { params: { id: string } }) {
    * Fetch existing data
    */
   const fetchData = async () => {
-    const res = await fetch("/api/articles", {
-      method: "POST",
+    const res = await fetch(`/api/articles?id=${params.id}`, {
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ articleId: params.id }),
+      // body: JSON.stringify({ articleId: params.id }),
     });
-    const { article, message }: { article: Article; message: string } =
+    const { articles, message }: { articles: Article; message: string } =
       await res.json();
-    if (article) {
-      setCurrentArticle(article);
+    if (articles) {
+      setCurrentArticle(articles);
     } else {
       console.log(message);
     }

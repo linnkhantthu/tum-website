@@ -1,5 +1,6 @@
 import prisma from "@/db";
 import {
+  deletedArticleById,
   getArticleById,
   getArticles,
   insertArticleByUsername,
@@ -105,6 +106,44 @@ export async function GET(request: NextRequest) {
         status: 500,
       }
     );
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  // Create response
+  const response = new Response();
+  // Create session
+  const session = await getSession(request, response);
+  let { user: currentUser } = session;
+
+  if (currentUser) {
+    const { articleId } = await request.json();
+    const { article, message } = await deletedArticleById(articleId);
+    if (article) {
+      return createResponse(
+        response,
+        JSON.stringify({
+          success: true,
+          message: message,
+        }),
+        {
+          status: 200,
+        }
+      );
+    } else {
+      console.log(message);
+      return createResponse(
+        response,
+        JSON.stringify({
+          success: false,
+          message:
+            "System Error: Failed to delete the article, please try again",
+        }),
+        {
+          status: 500,
+        }
+      );
+    }
   }
 }
 

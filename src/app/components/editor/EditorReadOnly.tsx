@@ -7,6 +7,8 @@ import { EDITOR_TOOLS } from "./tools";
 import useUser from "@/lib/useUser";
 import { useRouter } from "next/navigation";
 import Loading from "../Loading";
+import PublishDialog from "./PublishDialog";
+import DeleteDialog from "../DeleteDialog";
 
 //props
 type Props = {
@@ -44,6 +46,28 @@ const EditorBlock = ({ data, onChange, holder, articleId }: Props) => {
     };
   }, []);
 
+  const callDialog = () => {
+    // @ts-ignore
+    document.getElementById("my_modal_3")?.showModal();
+  };
+
+  const deleteArticle = async () => {
+    const res = await fetch("/api/articles/", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ articleId: articleId }),
+    });
+    const { success, message }: { success: boolean; message: string } =
+      await res.json();
+    if (res.ok && success) {
+      push("/articles");
+    } else {
+      alert(message);
+    }
+  };
+
   return (
     <>
       {isLoading ? (
@@ -51,25 +75,20 @@ const EditorBlock = ({ data, onChange, holder, articleId }: Props) => {
       ) : isError ? (
         "An Error occurred."
       ) : userData.isLoggedIn ? (
-        <div className="flex flex-col h-full w-full">
-          <div className="flex flex-row justify-end m-3">
+        <div className="flex flex-col w-full">
+          <div className="flex flex-row justify-end">
             <button
               onClick={() => push(`/editor/new/${articleId}`)}
               className="btn btn-primary mr-3"
-              // disabled={isSaveBtnDisabled}
             >
               Edit
             </button>
-            <button
-              // onClick={publish}
-              className="btn btn-success"
-              // disabled={isPublishBtnDisabled}
-            >
+            <button onClick={callDialog} className="btn btn-error">
               Delete
             </button>
           </div>
 
-          {/* <Dialog uploader={uploader} /> */}
+          <DeleteDialog uploader={deleteArticle} />
         </div>
       ) : (
         push("/")

@@ -54,24 +54,38 @@ export async function DELETE(request: NextRequest) {
   // Create session
   const session = await getSession(request, response);
   let { user: currentUser } = session;
-  const { filename } = await request.json();
-  // rmSync(path.join(process.cwd(), "public/images/" + filename), {
-  //   force: true,
-  // });
-  // Delete image from firebase
-  const storageRef = ref(storage, `images/${filename}`);
-  const deleted = await deleteObject(storageRef);
-  console.log("Deleted: ", deleted);
-
-  return createResponse(
-    response,
-    JSON.stringify(
-      JSON.stringify({
-        success: true,
-      })
-    ),
-    {
-      status: 200,
-    }
-  );
+  if (currentUser) {
+    const { filename } = await request.json();
+    // rmSync(path.join(process.cwd(), "public/images/" + filename), {
+    //   force: true,
+    // });
+    // Delete image from firebase
+    const storageRef = ref(storage, `images/${filename}`);
+    await deleteObject(storageRef);
+    return createResponse(
+      response,
+      JSON.stringify(
+        JSON.stringify({
+          success: true,
+          message: "Uploaded image successfully.",
+        })
+      ),
+      {
+        status: 200,
+      }
+    );
+  } else {
+    return createResponse(
+      response,
+      JSON.stringify(
+        JSON.stringify({
+          success: false,
+          message: "Access to the requested resource is forbidden.",
+        })
+      ),
+      {
+        status: 403,
+      }
+    );
+  }
 }

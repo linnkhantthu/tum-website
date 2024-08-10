@@ -1,6 +1,6 @@
 import React from "react";
 
-function Dialog({
+function PublishDialog({
   uploader,
 }: {
   uploader: (isSave: boolean) => Promise<boolean>;
@@ -36,4 +36,4 @@ function Dialog({
   );
 }
 
-export default Dialog;
+export default PublishDialog;

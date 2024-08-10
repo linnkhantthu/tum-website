@@ -11,7 +11,7 @@ import React, {
 } from "react";
 import EditorJS, { OutputData } from "@editorjs/editorjs";
 import { EDITOR_TOOLS } from "./tools";
-import Dialog from "./Dialog";
+import PublishDialog from "./PublishDialog";
 import { Article } from "@/lib/models";
 import useUser from "@/lib/useUser";
 import Loading from "../Loading";
@@ -86,7 +86,7 @@ const EditorBlock = ({
     return false;
   };
 
-  const publish = async () => {
+  const callDialog = async () => {
     // @ts-ignore
     document.getElementById("my_modal_3")?.showModal();
   };
@@ -132,7 +132,7 @@ const EditorBlock = ({
             {saveBtnStatus}
           </button>
           <button
-            onClick={publish}
+            onClick={callDialog}
             className="btn btn-success"
             disabled={isPublishBtnDisabled}
           >
@@ -142,7 +142,7 @@ const EditorBlock = ({
         <div className="flex flex-row">
           <div className="w-full" id={holder} />
         </div>
-        <Dialog uploader={uploader} />
+        <PublishDialog uploader={uploader} />
       </div>
     </>
   );

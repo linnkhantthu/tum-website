@@ -119,3 +119,15 @@ export async function updateArticleById(
     return undefined;
   }
 }
+
+export async function deletedArticleById(id: string) {
+  let article: any = undefined;
+  let message: any = undefined;
+  try {
+    article = await prisma.article.delete({ where: { id: id } });
+    message = "Deleted article successfully.";
+  } catch (error) {
+    message = error;
+  }
+  return { article, message };
+}
