@@ -2,9 +2,8 @@
 
 import React from "react";
 import Image from "next/image";
-import useUser from "@/lib/useUser";
-import Loading from "./Loading";
 import NavbarComponents from "./NavbarComponents";
+import Navigator from "./Navigator";
 
 function NavigationBar({ children }: { children: React.ReactNode }) {
   return (
@@ -42,7 +41,10 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
           </div>
         </div>
         {/* Page content here */}
-        <div className=" text-pretty">{children}</div>
+        <div className=" text-pretty container">
+          <Navigator />
+          {children}
+        </div>
       </div>
       <div className="drawer-side z-10">
         <label

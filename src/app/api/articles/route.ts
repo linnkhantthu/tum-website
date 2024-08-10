@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
   // Create session
   const session = await getSession(request, response);
   let { user: currentUser } = session;
-  if (currentUser) {
+  if (currentUser?.role === "ADMIN") {
     const {
       data,
       isPublished,
@@ -81,7 +81,7 @@ export async function GET(request: NextRequest) {
       ? await getArticleById(articleId)
       : isPublished
       ? await getArticles(-8, isPublished)
-      : currentUser
+      : currentUser?.role === "ADMIN"
       ? await getArticles(-8, isPublished)
       : await getArticles(-8, true);
   if (articles) {

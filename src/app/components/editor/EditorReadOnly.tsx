@@ -38,11 +38,7 @@ const EditorBlock = ({ data, onChange, holder }: Props) => {
     };
   }, []);
 
-  return (
-    <div className="px-2">
-      <div className="w-full" id={holder} />
-    </div>
-  );
+  return <div id={holder} />;
 };
 
 export default memo(EditorBlock);
