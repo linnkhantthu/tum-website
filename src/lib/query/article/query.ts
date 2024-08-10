@@ -45,7 +45,7 @@ export async function insertArticleByUsername(username?: string) {
 
 export async function getArticleById(id: string) {
   const article = await prisma.article.findFirst({
-    where: { AND: { id: id, isPublished: true } },
+    where: { AND: { id: id } },
     select: {
       id: true,
       date: true,

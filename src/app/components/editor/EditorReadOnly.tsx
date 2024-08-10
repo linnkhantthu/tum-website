@@ -4,17 +4,23 @@
 import React, { memo, useEffect, useRef } from "react";
 import EditorJS, { OutputData } from "@editorjs/editorjs";
 import { EDITOR_TOOLS } from "./tools";
+import useUser from "@/lib/useUser";
+import { useRouter } from "next/navigation";
+import Loading from "../Loading";
 
 //props
 type Props = {
   data?: OutputData;
   onChange(val: OutputData): void;
   holder: string;
+  articleId: string;
 };
 
-const EditorBlock = ({ data, onChange, holder }: Props) => {
+const EditorBlock = ({ data, onChange, holder, articleId }: Props) => {
   //add a reference to editor
   const ref = useRef<EditorJS>();
+  const { data: userData, isLoading, isError } = useUser();
+  const { push } = useRouter();
 
   //initialize editorjs
   useEffect(() => {
@@ -38,7 +44,40 @@ const EditorBlock = ({ data, onChange, holder }: Props) => {
     };
   }, []);
 
-  return <div id={holder} />;
+  return (
+    <>
+      {isLoading ? (
+        <Loading />
+      ) : isError ? (
+        "An Error occurred."
+      ) : userData.isLoggedIn ? (
+        <div className="flex flex-col h-full w-full">
+          <div className="flex flex-row justify-end m-3">
+            <button
+              onClick={() => push(`/editor/new/${articleId}`)}
+              className="btn btn-primary mr-3"
+              // disabled={isSaveBtnDisabled}
+            >
+              Edit
+            </button>
+            <button
+              // onClick={publish}
+              className="btn btn-success"
+              // disabled={isPublishBtnDisabled}
+            >
+              Delete
+            </button>
+          </div>
+          <div className="flex flex-row">
+            <div className="w-full" id={holder} />
+          </div>
+          {/* <Dialog uploader={uploader} /> */}
+        </div>
+      ) : (
+        push("/")
+      )}
+    </>
+  );
 };
 
 export default memo(EditorBlock);
