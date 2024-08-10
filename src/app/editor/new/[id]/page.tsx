@@ -1,10 +1,13 @@
 "use client";
 
 import Loading from "@/app/components/Loading";
+import Warning from "@/app/components/Warning";
 import { Article } from "@/lib/models";
+import useUser from "@/lib/useUser";
 //index.tsx
 import { OutputData } from "@editorjs/editorjs";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 // important that we use dynamic loading here
@@ -18,6 +21,8 @@ function EditorPage({ params }: { params: { id: string } }) {
   const [currentArticle, setCurrentArticle] = useState<Article>();
   const [data, setData] = useState<OutputData>(currentArticle?.content!);
   const [isLoading, setIsLoading] = useState(true);
+  const { data: userData, isLoading: isUserLoading, isError } = useUser();
+  const { push } = useRouter();
 
   /**
    * Fetch existing data
@@ -47,20 +52,24 @@ function EditorPage({ params }: { params: { id: string } }) {
 
   useEffect(() => setData(currentArticle?.content!), [currentArticle]);
 
-  return (
-    <main>
-      {isLoading ? (
-        <Loading label="Fetching data..." />
-      ) : (
-        <EditorBlock
-          data={data}
-          onChange={setData}
-          currentArticle={currentArticle!}
-          setCurrentArticle={setCurrentArticle}
-          holder="editorjs-container"
-        />
-      )}
-    </main>
+  return isUserLoading ? (
+    <Loading label="Loading..." />
+  ) : isError ? (
+    <Warning label="Lost connection to the server." />
+  ) : userData.isLoggedIn ? (
+    isLoading ? (
+      <Loading label="Fetching data..." />
+    ) : (
+      <EditorBlock
+        data={data}
+        onChange={setData}
+        currentArticle={currentArticle!}
+        setCurrentArticle={setCurrentArticle}
+        holder="editorjs-container"
+      />
+    )
+  ) : (
+    push("/")
   );
 }
 

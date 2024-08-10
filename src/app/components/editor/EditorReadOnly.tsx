@@ -68,14 +68,13 @@ const EditorBlock = ({ data, onChange, holder, articleId }: Props) => {
               Delete
             </button>
           </div>
-          <div className="flex flex-row">
-            <div className="w-full" id={holder} />
-          </div>
+
           {/* <Dialog uploader={uploader} /> */}
         </div>
       ) : (
         push("/")
       )}
+      <div className="w-full" id={holder} />
     </>
   );
 };
