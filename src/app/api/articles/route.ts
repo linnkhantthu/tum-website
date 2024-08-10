@@ -9,9 +9,11 @@ import { createResponse, getSession } from "@/lib/session";
 import { NextRequest } from "next/server";
 
 /**
- *
+ * Insert & Update Articles/
+ * Insert: No body required/
+ * Update: articleId, data, isPublished are required
  * @param request
- * @returns
+ * @returns article, message
  */
 export async function POST(request: NextRequest) {
   // Create response
@@ -19,33 +21,44 @@ export async function POST(request: NextRequest) {
   // Create session
   const session = await getSession(request, response);
   let { user: currentUser } = session;
-  const {
-    data,
-    isPublished,
-    articleId,
-  }: { data: object; isPublished: boolean; articleId: string | undefined } =
-    await request.json();
-
-  // Create new article
-  const article = articleId
-    ? await updateArticleById(articleId, data, isPublished)
-    : await insertArticleByUsername(currentUser?.username);
-  if (article) {
-    return createResponse(
-      response,
-      JSON.stringify({
-        article: article,
-        message: "Uploaded the article successfully.",
-      }),
-      {
-        status: 200,
-      }
-    );
+  if (currentUser) {
+    const {
+      data,
+      isPublished,
+      articleId,
+    }: { data: object; isPublished: boolean; articleId: string | undefined } =
+      await request.json();
+    // Create new article
+    const article = articleId
+      ? await updateArticleById(articleId, data, isPublished)
+      : await insertArticleByUsername(currentUser?.username);
+    if (article) {
+      return createResponse(
+        response,
+        JSON.stringify({
+          article: article,
+          message: "Uploaded the article successfully.",
+        }),
+        {
+          status: 200,
+        }
+      );
+    } else {
+      return createResponse(
+        response,
+        JSON.stringify({
+          message: "System Error: faieled to upload data.",
+        }),
+        {
+          status: 500,
+        }
+      );
+    }
   } else {
     return createResponse(
       response,
       JSON.stringify({
-        message: "Failed to upload the article, please try again",
+        message: "Access to the requested resource is forbidden.",
       }),
       {
         status: 403,
@@ -66,7 +79,11 @@ export async function GET(request: NextRequest) {
   const articles =
     articleId !== null
       ? await getArticleById(articleId)
-      : await getArticles(-8, isPublished);
+      : isPublished
+      ? await getArticles(-8, isPublished)
+      : currentUser
+      ? await getArticles(-8, isPublished)
+      : await getArticles(-8, true);
   if (articles) {
     return createResponse(
       response,
@@ -82,10 +99,10 @@ export async function GET(request: NextRequest) {
     return createResponse(
       response,
       JSON.stringify({
-        message: "Failed to fetch the article, please try again",
+        message: "System Error: Failed to fetch the article, please try again",
       }),
       {
-        status: 403,
+        status: 500,
       }
     );
   }

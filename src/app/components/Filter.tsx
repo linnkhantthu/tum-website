@@ -4,17 +4,17 @@ import { FaCheck, FaFilter } from "react-icons/fa";
 
 function Filter({
   setArticles,
-  isDraft,
-  setIsDraft,
+  isPublished,
+  setIsPublished,
 }: {
   setArticles: React.Dispatch<React.SetStateAction<Article[]>>;
-  isDraft: boolean;
-  setIsDraft: React.Dispatch<React.SetStateAction<boolean>>;
+  isPublished: boolean;
+  setIsPublished: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const [isHidden, setIsHidden] = useState(false);
 
-  const fetchData = async (isDraft: boolean) => {
-    const url = `/api/articles?isPublished=${!isDraft}`;
+  const fetchData = async (isPublished: boolean) => {
+    const url = `/api/articles?isPublished=${isPublished}`;
 
     const res = await fetch(url, {
       method: "GET",
@@ -26,7 +26,7 @@ function Filter({
       await res.json();
     if (articles.length !== 0) {
       setArticles(articles);
-      setIsDraft(true);
+      setIsPublished(isPublished);
       setIsHidden(true);
     }
     return true;
@@ -49,10 +49,10 @@ function Filter({
                 : "dropdown-content menu bg-base-200 rounded-box z-[1] w-52 p-2 shadow"
             }
           >
-            <li className={isDraft ? "bg-base-100" : ""}>
-              <a onClick={() => fetchData(!isDraft)}>
+            <li className={isPublished ? "" : "bg-base-100"}>
+              <a onClick={() => fetchData(!isPublished)}>
                 Drafts
-                {isDraft ? <FaCheck className="text-right" /> : ""}
+                {isPublished ? "" : <FaCheck className="text-right" />}
               </a>
             </li>
           </ul>

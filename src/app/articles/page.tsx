@@ -13,9 +13,9 @@ function Articles() {
   //state to hold output data. we'll use this for rendering later
   const [articles, setArticles] = useState<Article[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isDraft, setIsDraft] = useState<boolean>(false);
+  const [isPublished, setIsPublished] = useState<boolean>(true);
   const fetchData = async () => {
-    const res = await fetch(`/api/articles?isPublished=${true}`, {
+    const res = await fetch(`/api/articles?isPublished=${isPublished}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -53,8 +53,8 @@ function Articles() {
           ) : data.user?.role === "ADMIN" ? (
             <Filter
               setArticles={setArticles}
-              isDraft={isDraft}
-              setIsDraft={setIsDraft}
+              isPublished={isPublished}
+              setIsPublished={setIsPublished}
             />
           ) : (
             ""
