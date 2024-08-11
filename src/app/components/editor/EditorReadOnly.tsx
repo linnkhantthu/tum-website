@@ -93,7 +93,8 @@ const EditorBlock = ({ data, onChange, holder, articleId }: Props) => {
       ) : (
         ""
       )}
-      <div className="w-full" id={holder} />
+
+      <div className="w-full pointer-events-none" id={holder} />
     </>
   );
 };

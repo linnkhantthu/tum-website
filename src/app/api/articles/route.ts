@@ -21,9 +21,8 @@ export async function POST(request: NextRequest) {
   // Create response
   const response = new Response();
   // Create session
-  const session = await getSession(request, response);
-  let { user: currentUser } = session;
-  if (currentUser?.role === "ADMIN") {
+  const { currentUser } = await isAuth(request, response);
+  if (currentUser?.role === "ADMIN" && currentUser.verified) {
     const {
       data,
       isPublished,
@@ -79,13 +78,13 @@ export async function GET(request: NextRequest) {
   const isPublished = searchParams.get("isPublished") === "true";
   const articles =
     articleId !== null
-      ? await getArticleById(articleId, isLoggedIn)
+      ? await getArticleById(articleId, isLoggedIn, currentUser?.verified!)
       : isPublished
-      ? await getArticles(-8, isPublished, isLoggedIn)
-      : currentUser?.role === "ADMIN"
-      ? await getArticles(-8, isPublished, isLoggedIn)
-      : await getArticles(-8, true, isLoggedIn);
-
+      ? await getArticles(-8, isPublished, isLoggedIn, currentUser?.verified!)
+      : currentUser?.role === "ADMIN" && currentUser.verified
+      ? await getArticles(-8, isPublished, isLoggedIn, currentUser?.verified!)
+      : await getArticles(-8, true, isLoggedIn, currentUser?.verified!);
+  console.log(articles);
   if (articles) {
     return createResponse(
       response,
@@ -116,7 +115,7 @@ export async function DELETE(request: NextRequest) {
   // Create session
   const { currentUser } = await isAuth(request, response);
 
-  if (currentUser?.role === "ADMIN") {
+  if (currentUser?.role === "ADMIN" && currentUser.verified) {
     const { articleId } = await request.json();
     const { article, message } = await deletedArticleById(articleId);
     if (article) {

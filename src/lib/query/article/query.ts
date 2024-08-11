@@ -46,9 +46,13 @@ export async function insertArticleByUsername(username?: string) {
   return undefined;
 }
 
-export async function getArticleById(id: string, isLoggedIn: boolean) {
+export async function getArticleById(
+  id: string,
+  isLoggedIn: boolean,
+  isVerified: boolean
+) {
   let article;
-  if (isLoggedIn) {
+  if (isLoggedIn && isVerified) {
     article = await prisma.article.findFirst({
       where: { AND: { id: id } },
       select: {
@@ -97,10 +101,12 @@ export async function getArticleById(id: string, isLoggedIn: boolean) {
 export async function getArticles(
   take = -8,
   isPublished = true,
-  isLoggedIn: boolean
+  isLoggedIn: boolean,
+  isVerified: boolean
 ) {
   let articles;
-  if (isLoggedIn) {
+
+  if (isLoggedIn && isVerified) {
     articles = await prisma.article.findMany({
       take: take,
       where: {

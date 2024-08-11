@@ -29,13 +29,13 @@ export async function POST(request: NextRequest) {
       try {
         const sentEmailId = await sendMail(
           currentUser.email,
-          "Todo: Verify your email",
+          "TUM: Verify your email",
           EmailTemplate({
             description: "to complete verification",
             host: request.headers.get("host")!,
             lastName: currentUser.lastName,
             token: token,
-            path: "/users/verify/",
+            path: "/users/auth/verify/",
             buttonValue: "Verify",
           })
         );
@@ -51,7 +51,8 @@ export async function POST(request: NextRequest) {
         //     buttonValue: "Verify",
         //   })
         // );
-        if (sentEmailId) {
+
+        if (sentEmailId !== null) {
           isSuccess = true;
           message =
             "We have sent a verification token to " +
@@ -59,6 +60,7 @@ export async function POST(request: NextRequest) {
             "successfully";
         }
       } catch (error: any) {
+        console.log(error);
         isSuccess = false;
         message = "Failed to send an email to " + currentUser.email + ".";
       }
