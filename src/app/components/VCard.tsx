@@ -10,8 +10,8 @@ function VCard({
   content: string;
 }) {
   return (
-    <div className="card bg-base-100 w-96 shadow-xl h-96 m-3">
-      <figure className="h-1/2">
+    <div className="card card-bordered bg-base-100 w-96 shadow-xl h-96 mr-1 mb-1">
+      <figure className="min-h-[50%] max-h-[50%]">
         {image ? (
           <img src={image.data.file.url} alt={image.data.caption} />
         ) : (

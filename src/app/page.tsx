@@ -84,7 +84,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className="w-full p-10 h-fit flex flex-row flex-wrap">
+      <div className="w-full pt-10 h-fit flex md:flex-row flex-col md:justify-start flex-wrap">
         {articles.length === 0 ? (
           <div className="flex flex-row justify-center items-center w-full">
             No articles yet

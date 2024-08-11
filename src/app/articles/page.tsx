@@ -7,7 +7,6 @@ import HCard from "../components/HCard";
 import { Article } from "@/lib/models";
 import useUser from "@/lib/useUser";
 import Filter from "../components/Filter";
-import { MdWarning } from "react-icons/md";
 import Warning from "../components/Warning";
 
 function Articles() {

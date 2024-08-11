@@ -33,12 +33,12 @@ function Filter({
   };
   return (
     <div
-      className="flex flex-row justify-center"
+      className="flex flex-row justify-end"
       onClick={() => setIsHidden(false)}
     >
-      <div className="mx-4 mt-3 w-4/5 text-right">
+      <div className="mt-3">
         <div className="dropdown dropdown-end">
-          <div tabIndex={0} role="button" className="btn m-1">
+          <div tabIndex={0} role="button" className="btn btn-ghost btn-sm m-1">
             <FaFilter />
           </div>
           <ul

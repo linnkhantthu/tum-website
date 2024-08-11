@@ -91,7 +91,7 @@ const EditorBlock = ({ data, onChange, holder, articleId }: Props) => {
           <DeleteDialog uploader={deleteArticle} />
         </div>
       ) : (
-        push("/")
+        ""
       )}
       <div className="w-full" id={holder} />
     </>

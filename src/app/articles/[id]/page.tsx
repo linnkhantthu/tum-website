@@ -51,23 +51,15 @@ function ArticleById({ params }: { params: { id: string } }) {
   useEffect(() => {
     fetchData();
   }, []);
-  return isUserLoading ? (
-    <Loading label="Loading..." />
-  ) : isError ? (
-    <Warning label="Lost connection to the server." />
-  ) : userData.isLoggedIn ? (
-    isLoading ? (
-      <Loading label="Fetching data..." />
-    ) : (
-      <EditorBlock
-        data={data}
-        onChange={setData}
-        holder="editorjs-container"
-        articleId={params.id}
-      />
-    )
+  return isLoading ? (
+    <Loading label="Fetching data..." />
   ) : (
-    push("/")
+    <EditorBlock
+      data={data}
+      onChange={setData}
+      holder="editorjs-container"
+      articleId={params.id}
+    />
   );
 }
 

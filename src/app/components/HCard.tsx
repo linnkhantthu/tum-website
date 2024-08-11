@@ -13,15 +13,17 @@ function HCard({
 }) {
   return (
     <div className="flex flex-row justify-center items-center w-full">
-      <div className="card card-side bg-base-100 shadow-xl mx-4 mt-3 w-4/5">
-        <figure className="w-1/4">
-          {image ? (
-            <img src={image.data.file.url} alt={image.data.caption} />
-          ) : (
-            <img src="/tum-logo.png" alt="image" />
-          )}
-        </figure>
-        <div className="card-body w-4/5">
+      <div className="card card-side card-bordered bg-base-100 shadow-xl mt-3 w-full">
+        <div className="flex flex-col min-w-[33%] max-w-[33%] justify-center border border-y-0 border-l-0 border-base-300">
+          <figure>
+            {image ? (
+              <img src={image.data.file.url} alt={image.data.caption} />
+            ) : (
+              <img src="/tum-logo.png" alt="image" />
+            )}
+          </figure>
+        </div>
+        <div className="card-body min-w-[67%] max-w-[67%]">
           <h2 className="card-title">{title}</h2>
           <p className="text-ellipsis truncate hover:text-clip">
             {content.replaceAll("&nbsp;", "")}
