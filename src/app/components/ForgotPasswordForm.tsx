@@ -16,7 +16,7 @@ function ForgotPasswordForm({
     handleSubmit(e).then(() => setIsSubmitting(false));
   };
   return (
-    <div className="flex flex-row justify-center m-2 w-screen">
+    <div className="flex flex-row justify-center">
       <fieldset className="flex flex-col w-1/3">
         <legend className="flex flex-col w-full">
           {flashMessage ? (
