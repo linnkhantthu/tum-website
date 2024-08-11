@@ -1,5 +1,5 @@
 import { OutputData } from "@editorjs/editorjs";
-import { UserRole } from "@prisma/client";
+import { ArticleType, UserRole } from "@prisma/client";
 
 export type FlashMessage = {
   message: string;
@@ -26,6 +26,7 @@ export interface responseModel {
 
 export type Article = {
   id: string | undefined;
+  type: ArticleType;
   isPublished: boolean;
   date: Date;
   content: OutputData;

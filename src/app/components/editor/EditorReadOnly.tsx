@@ -74,7 +74,7 @@ const EditorBlock = ({ data, onChange, holder, articleId }: Props) => {
         <Loading />
       ) : isError ? (
         "An Error occurred."
-      ) : userData.isLoggedIn ? (
+      ) : userData.user?.role === "ADMIN" ? (
         <div className="flex flex-col w-full">
           <div className="flex flex-row justify-end">
             <button

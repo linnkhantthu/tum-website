@@ -46,47 +46,95 @@ export async function insertArticleByUsername(username?: string) {
   return undefined;
 }
 
-export async function getArticleById(id: string) {
-  const article = await prisma.article.findFirst({
-    where: { AND: { id: id } },
-    select: {
-      id: true,
-      date: true,
-      content: true,
-      isPublished: true,
-      author: {
-        select: {
-          id: true,
-          email: true,
-          username: true,
-          lastName: true,
-          role: true,
-          sessionId: true,
-          verified: true,
+export async function getArticleById(id: string, isLoggedIn: boolean) {
+  let article;
+  if (isLoggedIn) {
+    article = await prisma.article.findFirst({
+      where: { AND: { id: id } },
+      select: {
+        id: true,
+        date: true,
+        content: true,
+        isPublished: true,
+        author: {
+          select: {
+            id: true,
+            email: true,
+            username: true,
+            lastName: true,
+            role: true,
+            sessionId: true,
+            verified: true,
+          },
         },
       },
-    },
-  });
+    });
+  } else {
+    article = await prisma.article.findFirst({
+      where: { AND: { id: id, type: "PUBLIC" } },
+      select: {
+        id: true,
+        date: true,
+        content: true,
+        isPublished: true,
+        author: {
+          select: {
+            id: true,
+            email: true,
+            username: true,
+            lastName: true,
+            role: true,
+            sessionId: true,
+            verified: true,
+          },
+        },
+      },
+    });
+  }
   return article;
 }
 
-export async function getArticles(take = -8, isPublished = true) {
-  const article = await prisma.article.findMany({
-    take: take,
-    where: {
-      isPublished: isPublished,
-    },
-    select: {
-      id: true,
-      date: true,
-      content: true,
-      isPublished: true,
-      author: {
-        select: { username: true },
+export async function getArticles(
+  take = -8,
+  isPublished = true,
+  isLoggedIn: boolean
+) {
+  let articles;
+  if (isLoggedIn) {
+    articles = await prisma.article.findMany({
+      take: take,
+      where: {
+        isPublished: isPublished,
       },
-    },
-  });
-  return article;
+      select: {
+        id: true,
+        date: true,
+        content: true,
+        isPublished: true,
+        author: {
+          select: { username: true },
+        },
+      },
+    });
+  } else {
+    articles = await prisma.article.findMany({
+      take: take,
+      where: {
+        isPublished: isPublished,
+        type: "PUBLIC",
+      },
+      select: {
+        id: true,
+        date: true,
+        content: true,
+        isPublished: true,
+        author: {
+          select: { username: true },
+        },
+      },
+    });
+  }
+  return articles;
 }
 
 export async function updateArticleById(

@@ -26,9 +26,13 @@ function NavbarComponents({ isMenuHorizontal }: { isMenuHorizontal: boolean }) {
         </li>
       ) : data.isLoggedIn ? (
         <>
-          <li>
-            <a href="/editor/new">Editor</a>
-          </li>
+          {data.user?.role === "ADMIN" ? (
+            <li>
+              <a href="/editor/new">Editor</a>
+            </li>
+          ) : (
+            ""
+          )}
           <li>
             <a href="/users/auth/logout">Logout</a>
           </li>

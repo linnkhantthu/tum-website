@@ -4,10 +4,14 @@ function VCard({
   image,
   title,
   content,
+  authorName,
+  date,
 }: {
   image: any;
   title: string;
   content: string;
+  authorName: string;
+  date: string;
 }) {
   return (
     <div className="card card-bordered bg-base-100 w-96 shadow-xl h-96 mr-1 mb-1">
@@ -27,8 +31,8 @@ function VCard({
           {content.replaceAll("&nbsp;", "")}
         </p>
         <div className="card-actions justify-end">
-          <div className="badge badge-outline">Fashion</div>
-          <div className="badge badge-outline">Products</div>
+          <div className="badge badge-outline">{authorName}</div>
+          <div className="badge badge-outline">{date}</div>
         </div>
       </div>
     </div>

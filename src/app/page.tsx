@@ -103,12 +103,15 @@ export default function Home() {
 
             const title = header ? header.data.text : "Title";
             const content = paragraph ? paragraph.data.text : "Content";
+            const date = new Date(article.date);
             return (
               <VCard
                 key={`article-${article.id}`}
                 image={image}
                 title={title}
                 content={content}
+                authorName={article.author.username}
+                date={date.toDateString()}
               />
             );
           })

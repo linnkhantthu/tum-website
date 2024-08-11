@@ -7,6 +7,7 @@ import {
   updateArticleById,
 } from "@/lib/query/article/query";
 import { createResponse, getSession } from "@/lib/session";
+import { isAuth } from "@/lib/utils";
 import { NextRequest } from "next/server";
 
 /**
@@ -72,19 +73,19 @@ export async function GET(request: NextRequest) {
   // Create response
   const response = new Response();
   // Create session
-  const session = await getSession(request, response);
-  let { user: currentUser } = session;
+  const { currentUser, isLoggedIn } = await isAuth(request, response);
   const { searchParams } = new URL(request.url);
   const articleId = searchParams.get("id");
   const isPublished = searchParams.get("isPublished") === "true";
   const articles =
     articleId !== null
-      ? await getArticleById(articleId)
+      ? await getArticleById(articleId, isLoggedIn)
       : isPublished
-      ? await getArticles(-8, isPublished)
+      ? await getArticles(-8, isPublished, isLoggedIn)
       : currentUser?.role === "ADMIN"
-      ? await getArticles(-8, isPublished)
-      : await getArticles(-8, true);
+      ? await getArticles(-8, isPublished, isLoggedIn)
+      : await getArticles(-8, true, isLoggedIn);
+
   if (articles) {
     return createResponse(
       response,
@@ -113,10 +114,9 @@ export async function DELETE(request: NextRequest) {
   // Create response
   const response = new Response();
   // Create session
-  const session = await getSession(request, response);
-  let { user: currentUser } = session;
+  const { currentUser } = await isAuth(request, response);
 
-  if (currentUser) {
+  if (currentUser?.role === "ADMIN") {
     const { articleId } = await request.json();
     const { article, message } = await deletedArticleById(articleId);
     if (article) {
@@ -145,6 +145,16 @@ export async function DELETE(request: NextRequest) {
       );
     }
   }
+  return createResponse(
+    response,
+    JSON.stringify({
+      success: false,
+      message: "Access to the requested resource is forbidden.",
+    }),
+    {
+      status: 403,
+    }
+  );
 }
 
 insertArticleByUsername()

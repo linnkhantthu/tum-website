@@ -124,6 +124,14 @@ const EditorBlock = ({
     <>
       <div className="flex flex-col h-full w-full">
         <div className="flex flex-row justify-end m-3">
+          <select
+            className="select select-bordered mr-3"
+            name="articleType"
+            id="articleType"
+          >
+            <option value="PRIVATE">Private</option>
+            <option value="PUBLIC">Public</option>
+          </select>
           <button
             onClick={() => uploader(true)}
             className="btn btn-primary mr-3"
