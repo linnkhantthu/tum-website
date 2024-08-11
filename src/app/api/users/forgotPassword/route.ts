@@ -23,6 +23,7 @@ export async function POST(request: NextRequest) {
   const { isLoggedIn } = await isAuth(request, response);
   try {
     const { email: email } = await request.json();
+    console.log(isLoggedIn);
     if (!isLoggedIn) {
       // Get data
 
@@ -38,6 +39,7 @@ export async function POST(request: NextRequest) {
         if (token) {
           // Try to send the token as a form of react element with a Button
           try {
+            console.log("inside try");
             const sentEmailId = await sendMail(
               user.email,
               "Todo: Verify your email",
@@ -50,6 +52,7 @@ export async function POST(request: NextRequest) {
                 buttonValue: "Reset Password",
               })
             );
+            console.log(sentEmailId);
             // const sentEmailId = await sendMailWithNodemailer(
             //   user.email,
             //   "Todo: Reset password",
@@ -63,10 +66,13 @@ export async function POST(request: NextRequest) {
             //   })
             // );
             // If the mail is successfully sent
-            if (sentEmailId) {
+            if (sentEmailId !== null) {
               isSuccess = true;
               message =
                 "We have sent an email to " + user.email + " successfully.";
+            } else {
+              isSuccess = false;
+              message = "Failed to send email, please try again";
             }
           } catch (error) {
             message = Results.SERVER_ERROR;

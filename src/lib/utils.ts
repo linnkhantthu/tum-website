@@ -54,7 +54,7 @@ export async function sendMail(
   email: string,
   subject: string,
   template: JSX.Element
-): Promise<string> {
+) {
   const resend = new Resend(process.env.RESEND_API_KEY);
   const data = await resend.emails.send({
     from: "Acme <onboarding@resend.dev>",
@@ -63,7 +63,7 @@ export async function sendMail(
     subject: subject,
     react: template,
   });
-  return data.data?.id!;
+  return data.data;
 }
 
 export async function sendMailWithNodemailer(

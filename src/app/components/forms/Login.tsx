@@ -91,16 +91,20 @@ function LoginForm({
           <span className="pl-3 pb-3">Remember Me</span>
         </span>
         <span></span>
+        <a href="/users/auth/forgotPassword" className="link">
+          Forgot Password?
+        </a>
+        <span></span>
+        <Btn text={"Login"} />
+        <span></span>
         <span
-          className="link link-info"
+          className="link "
           onClick={() => {
             setIsRegisterForm(!isRegisterForm);
           }}
         >
           Need an account?
         </span>
-        <span></span>
-        <Btn text={"Login"} />
       </form>
     </>
   );
