@@ -13,12 +13,7 @@ import EditorJS, { OutputData } from "@editorjs/editorjs";
 import { EDITOR_TOOLS } from "./tools";
 import PublishDialog from "./PublishDialog";
 import { Article } from "@/lib/models";
-import useUser from "@/lib/useUser";
-import Loading from "../Loading";
-import { useRouter } from "next/navigation";
-import { MdWarning } from "react-icons/md";
-import Warning from "../Warning";
-
+import { ArticleType } from "@prisma/client";
 //props
 type Props = {
   data: OutputData;
@@ -68,6 +63,7 @@ const EditorBlock = ({
         data: data,
         isPublished: !isSave,
         articleId: currentArticleId,
+        articleType: currentArticle.type,
       }),
     });
     if (res.ok) {
@@ -124,14 +120,32 @@ const EditorBlock = ({
     <>
       <div className="flex flex-col h-full w-full">
         <div className="flex flex-row justify-end m-3">
-          <select
-            className="select select-bordered mr-3"
-            name="articleType"
-            id="articleType"
-          >
-            <option value="PRIVATE">Private</option>
-            <option value="PUBLIC">Public</option>
-          </select>
+          <form>
+            <select
+              onChange={(e) => {
+                currentArticle.type = e.currentTarget.options[
+                  e.currentTarget.selectedIndex
+                ].value as ArticleType;
+                setCurrentArticle(currentArticle);
+              }}
+              className="select select-bordered mr-3"
+              name="articleType"
+              id="articleType"
+            >
+              <option
+                value="PRIVATE"
+                selected={currentArticle.type === "PRIVATE"}
+              >
+                Private
+              </option>
+              <option
+                value="PUBLIC"
+                selected={currentArticle.type === "PUBLIC"}
+              >
+                Public
+              </option>
+            </select>
+          </form>
           <button
             onClick={() => uploader(true)}
             className="btn btn-primary mr-3"

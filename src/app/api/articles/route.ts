@@ -8,6 +8,7 @@ import {
 } from "@/lib/query/article/query";
 import { createResponse, getSession } from "@/lib/session";
 import { isAuth } from "@/lib/utils";
+import { ArticleType } from "@prisma/client";
 import { NextRequest } from "next/server";
 
 /**
@@ -27,11 +28,16 @@ export async function POST(request: NextRequest) {
       data,
       isPublished,
       articleId,
-    }: { data: object; isPublished: boolean; articleId: string | undefined } =
-      await request.json();
+      articleType,
+    }: {
+      data: object;
+      isPublished: boolean;
+      articleId: string | undefined;
+      articleType: ArticleType;
+    } = await request.json();
     // Create new article
     const article = articleId
-      ? await updateArticleById(articleId, data, isPublished)
+      ? await updateArticleById(articleId, data, isPublished, articleType)
       : await insertArticleByUsername(currentUser?.username);
     if (article) {
       return createResponse(
@@ -84,7 +90,7 @@ export async function GET(request: NextRequest) {
       : currentUser?.role === "ADMIN" && currentUser.verified
       ? await getArticles(-8, isPublished, isLoggedIn, currentUser?.verified!)
       : await getArticles(-8, true, isLoggedIn, currentUser?.verified!);
-  console.log(articles);
+  // console.log(articles);
   if (articles) {
     return createResponse(
       response,
@@ -130,7 +136,7 @@ export async function DELETE(request: NextRequest) {
         }
       );
     } else {
-      console.log(message);
+      // console.log(message);
       return createResponse(
         response,
         JSON.stringify({

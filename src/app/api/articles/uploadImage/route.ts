@@ -1,8 +1,6 @@
-import { createResponse, getSession } from "@/lib/session";
+import { createResponse } from "@/lib/session";
 import { generateToken, isAuth } from "@/lib/utils";
-import { rmSync, writeFileSync } from "fs";
 import { NextRequest } from "next/server";
-import path from "path";
 import {
   getDownloadURL,
   ref,
@@ -16,6 +14,7 @@ export async function POST(request: NextRequest) {
   const response = new Response();
   // Create session
   const { currentUser } = await isAuth(request, response);
+  console.log(currentUser);
   if (currentUser?.role === "ADMIN" && currentUser.verified) {
     const formData = await request.formData();
     // @ts-ignore
@@ -32,8 +31,6 @@ export async function POST(request: NextRequest) {
       JSON.stringify({
         success: 1,
         file: {
-          // url: `http://${request.headers.get("host")}/images/${filename}`,
-          // ... and any additional fields you want to store, such as width, height, color, extension, etc
           url: url,
         },
       }),

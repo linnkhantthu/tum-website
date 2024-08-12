@@ -1,6 +1,7 @@
 import prisma from "@/db";
 import { storage } from "@/lib/firebase";
 import { Article } from "@/lib/models";
+import { ArticleType } from "@prisma/client";
 import { deleteObject, ref } from "firebase/storage";
 
 /**
@@ -24,6 +25,7 @@ export async function insertArticleByUsername(username?: string) {
           id: true,
           date: true,
           // content: true,
+          type: true,
           isPublished: true,
           author: {
             select: {
@@ -60,6 +62,7 @@ export async function getArticleById(
         date: true,
         content: true,
         isPublished: true,
+        type: true,
         author: {
           select: {
             id: true,
@@ -81,6 +84,7 @@ export async function getArticleById(
         date: true,
         content: true,
         isPublished: true,
+        type: true,
         author: {
           select: {
             id: true,
@@ -117,6 +121,7 @@ export async function getArticles(
         date: true,
         content: true,
         isPublished: true,
+        type: true,
         author: {
           select: { username: true },
         },
@@ -134,6 +139,7 @@ export async function getArticles(
         date: true,
         content: true,
         isPublished: true,
+        type: true,
         author: {
           select: { username: true },
         },
@@ -146,7 +152,8 @@ export async function getArticles(
 export async function updateArticleById(
   articleId: string,
   data: object,
-  isPublished = false
+  isPublished = false,
+  articleType: ArticleType
 ) {
   try {
     const article = await prisma.article.update({
@@ -155,6 +162,7 @@ export async function updateArticleById(
         date: true,
         content: true,
         isPublished: true,
+        type: true,
         author: {
           select: {
             id: true,
@@ -168,7 +176,7 @@ export async function updateArticleById(
         },
       },
       where: { id: articleId },
-      data: { content: data, isPublished: isPublished },
+      data: { content: data, isPublished: isPublished, type: articleType },
     });
     return article;
   } catch (error) {
