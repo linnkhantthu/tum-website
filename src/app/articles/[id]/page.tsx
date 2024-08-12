@@ -2,7 +2,7 @@
 
 import Loading from "@/app/components/Loading";
 import Warning from "@/app/components/Warning";
-import { Article } from "@/lib/models";
+import { Article, User } from "@/lib/models";
 import useUser from "@/lib/useUser";
 //index.tsx
 import { OutputData } from "@editorjs/editorjs";
@@ -24,7 +24,9 @@ import React from "react";
 function ArticleById({ params }: { params: { id: string } }) {
   //state to hold output data. we'll use this for rendering later
   const [data, setData] = useState<OutputData>();
+  const [currentAuthor, setCurrentAuthor] = useState<User>();
   const [isLoading, setIsLoading] = useState(true);
+  const [message, setMessage] = useState("");
 
   const fetchData = async () => {
     const res = await fetch(`/api/articles?id=${params.id}`, {
@@ -37,13 +39,16 @@ function ArticleById({ params }: { params: { id: string } }) {
       const { articles, message }: { articles: Article; message: string } =
         await res.json();
       if (articles) {
-        setIsLoading(false);
-        setData(articles.content);
+        console.log(articles.content);
+        setData(articles.content === null ? data : articles.content);
+        setCurrentAuthor(articles.author);
       }
+      setMessage(message);
     } else {
       const { message } = await res.json();
-      alert(message);
+      setMessage(message);
     }
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -51,13 +56,16 @@ function ArticleById({ params }: { params: { id: string } }) {
   }, []);
   return isLoading ? (
     <Loading label="Fetching data..." />
-  ) : (
+  ) : currentAuthor ? (
     <EditorBlock
       data={data}
       onChange={setData}
       holder="editorjs-container"
       articleId={params.id}
+      currentAuthor={currentAuthor!}
     />
+  ) : (
+    <div className="text-center mt-3">{message}</div>
   );
 }
 

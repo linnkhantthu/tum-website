@@ -10,14 +10,15 @@ import { deleteObject, ref } from "firebase/storage";
  * @returns User | Undefined
  */
 export async function insertArticleByUsername(username?: string) {
-  let data = null;
+  let article;
+  let message = "Needed 1 argument got 0.";
   if (username) {
     const author = await prisma.user.findFirst({
-      where: { username: username },
+      where: { username: username, role: "ADMIN" },
     });
-
+    message = "You need to be an admin to access this function.";
     if (author !== null) {
-      data = await prisma.article.create({
+      article = await prisma.article.create({
         data: {
           userId: author.id,
         },
@@ -40,12 +41,81 @@ export async function insertArticleByUsername(username?: string) {
           },
         },
       });
-      if (data !== null) {
-        return data;
-      }
+      message =
+        article === null
+          ? "Failed to create a new article at this time, please try again."
+          : "Generated a new article successfully.";
     }
   }
-  return undefined;
+  return { article, message };
+}
+
+export async function updateArticleById(
+  articleId: string,
+  data: object,
+  isPublished = false,
+  articleType: ArticleType,
+  userId: number
+) {
+  let article;
+  let message;
+  try {
+    article = await prisma.article.update({
+      select: {
+        id: true,
+        date: true,
+        content: true,
+        isPublished: true,
+        type: true,
+        author: {
+          select: {
+            id: true,
+            email: true,
+            username: true,
+            lastName: true,
+            role: true,
+            sessionId: true,
+            verified: true,
+          },
+        },
+      },
+      where: { id: articleId, userId: userId },
+      data: { content: data, isPublished: isPublished, type: articleType },
+    });
+    message = "Updated article successfully.";
+  } catch (error) {
+    console.error(error);
+    message = "Only the article author can update this article.";
+  }
+  return { article, message };
+}
+
+export async function deletedArticleById(id: string, userId: number) {
+  let article: any = undefined;
+  let message;
+  try {
+    article = await prisma.article.delete({
+      where: { id: id, userId: userId },
+    });
+    const _article = article as Article;
+    const images = _article.content.blocks.filter(
+      (value) => value.type === "image"
+    );
+
+    // Delete corresponding images from firebase
+    images.map(async (image) => {
+      const url: string = image.data.file.url;
+      const filename = url.split("%2F")[1].split("?")[0];
+      const storageRef = ref(storage, `images/${filename}`);
+      await deleteObject(storageRef);
+    });
+    message = "Deleted article successfully along with images.";
+  } catch (error) {
+    console.error(error);
+    message =
+      "Failed to delete the article: Only the author can delete its articles.";
+  }
+  return { article, message };
 }
 
 export async function getArticleById(
@@ -54,6 +124,7 @@ export async function getArticleById(
   isVerified: boolean
 ) {
   let article;
+  let message;
   if (isLoggedIn && isVerified) {
     article = await prisma.article.findFirst({
       where: { AND: { id: id } },
@@ -76,6 +147,10 @@ export async function getArticleById(
         },
       },
     });
+    message =
+      article === null
+        ? "You need to be logged in and verified to read this article."
+        : "Fetched article successfully.";
   } else {
     article = await prisma.article.findFirst({
       where: { AND: { id: id, type: "PUBLIC" } },
@@ -98,8 +173,13 @@ export async function getArticleById(
         },
       },
     });
+    message =
+      article === null
+        ? "You need to be a member to read this article."
+        : "Fetched article successfully.";
   }
-  return article;
+
+  return { article, message };
 }
 
 export async function getArticles(
@@ -108,10 +188,10 @@ export async function getArticles(
   isLoggedIn: boolean,
   isVerified: boolean
 ) {
-  let articles;
-
+  let article;
+  let message;
   if (isLoggedIn && isVerified) {
-    articles = await prisma.article.findMany({
+    article = await prisma.article.findMany({
       take: take,
       where: {
         isPublished: isPublished,
@@ -127,8 +207,12 @@ export async function getArticles(
         },
       },
     });
+    message =
+      article.length === 0
+        ? "No articles for public and non-verified users yet."
+        : "Fetched articles successfully.";
   } else {
-    articles = await prisma.article.findMany({
+    article = await prisma.article.findMany({
       take: take,
       where: {
         isPublished: isPublished,
@@ -145,66 +229,10 @@ export async function getArticles(
         },
       },
     });
-  }
-  return articles;
-}
-
-export async function updateArticleById(
-  articleId: string,
-  data: object,
-  isPublished = false,
-  articleType: ArticleType
-) {
-  try {
-    const article = await prisma.article.update({
-      select: {
-        id: true,
-        date: true,
-        content: true,
-        isPublished: true,
-        type: true,
-        author: {
-          select: {
-            id: true,
-            email: true,
-            username: true,
-            lastName: true,
-            role: true,
-            sessionId: true,
-            verified: true,
-          },
-        },
-      },
-      where: { id: articleId },
-      data: { content: data, isPublished: isPublished, type: articleType },
-    });
-    return article;
-  } catch (error) {
-    console.log(error);
-    return undefined;
-  }
-}
-
-export async function deletedArticleById(id: string) {
-  let article: any = undefined;
-  let message: any = undefined;
-  try {
-    article = await prisma.article.delete({ where: { id: id } });
-    message = "Deleted article successfully.";
-    const _article = article as Article;
-    const images = _article.content.blocks.filter(
-      (value) => value.type === "image"
-    );
-
-    // Delete corresponding images from firebase
-    images.map(async (image) => {
-      const url: string = image.data.file.url;
-      const filename = url.split("%2F")[1].split("?")[0];
-      const storageRef = ref(storage, `images/${filename}`);
-      await deleteObject(storageRef);
-    });
-  } catch (error) {
-    message = error;
+    message =
+      article.length === 0
+        ? "Articles are not yet publicly published."
+        : "Fetched articles successfully.";
   }
   return { article, message };
 }

@@ -7,8 +7,8 @@ import { EDITOR_TOOLS } from "./tools";
 import useUser from "@/lib/useUser";
 import { useRouter } from "next/navigation";
 import Loading from "../Loading";
-import PublishDialog from "./PublishDialog";
 import DeleteDialog from "../DeleteDialog";
+import { User } from "@/lib/models";
 
 //props
 type Props = {
@@ -16,9 +16,16 @@ type Props = {
   onChange(val: OutputData): void;
   holder: string;
   articleId: string;
+  currentAuthor: User;
 };
 
-const EditorBlock = ({ data, onChange, holder, articleId }: Props) => {
+const EditorBlock = ({
+  data,
+  onChange,
+  holder,
+  articleId,
+  currentAuthor,
+}: Props) => {
   //add a reference to editor
   const ref = useRef<EditorJS>();
   const { data: userData, isLoading, isError } = useUser();
@@ -67,14 +74,15 @@ const EditorBlock = ({ data, onChange, holder, articleId }: Props) => {
       alert(message);
     }
   };
-
+  console.log(currentAuthor.email);
   return (
     <>
       {isLoading ? (
         <Loading />
       ) : isError ? (
         "An Error occurred."
-      ) : userData.user?.role === "ADMIN" ? (
+      ) : userData.user?.role === "ADMIN" &&
+        userData.user.id === currentAuthor.id ? (
         <div className="flex flex-col w-full">
           <div className="flex flex-row justify-end">
             <button

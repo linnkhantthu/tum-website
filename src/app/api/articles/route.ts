@@ -36,31 +36,25 @@ export async function POST(request: NextRequest) {
       articleType: ArticleType;
     } = await request.json();
     // Create new article
-    const article = articleId
-      ? await updateArticleById(articleId, data, isPublished, articleType)
+    const { article, message } = articleId
+      ? await updateArticleById(
+          articleId,
+          data,
+          isPublished,
+          articleType,
+          currentUser?.id
+        )
       : await insertArticleByUsername(currentUser?.username);
-    if (article) {
-      return createResponse(
-        response,
-        JSON.stringify({
-          article: article,
-          message: "Uploaded the article successfully.",
-        }),
-        {
-          status: 200,
-        }
-      );
-    } else {
-      return createResponse(
-        response,
-        JSON.stringify({
-          message: "System Error: faieled to upload data.",
-        }),
-        {
-          status: 500,
-        }
-      );
-    }
+    return createResponse(
+      response,
+      JSON.stringify({
+        article: article,
+        message: message,
+      }),
+      {
+        status: 200,
+      }
+    );
   } else {
     return createResponse(
       response,
@@ -74,6 +68,11 @@ export async function POST(request: NextRequest) {
   }
 }
 
+/**
+ * Fetch article or articles
+ * @param request
+ * @returns article/articles, message
+ */
 export async function GET(request: NextRequest) {
   // Create response
   const response = new Response();
@@ -82,7 +81,7 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const articleId = searchParams.get("id");
   const isPublished = searchParams.get("isPublished") === "true";
-  const articles =
+  const { article, message } =
     articleId !== null
       ? await getArticleById(articleId, isLoggedIn, currentUser?.verified!)
       : isPublished
@@ -90,31 +89,23 @@ export async function GET(request: NextRequest) {
       : currentUser?.role === "ADMIN" && currentUser.verified
       ? await getArticles(-8, isPublished, isLoggedIn, currentUser?.verified!)
       : await getArticles(-8, true, isLoggedIn, currentUser?.verified!);
-  // console.log(articles);
-  if (articles) {
-    return createResponse(
-      response,
-      JSON.stringify({
-        articles: articles,
-        message: "Fetched articles successfully.",
-      }),
-      {
-        status: 200,
-      }
-    );
-  } else {
-    return createResponse(
-      response,
-      JSON.stringify({
-        message: "System Error: Failed to fetch the article, please try again",
-      }),
-      {
-        status: 500,
-      }
-    );
-  }
+  return createResponse(
+    response,
+    JSON.stringify({
+      articles: article === null ? undefined : article,
+      message: message,
+    }),
+    {
+      status: 200,
+    }
+  );
 }
 
+/**
+ * Delete article
+ * @param request
+ * @returns success, message
+ */
 export async function DELETE(request: NextRequest) {
   // Create response
   const response = new Response();
@@ -123,32 +114,20 @@ export async function DELETE(request: NextRequest) {
 
   if (currentUser?.role === "ADMIN" && currentUser.verified) {
     const { articleId } = await request.json();
-    const { article, message } = await deletedArticleById(articleId);
-    if (article) {
-      return createResponse(
-        response,
-        JSON.stringify({
-          success: true,
-          message: message,
-        }),
-        {
-          status: 200,
-        }
-      );
-    } else {
-      // console.log(message);
-      return createResponse(
-        response,
-        JSON.stringify({
-          success: false,
-          message:
-            "System Error: Failed to delete the article, please try again",
-        }),
-        {
-          status: 500,
-        }
-      );
-    }
+    const { article, message } = await deletedArticleById(
+      articleId,
+      currentUser.id
+    );
+    return createResponse(
+      response,
+      JSON.stringify({
+        success: article ? true : false,
+        message: message,
+      }),
+      {
+        status: 200,
+      }
+    );
   }
   return createResponse(
     response,

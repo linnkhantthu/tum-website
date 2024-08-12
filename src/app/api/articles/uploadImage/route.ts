@@ -14,7 +14,6 @@ export async function POST(request: NextRequest) {
   const response = new Response();
   // Create session
   const { currentUser } = await isAuth(request, response);
-  console.log(currentUser);
   if (currentUser?.role === "ADMIN" && currentUser.verified) {
     const formData = await request.formData();
     // @ts-ignore
@@ -24,7 +23,6 @@ export async function POST(request: NextRequest) {
     const storageRef = ref(storage, `images/${filename}`);
     const { metadata, ref: ubRef } = await uploadBytes(storageRef, image);
     const url = await getDownloadURL(storageRef);
-    console.log("URL: ", url);
 
     return createResponse(
       response,
@@ -66,7 +64,7 @@ export async function DELETE(request: NextRequest) {
       JSON.stringify(
         JSON.stringify({
           success: true,
-          message: "Uploaded image successfully.",
+          message: "Deleted image successfully.",
         })
       ),
       {
