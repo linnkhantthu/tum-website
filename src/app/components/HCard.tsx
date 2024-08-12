@@ -14,7 +14,7 @@ function HCard({
   return (
     <div className="flex flex-row justify-center items-center w-full">
       <div className="card card-side card-bordered bg-base-100 shadow-xl mt-3 w-full">
-        <div className="flex flex-col min-w-[33%] max-w-[33%] justify-center border border-y-0 border-l-0 border-base-300">
+        <div className="flex flex-col min-w-[33%] max-w-[33%] justify-center border border-y-0 border-l-0 border-base-300 sm:min-w-[20%] sm:max-w-[20%]">
           <figure>
             {image ? (
               <img src={image.data.file.url} alt={image.data.caption} />
@@ -23,13 +23,13 @@ function HCard({
             )}
           </figure>
         </div>
-        <div className="card-body min-w-[67%] max-w-[67%]">
-          <h2 className="card-title">{title}</h2>
-          <p className="text-ellipsis truncate hover:text-clip">
+        <div className="card-body min-w-[67%] max-w-[67%] sm:min-w-[80%] sm:max-w-[80%] pr-3">
+          <h2 className="card-title text-sm sm:text-lg">{title}</h2>
+          <div className="line-clamp-3 text-justify text-sm sm:text-base">
             {content.replaceAll("&nbsp;", "")}
-          </p>
+          </div>
           <div className="card-actions justify-end">
-            <a href={`/articles/${articleId}`} className="btn btn-primary">
+            <a href={`/articles/${articleId}`} className="link">
               Read more
             </a>
           </div>
