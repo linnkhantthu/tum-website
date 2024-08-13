@@ -37,6 +37,8 @@ model User {
   Subcategory              Subcategory[]
 }
 
+// 
+
 model Article {
   id            String       @id @default(uuid())
   type          ArticleType  @default(PRIVATE)
@@ -52,24 +54,24 @@ model Article {
 }
 
 model Category {
-  id            String       @id @default(uuid())
-  date          DateTime     @default(now())
-  label         String
-  author        User         @relation(fields: [userId], references: [id])
-  userId        Int
-  Article       Article[]
-  subcategory   Subcategory? @relation(fields: [subcategoryId], references: [id])
-  subcategoryId String?
+  id          String        @id @default(uuid())
+  date        DateTime      @default(now())
+  label       String
+  author      User          @relation(fields: [userId], references: [id])
+  userId      Int
+  Article     Article[]
+  subcategory Subcategory[]
 }
 
 model Subcategory {
-  id       String     @id @default(uuid())
-  date     DateTime   @default(now())
-  label    String
-  author   User       @relation(fields: [userId], references: [id])
-  userId   Int
-  Article  Article[]
-  Category Category[]
+  id         String    @id @default(uuid())
+  date       DateTime  @default(now())
+  label      String
+  author     User      @relation(fields: [userId], references: [id])
+  userId     Int
+  Article    Article[]
+  Category   Category? @relation(fields: [categoryId], references: [id])
+  categoryId String?
 }
 
 enum UserRole {

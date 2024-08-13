@@ -32,9 +32,10 @@ function Input({
         name={id}
         value={value}
         onChange={(e) => {
-          controller(e.currentTarget.value);
+          controller(e.target.value);
         }}
         className="input input-info w-full px-10"
+        required
       />
       {error ? (
         <small className="label label-text text-error">{error}</small>

@@ -121,6 +121,9 @@ const EditorBlock = ({
       <div className="flex flex-col h-full w-full">
         <div className="flex flex-row justify-end m-3">
           <form>
+            <select name="category" id="category">
+              <option value=""></option>
+            </select>
             <select
               onChange={(e) => {
                 currentArticle.type = e.currentTarget.options[

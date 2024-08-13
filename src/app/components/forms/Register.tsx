@@ -3,7 +3,8 @@ import { FaUserCircle, FaUserTie } from "react-icons/fa";
 import { MdEmail, MdPerson, MdSecurity, MdPassword } from "react-icons/md";
 import Btn from "./Btn";
 import Input from "./Input";
-import { FlashMessage, User } from "@/lib/models";
+import { FlashMessage, format, User } from "@/lib/models";
+import { isEmail } from "@/lib/utils";
 
 function RegisterForm({
   isRegisterForm,
@@ -16,6 +17,13 @@ function RegisterForm({
     React.SetStateAction<FlashMessage | undefined>
   >;
 }) {
+  function isEmail(email: string) {
+    return String(email)
+      .toLowerCase()
+      .match(
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      );
+  }
   const [email, emailController] = useState<string>("");
   const [username, usernameController] = useState<string>("");
   const [firstName, firstNameController] = useState<string>("");
@@ -36,47 +44,85 @@ function RegisterForm({
     useState<string>();
 
   const submitForm = async (e: FormEvent) => {
+    emailErrorController(undefined);
+    usernameErrorController(undefined);
+    firstNameErrorController(undefined);
+    lastNameErrorController(undefined);
+    dobErrorController(undefined);
+    nrcNoErrorController(undefined);
+    passwordErrorController(undefined);
+    confirmPasswordErrorController(undefined);
     e.preventDefault();
-    if (password === confirmPassword) {
-      confirmPasswordErrorController(undefined);
-      console.log(dob);
-      const formData = {
-        email: email,
-        username: username,
-        firstName: firstName,
-        lastName: lastName,
-        dob: dob,
-        nrcNo: nrcNo,
-        password: password,
-      };
+    if (
+      email !== "" &&
+      username !== "" &&
+      firstName !== "" &&
+      lastName !== "" &&
+      dob &&
+      nrcNo !== "" &&
+      password !== "" &&
+      confirmPassword !== ""
+    ) {
+      if (isEmail(email)) {
+        if (!format.test(username)) {
+          if (nrcNo.length === 14) {
+            if (password === confirmPassword) {
+              const formData = {
+                email: email,
+                username: username,
+                firstName: firstName,
+                lastName: lastName,
+                dob: dob,
+                nrcNo: nrcNo,
+                password: password,
+              };
 
-      const res = await fetch("/api/users/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-      if (res.ok) {
-        const { user, message }: { user: User; message: string } =
-          await res.json();
-        if (user) {
-          setFlashMessage({
-            message: `Account registered as ${user.username}`,
-            category: "bg-info",
-          });
-          setIsRegisterForm(false);
+              const res = await fetch("/api/users/register", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(formData),
+              });
+              if (res.ok) {
+                const { user, message }: { user: User; message: string } =
+                  await res.json();
+                if (user) {
+                  setFlashMessage({
+                    message: `Account registered as ${user.username}`,
+                    category: "bg-info",
+                  });
+                  setIsRegisterForm(false);
+                } else {
+                  setFlashMessage({ message: message, category: "bg-error" });
+                }
+              } else {
+                setFlashMessage({
+                  message: "Connection Error",
+                  category: "bg-error",
+                });
+              }
+            } else {
+              confirmPasswordErrorController(
+                "This field must be equal with the Password field."
+              );
+            }
+          } else {
+            nrcNoErrorController("Invalid NRC number format.");
+          }
         } else {
-          setFlashMessage({ message: message, category: "bg-error" });
+          usernameErrorController(
+            "Username cannot contain special characters."
+          );
         }
       } else {
-        setFlashMessage({ message: "Connection Error", category: "bg-error" });
+        emailErrorController("Please fill in the valid email.");
       }
     } else {
-      // Password field error
-      confirmPasswordErrorController(
-        "This field must be equal with Password field."
-      );
+      setFlashMessage({
+        message: "All the field must be filled.",
+        category: "bg-error",
+      });
     }
   };
   return (
@@ -115,6 +161,8 @@ function RegisterForm({
           Icon={FaUserCircle}
           value={firstName}
           controller={firstNameController}
+          error={firstNameError}
+          errorController={firstNameErrorController}
         />
         <Input
           label={"Last Name"}
@@ -123,6 +171,8 @@ function RegisterForm({
           Icon={FaUserTie}
           value={lastName}
           controller={lastNameController}
+          error={lastNameError}
+          errorController={lastNameErrorController}
         />
         <Input
           label={"Birth Date"}
@@ -130,6 +180,8 @@ function RegisterForm({
           id={"dob"}
           value={dob}
           controller={dobController}
+          error={dobError}
+          errorController={dobErrorController}
         />
         <Input
           label={"NRC No#"}
@@ -138,6 +190,8 @@ function RegisterForm({
           Icon={MdSecurity}
           value={nrcNo}
           controller={nrcNoController}
+          error={nrcNoError}
+          errorController={nrcNoErrorController}
         />
         <Input
           label={"Password"}
@@ -146,6 +200,8 @@ function RegisterForm({
           Icon={MdPassword}
           value={password}
           controller={passwordController}
+          error={passwordError}
+          errorController={passwordErrorController}
         />
         <Input
           label={"Confirm Password"}

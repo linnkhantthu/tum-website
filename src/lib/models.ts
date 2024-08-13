@@ -49,6 +49,9 @@ export type Category = {
   userId: number;
 };
 
+// Format to check if username includes special characters
+export const format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+
 /**
  * Results
  */
