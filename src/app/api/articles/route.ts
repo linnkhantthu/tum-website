@@ -6,7 +6,7 @@ import {
   insertArticleByUsername,
   updateArticleById,
 } from "@/lib/query/article/query";
-import { createResponse, getSession } from "@/lib/session";
+import { createResponse } from "@/lib/session";
 import { isAuth } from "@/lib/utils";
 import { ArticleType } from "@prisma/client";
 import { NextRequest } from "next/server";
@@ -29,11 +29,13 @@ export async function POST(request: NextRequest) {
       isPublished,
       articleId,
       articleType,
+      categoryId,
     }: {
       data: object;
       isPublished: boolean;
       articleId: string | undefined;
       articleType: ArticleType;
+      categoryId: string;
     } = await request.json();
     // Create new article
     const { article, message } = articleId
@@ -42,7 +44,8 @@ export async function POST(request: NextRequest) {
           data,
           isPublished,
           articleType,
-          currentUser?.id
+          currentUser?.id,
+          categoryId
         )
       : await insertArticleByUsername(currentUser?.username);
     return createResponse(

@@ -31,6 +31,22 @@ export type Article = {
   date: Date;
   content: OutputData;
   author: User;
+  category: Category | undefined;
+};
+
+export type Category = {
+  id: string;
+  date: Date;
+  label: string;
+  subcategory: {
+    id: string;
+    date: Date;
+    label: string;
+    author: User;
+    userId: number;
+  };
+  author: User;
+  userId: number;
 };
 
 /**

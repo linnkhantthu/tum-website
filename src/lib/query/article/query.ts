@@ -1,6 +1,6 @@
 import prisma from "@/db";
 import { storage } from "@/lib/firebase";
-import { Article } from "@/lib/models";
+import { Article, Category } from "@/lib/models";
 import { ArticleType } from "@prisma/client";
 import { deleteObject, ref } from "firebase/storage";
 
@@ -55,7 +55,8 @@ export async function updateArticleById(
   data: object,
   isPublished = false,
   articleType: ArticleType,
-  userId: number
+  userId: number,
+  categoryId?: string
 ) {
   let article;
   let message;
@@ -67,6 +68,7 @@ export async function updateArticleById(
         content: true,
         isPublished: true,
         type: true,
+        category: true,
         author: {
           select: {
             id: true,
@@ -80,7 +82,12 @@ export async function updateArticleById(
         },
       },
       where: { id: articleId, userId: userId },
-      data: { content: data, isPublished: isPublished, type: articleType },
+      data: {
+        content: data,
+        isPublished: isPublished,
+        type: articleType,
+        categoryId: categoryId,
+      },
     });
     message = "Updated article successfully.";
   } catch (error) {
