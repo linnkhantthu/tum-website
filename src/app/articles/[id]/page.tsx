@@ -27,6 +27,7 @@ function ArticleById({ params }: { params: { id: string } }) {
   const [currentAuthor, setCurrentAuthor] = useState<User>();
   const [isLoading, setIsLoading] = useState(true);
   const [message, setMessage] = useState("");
+  const [publishedDate, setPublishedDate] = useState<Date>();
 
   const fetchData = async () => {
     const res = await fetch(`/api/articles?id=${params.id}`, {
@@ -39,9 +40,9 @@ function ArticleById({ params }: { params: { id: string } }) {
       const { articles, message }: { articles: Article; message: string } =
         await res.json();
       if (articles) {
-        console.log(articles.content);
         setData(articles.content === null ? data : articles.content);
         setCurrentAuthor(articles.author);
+        setPublishedDate(articles.date);
       }
       setMessage(message);
     } else {
@@ -63,6 +64,7 @@ function ArticleById({ params }: { params: { id: string } }) {
       holder="editorjs-container"
       articleId={params.id}
       currentAuthor={currentAuthor!}
+      publishedDate={publishedDate}
     />
   ) : (
     <div className="text-center mt-3">{message}</div>

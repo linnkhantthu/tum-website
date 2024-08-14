@@ -17,6 +17,7 @@ type Props = {
   holder: string;
   articleId: string;
   currentAuthor: User;
+  publishedDate: Date | undefined;
 };
 
 const EditorBlock = ({
@@ -25,6 +26,7 @@ const EditorBlock = ({
   holder,
   articleId,
   currentAuthor,
+  publishedDate,
 }: Props) => {
   //add a reference to editor
   const ref = useRef<EditorJS>();
@@ -74,9 +76,8 @@ const EditorBlock = ({
       alert(message);
     }
   };
-  console.log(currentAuthor.email);
   return (
-    <>
+    <div className="flex flex-col">
       {isLoading ? (
         <Loading />
       ) : isError ? (
@@ -101,9 +102,12 @@ const EditorBlock = ({
       ) : (
         ""
       )}
-
-      <div className="w-full pointer-events-none" id={holder} />
-    </>
+      <div>
+        <span className="pr-3">@{currentAuthor.username}</span>
+        <span>{new Date(publishedDate!).toDateString()}</span>
+      </div>
+      <div className="w-full pointer-events-none text-justify" id={holder} />
+    </div>
   );
 };
 

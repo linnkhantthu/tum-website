@@ -169,65 +169,82 @@ export async function insertUser(
         username: username,
       },
     });
-    if (isUserExistsWithEmail === null || isUserExistsWithUsername === null) {
+    const isUserExistsWithNrcNo = await prisma.user.findFirst({
+      where: {
+        nrcNo: nrcNo,
+      },
+    });
+    if (
+      isUserExistsWithEmail === null &&
+      isUserExistsWithUsername === null &&
+      isUserExistsWithNrcNo === null
+    ) {
       const encryptedPassword = hashPassword.encrypt(password);
       const fmtedDob = new Date(dob);
-      const user = await prisma.user.create({
-        data: {
-          email: email,
-          username: username,
-          firstName: firstName,
-          lastName: lastName,
-          dob: fmtedDob,
-          nrcNo: nrcNo,
-          password: encryptedPassword,
-          verifyToken: generateToken(),
-          verifyTokenExpire: getExpireDate(1440),
-        },
-      });
+      try {
+        const user = await prisma.user.create({
+          data: {
+            email: email,
+            username: username,
+            firstName: firstName,
+            lastName: lastName,
+            dob: fmtedDob,
+            nrcNo: nrcNo,
+            password: encryptedPassword,
+            verifyToken: generateToken(),
+            verifyTokenExpire: getExpireDate(1440),
+          },
+        });
 
-      if (user) {
-        registeredUser = user as User;
-        message = `Registered successfully as ${registeredUser.username}.`;
-        const sentEmailId = await sendMail(
-          user.email,
-          "Todo: Verify your email",
-          EmailTemplate({
-            description: "to complete the verification",
-            lastName: user.lastName,
-            token: user.verifyToken!,
-            host: host!,
-            path: "/users/verify/",
-            buttonValue: "Verify",
-          })
-        );
-        // const sentEmailId = await sendMailWithNodemailer(
-        //   user.email,
-        //   "Todo: Verify your email",
-        //   EmailTemplate({
-        //     description: "to complete the verification",
-        //     lastName: user.lastName!,
-        //     token: user.verifyToken!,
-        //     host: host!,
-        //     path: "/users/verify/",
-        //     buttonValue: "Verify",
-        //   })
-        // );
-        message = sentEmailId
-          ? message + ` And sent the verification link to ${user.email}.`
-          : message + ` Failed to send the verification link to ${user.email}`;
-        // return sentEmailId ? (user as User) : undefined;
-      } else {
-        message = "Failed to register the user.";
+        if (user) {
+          registeredUser = user as User;
+          message = `Registered successfully as ${registeredUser.username}.`;
+          const sentEmailId = await sendMail(
+            user.email,
+            "Todo: Verify your email",
+            EmailTemplate({
+              description: "to complete the verification",
+              lastName: user.lastName,
+              token: user.verifyToken!,
+              host: host!,
+              path: "/users/verify/",
+              buttonValue: "Verify",
+            })
+          );
+          // const sentEmailId = await sendMailWithNodemailer(
+          //   user.email,
+          //   "Todo: Verify your email",
+          //   EmailTemplate({
+          //     description: "to complete the verification",
+          //     lastName: user.lastName!,
+          //     token: user.verifyToken!,
+          //     host: host!,
+          //     path: "/users/verify/",
+          //     buttonValue: "Verify",
+          //   })
+          // );
+          message = sentEmailId
+            ? message + ` And sent the verification link to ${user.email}.`
+            : message +
+              ` Failed to send the verification link to ${user.email}`;
+          // return sentEmailId ? (user as User) : undefined;
+        } else {
+          message = "Failed to register the user.";
+        }
+      } catch (error) {
+        console.error("Error: ", error);
       }
     } else {
       // msg = `User already exist with ${username} or ${email}.`;
-      message = isUserExistsWithEmail
-        ? Results.ACCOUNT_ALREADY_EXIST_WITH_EMAIL
-        : Results.ACCOUNT_ALREADY_EXIST_WITH_USERNAME;
+      message =
+        isUserExistsWithEmail !== null
+          ? Results.ACCOUNT_ALREADY_EXIST_WITH_EMAIL
+          : isUserExistsWithUsername !== null
+          ? Results.ACCOUNT_ALREADY_EXIST_WITH_USERNAME
+          : Results.ACCOUNT_ALREADY_EXIST_WITH_NRCNO;
     }
   }
-  return { user: registeredUser, msg: message };
+  return { user: registeredUser, message };
 }
 
 /**

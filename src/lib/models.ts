@@ -65,6 +65,7 @@ export enum Results {
   AUTH_ERROR = "Username or password is incorrect",
   ACCOUNT_ALREADY_EXIST_WITH_USERNAME = "Account already exist with this username.",
   ACCOUNT_ALREADY_EXIST_WITH_EMAIL = "Account already exist with this email.",
+  ACCOUNT_ALREADY_EXIST_WITH_NRCNO = "Account already exist with this NRCNo#.",
 }
 
 /**

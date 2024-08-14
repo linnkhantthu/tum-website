@@ -4,7 +4,6 @@ import { MdEmail, MdPerson, MdSecurity, MdPassword } from "react-icons/md";
 import Btn from "./Btn";
 import Input from "./Input";
 import { FlashMessage, format, User } from "@/lib/models";
-import { isEmail } from "@/lib/utils";
 
 function RegisterForm({
   isRegisterForm,

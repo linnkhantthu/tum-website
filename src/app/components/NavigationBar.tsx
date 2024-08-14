@@ -11,24 +11,42 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const changeTheme = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTheme(e.target.checked ? "dark" : "light");
+    localStorage.setItem("theme", e.target.checked ? "dark" : "light");
   };
-
   useEffect(() => {
     const localTheme = localStorage.getItem("theme");
+    const isCheck = document.getElementById("theme-checkbox");
     if (localTheme !== null) {
-      console.log("Here");
-      document.getElementById("theme-checkbox")!.checked =
-        localTheme === "light" ? true : false;
       setTheme(localTheme);
+      if (isCheck !== null) {
+        // @ts-ignore
+        isCheck!.checked = localTheme === "dark" ? true : false;
+      }
     } else {
-      document.getElementById("theme-checkbox")!.checked = true;
-      localStorage.setItem("theme", "dark");
       setTheme("dark");
+      if (isCheck !== null) {
+        // @ts-ignore
+        isCheck!.checked = true;
+      }
+      localStorage.setItem("theme", "dark");
     }
     setIsLoading(false);
   }, []);
 
-  return (
+  useEffect(() => {
+    const localTheme = localStorage.getItem("theme");
+    const isCheck = document.getElementById("theme-checkbox");
+    if (isCheck !== null) {
+      // @ts-ignore
+      isCheck!.checked = localTheme === "dark" ? true : false;
+    }
+  }, [isLoading]);
+
+  return isLoading ? (
+    <div className="flex flex-col mt-10">
+      <Loading label="Loading theme..." />
+    </div>
+  ) : (
     <div className="drawer m-0 min-h-screen" data-theme={theme}>
       <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
       <div className="drawer-content flex flex-col">
