@@ -3,8 +3,15 @@
 import React from "react";
 import Loading from "./Loading";
 import useUser from "@/lib/useUser";
+import ThemeController from "./ThemeController";
 
-function NavbarComponents({ isMenuHorizontal }: { isMenuHorizontal: boolean }) {
+function NavbarComponents({
+  isMenuHorizontal,
+  themeController,
+}: {
+  isMenuHorizontal: boolean;
+  themeController: () => void;
+}) {
   const { data, isLoading, isError } = useUser();
   return (
     <ul
@@ -42,6 +49,11 @@ function NavbarComponents({ isMenuHorizontal }: { isMenuHorizontal: boolean }) {
           <a href="/users/auth/">Login/Register</a>
         </li>
       )}
+      <li className="flex flex-row items-end">
+        <span>
+          Theme <ThemeController themeController={themeController} />
+        </span>
+      </li>
     </ul>
   );
 }

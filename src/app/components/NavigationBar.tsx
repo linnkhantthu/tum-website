@@ -1,13 +1,19 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import NavbarComponents from "./NavbarComponents";
 import Navigator from "./Navigator";
 
 function NavigationBar({ children }: { children: React.ReactNode }) {
+  const [theme, setTheme] = useState("dark");
+  const changeTheme = () => {
+    const isChecked = document.getElementById("theme-checkbox")!.checked;
+    setTheme(isChecked ? "light" : "dark");
+  };
+
   return (
-    <div className="drawer m-0 min-h-screen" data-theme="dark">
+    <div className="drawer m-0 min-h-screen" data-theme={theme}>
       <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
       <div className="drawer-content flex flex-col">
         {/* Navbar */}
@@ -37,7 +43,10 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
             <Image src="/tum-logo.png" alt="tum-logo" width={50} height={50} />
           </div>
           <div className="hidden flex-none lg:block">
-            <NavbarComponents isMenuHorizontal={true} />
+            <NavbarComponents
+              isMenuHorizontal={true}
+              themeController={changeTheme}
+            />
           </div>
         </div>
         {/* Page content here */}
@@ -52,7 +61,10 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
           aria-label="close sidebar"
           className="drawer-overlay"
         ></label>
-        <NavbarComponents isMenuHorizontal={false} />
+        <NavbarComponents
+          isMenuHorizontal={false}
+          themeController={changeTheme}
+        />
       </div>
     </div>
   );
