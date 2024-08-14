@@ -10,7 +10,7 @@ function NavbarComponents({
   themeController,
 }: {
   isMenuHorizontal: boolean;
-  themeController: () => void;
+  themeController: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) {
   const { data, isLoading, isError } = useUser();
   return (

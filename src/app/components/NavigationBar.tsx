@@ -1,16 +1,32 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import NavbarComponents from "./NavbarComponents";
 import Navigator from "./Navigator";
+import Loading from "./Loading";
 
 function NavigationBar({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState("dark");
-  const changeTheme = () => {
-    const isChecked = document.getElementById("theme-checkbox")!.checked;
-    setTheme(isChecked ? "light" : "dark");
+  const [theme, setTheme] = useState<string>();
+  const [isLoading, setIsLoading] = useState(true);
+  const changeTheme = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTheme(e.target.checked ? "dark" : "light");
   };
+
+  useEffect(() => {
+    const localTheme = localStorage.getItem("theme");
+    if (localTheme !== null) {
+      console.log("Here");
+      document.getElementById("theme-checkbox")!.checked =
+        localTheme === "light" ? true : false;
+      setTheme(localTheme);
+    } else {
+      document.getElementById("theme-checkbox")!.checked = true;
+      localStorage.setItem("theme", "dark");
+      setTheme("dark");
+    }
+    setIsLoading(false);
+  }, []);
 
   return (
     <div className="drawer m-0 min-h-screen" data-theme={theme}>

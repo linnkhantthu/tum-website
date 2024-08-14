@@ -1,6 +1,10 @@
 import React from "react";
 
-function ThemeController({ themeController }: { themeController: () => void }) {
+function ThemeController({
+  themeController,
+}: {
+  themeController: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}) {
   return (
     <label className="swap swap-rotate">
       {/* this hidden checkbox controls the state */}
