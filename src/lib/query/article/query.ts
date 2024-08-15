@@ -222,7 +222,7 @@ export async function getArticles(
     article = await prisma.article.findMany({
       take: take,
       where: {
-        isPublished: isPublished,
+        isPublished: true,
         type: "PUBLIC",
       },
       select: {

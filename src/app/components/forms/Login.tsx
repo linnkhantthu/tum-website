@@ -6,17 +6,16 @@ import Input from "./Input";
 import { FlashMessage, User } from "@/lib/models";
 import useUser from "@/lib/useUser";
 import { useRouter } from "next/navigation";
+import { makeid } from "@/lib/utils-fe";
 
 function LoginForm({
   isRegisterForm,
   setIsRegisterForm,
-  setFlashMessage,
+  setToasts,
 }: {
   isRegisterForm: boolean;
   setIsRegisterForm: React.Dispatch<React.SetStateAction<boolean>>;
-  setFlashMessage: React.Dispatch<
-    React.SetStateAction<FlashMessage | undefined>
-  >;
+  setToasts: React.Dispatch<React.SetStateAction<FlashMessage[]>>;
 }) {
   const { data, mutateUser } = useUser();
   const { push } = useRouter();
@@ -44,16 +43,32 @@ function LoginForm({
         await res.json();
       if (user) {
         // Logged in successfully
+        const toasts: FlashMessage = {
+          id: makeid(10),
+          message: message,
+          category: "alert-success",
+        };
+
+        localStorage.setItem("toasts", JSON.stringify([toasts]));
         await mutateUser({ ...data, user: user });
         push("/");
       } else {
-        setFlashMessage({ message: message, category: "bg-error" });
+        setToasts([
+          {
+            id: makeid(10),
+            message: message,
+            category: "alert-error",
+          },
+        ]);
       }
     } else {
-      setFlashMessage({
-        message: `Connection error, status code is ${res.status}`,
-        category: "bg-info",
-      });
+      setToasts([
+        {
+          id: makeid(10),
+          message: `Connection error, status code is ${res.status}`,
+          category: "bg-info",
+        },
+      ]);
     }
   };
   return (

@@ -2,6 +2,7 @@ import { OutputData } from "@editorjs/editorjs";
 import { ArticleType, UserRole } from "@prisma/client";
 
 export type FlashMessage = {
+  id: string;
   message: string;
   category: string;
 };

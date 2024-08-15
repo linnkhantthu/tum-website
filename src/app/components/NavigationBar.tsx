@@ -5,15 +5,25 @@ import Image from "next/image";
 import NavbarComponents from "./NavbarComponents";
 import Navigator from "./Navigator";
 import Loading from "./Loading";
+import Toast from "./Toast";
+import { FlashMessage } from "@/lib/models";
+import { toastOnDelete } from "@/lib/utils-fe";
 
 function NavigationBar({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<string>();
   const [isLoading, setIsLoading] = useState(true);
+  const [toasts, setToasts] = useState<FlashMessage[]>([]);
+
+  /**
+   * Theme Controller
+   * @param e
+   */
   const changeTheme = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTheme(e.target.checked ? "dark" : "light");
     localStorage.setItem("theme", e.target.checked ? "dark" : "light");
   };
   useEffect(() => {
+    // Initiate Theme
     const localTheme = localStorage.getItem("theme");
     const isCheck = document.getElementById("theme-checkbox");
     if (localTheme !== null) {
@@ -41,6 +51,27 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
       isCheck!.checked = localTheme === "dark" ? true : false;
     }
   }, [isLoading]);
+
+  useEffect(() => {
+    const toasts: FlashMessage[] | null = JSON.parse(
+      localStorage.getItem("toasts")!
+    );
+    if (toasts !== null) {
+      setToasts(toasts);
+    }
+    window.addEventListener(
+      "storage",
+      () => {
+        const toasts: FlashMessage[] | null = JSON.parse(
+          localStorage.getItem("toasts")!
+        );
+        if (toasts !== null) {
+          setToasts(toasts);
+        }
+      },
+      false
+    );
+  }, []);
 
   return isLoading ? (
     <div className="flex flex-col mt-10">
@@ -87,6 +118,15 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
         <div className=" text-pretty container">
           <Navigator />
           {children}
+          <div className="toast toast-start w-full">
+            {toasts.map((value) => (
+              <Toast
+                key={`toastId-${value.id}`}
+                flashMessage={value}
+                onDelete={() => toastOnDelete(value.id, toasts, setToasts)}
+              />
+            ))}
+          </div>
         </div>
       </div>
       <div className="drawer-side z-10">

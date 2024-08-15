@@ -201,13 +201,13 @@ export async function insertUser(
           message = `Registered successfully as ${registeredUser.username}.`;
           const sentEmailId = await sendMail(
             user.email,
-            "Todo: Verify your email",
+            "TUM: Verify your email before using further features.",
             EmailTemplate({
               description: "to complete the verification",
               lastName: user.lastName,
               token: user.verifyToken!,
               host: host!,
-              path: "/users/verify/",
+              path: "/auth/users/verify/",
               buttonValue: "Verify",
             })
           );

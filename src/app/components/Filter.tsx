@@ -26,7 +26,7 @@ function Filter({
       await res.json();
     if (articles.length !== 0) {
       setArticles(articles);
-      setIsPublished(isPublished);
+      setIsPublished(articles[0].isPublished);
       setIsHidden(true);
     }
     return true;

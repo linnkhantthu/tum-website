@@ -6,12 +6,14 @@ import useUser from "@/lib/useUser";
 import React, { FormEvent, useEffect, useState } from "react";
 import { redirect } from "next/navigation";
 import PasswordResetForm from "@/app/components/forms/PasswordResetForm";
+import Toast from "@/app/components/Toast";
+import { makeid, toastOnDelete } from "@/lib/utils-fe";
 
 function VerifyResetPasswordToken({ params }: { params: { token: string } }) {
   const { data, isError, isLoading: isUserLoading } = useUser();
   const [isLoading, setIsLoading] = useState(true);
   const [isVerified, setIsVerified] = useState(false);
-  const [flashMessage, setFlashMessage] = useState<FlashMessage>();
+  const [toasts, setToasts] = useState<FlashMessage[]>([]);
   const [fetchedToken, setFetchedToken] = useState<string | undefined>(
     undefined
   );
@@ -51,14 +53,32 @@ function VerifyResetPasswordToken({ params }: { params: { token: string } }) {
       const { token: fetchedToken, message } = await res.json();
       if (res.ok) {
         if (fetchedToken !== undefined) {
-          setFlashMessage({ message: message, category: "bg-success" });
+          setToasts([
+            {
+              id: makeid(10),
+              message: message,
+              category: "alert-success",
+            },
+          ]);
           setFetchedToken(fetchedToken);
           setIsVerified(true);
         } else {
-          setFlashMessage({ message: message, category: "text-error" });
+          setToasts([
+            {
+              id: makeid(10),
+              message: message,
+              category: "alert-error",
+            },
+          ]);
         }
       } else {
-        setFlashMessage({ message: message, category: "text-error" });
+        setToasts([
+          {
+            id: makeid(10),
+            message: message,
+            category: "alert-error",
+          },
+        ]);
       }
     }
     try {
@@ -76,7 +96,7 @@ function VerifyResetPasswordToken({ params }: { params: { token: string } }) {
       ) : data?.user ? (
         <div className="flex flex-col justify-center">
           <span className=" flex flex-row justify-center">
-            <p className={flashMessage?.category}>{flashMessage?.message}</p>
+            <p className={toasts[0]?.category}>{toasts[0]?.message}</p>
           </span>
         </div>
       ) : isLoading ? (
@@ -91,9 +111,10 @@ function VerifyResetPasswordToken({ params }: { params: { token: string } }) {
           <div className="flex flex-col justify-center">
             <span className=" flex flex-row justify-center">
               <PasswordResetForm
-                flashMessage={flashMessage}
+                toasts={toasts}
                 handleSubmit={handleSubmit}
                 fetchedToken={fetchedToken}
+                setToasts={setToasts}
               />
             </span>
           </div>
@@ -101,13 +122,21 @@ function VerifyResetPasswordToken({ params }: { params: { token: string } }) {
       ) : (
         <div className="flex flex-row justify-center">
           <span
-            className={"flex flex-col justify-center " + flashMessage?.category}
+            className={"flex flex-col justify-center " + toasts[0]?.category}
           >
-            <span>{flashMessage?.message}</span>
             <a href="/users/auth/forgotPassword">Try Again?</a>
           </span>
         </div>
       )}
+      <div className="toast toast-start">
+        {toasts?.map((toast) => (
+          <Toast
+            key={`toastId-${toast.id}`}
+            flashMessage={toast}
+            onDelete={() => toastOnDelete(toast.id, toasts, setToasts)}
+          />
+        ))}
+      </div>
     </>
   );
 }

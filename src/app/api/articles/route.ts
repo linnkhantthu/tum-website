@@ -89,7 +89,7 @@ export async function GET(request: NextRequest) {
       ? await getArticleById(articleId, isLoggedIn, currentUser?.verified!)
       : isPublished
       ? await getArticles(-8, isPublished, isLoggedIn, currentUser?.verified!)
-      : currentUser?.role === "ADMIN" && currentUser.verified
+      : currentUser?.role === "ADMIN"
       ? await getArticles(-8, isPublished, isLoggedIn, currentUser?.verified!)
       : await getArticles(-8, true, isLoggedIn, currentUser?.verified!);
   return createResponse(

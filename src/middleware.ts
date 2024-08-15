@@ -9,13 +9,14 @@ export const middleware = async (req: NextRequest) => {
   const { user } = session;
 
   if (user !== undefined) {
-    return NextResponse.redirect(new URL("/", req.url));
+    return user.verified
+      ? NextResponse.redirect(new URL("/", req.url))
+      : NextResponse.redirect(new URL("/users/auth/pleaseVerify", req.url));
   }
-
   return res;
 };
 
 export const config = {
   // matcher: ["/", "/purchase/:path*"],
-  matcher: ["/admin/auth/"],
+  matcher: ["/users/auth/", "/editor/:path*"],
 };

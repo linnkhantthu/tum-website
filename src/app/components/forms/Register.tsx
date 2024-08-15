@@ -4,17 +4,16 @@ import { MdEmail, MdPerson, MdSecurity, MdPassword } from "react-icons/md";
 import Btn from "./Btn";
 import Input from "./Input";
 import { FlashMessage, format, User } from "@/lib/models";
+import { makeid } from "@/lib/utils-fe";
 
 function RegisterForm({
   isRegisterForm,
   setIsRegisterForm,
-  setFlashMessage,
+  setToasts,
 }: {
   isRegisterForm: boolean;
   setIsRegisterForm: React.Dispatch<React.SetStateAction<boolean>>;
-  setFlashMessage: React.Dispatch<
-    React.SetStateAction<FlashMessage | undefined>
-  >;
+  setToasts: React.Dispatch<React.SetStateAction<FlashMessage[]>>;
 }) {
   function isEmail(email: string) {
     return String(email)
@@ -87,19 +86,31 @@ function RegisterForm({
                 const { user, message }: { user: User; message: string } =
                   await res.json();
                 if (user) {
-                  setFlashMessage({
-                    message: `Account registered as ${user.username}`,
-                    category: "bg-info",
-                  });
+                  setToasts([
+                    {
+                      id: makeid(10),
+                      message: `Account registered as ${user.username}`,
+                      category: "bg-info",
+                    },
+                  ]);
                   setIsRegisterForm(false);
                 } else {
-                  setFlashMessage({ message: message, category: "bg-error" });
+                  setToasts([
+                    {
+                      id: makeid(10),
+                      message: message,
+                      category: "bg-error",
+                    },
+                  ]);
                 }
               } else {
-                setFlashMessage({
-                  message: "Connection Error",
-                  category: "bg-error",
-                });
+                setToasts([
+                  {
+                    id: makeid(10),
+                    message: "Connection Error",
+                    category: "bg-error",
+                  },
+                ]);
               }
             } else {
               confirmPasswordErrorController(
@@ -118,10 +129,13 @@ function RegisterForm({
         emailErrorController("Please fill in the valid email.");
       }
     } else {
-      setFlashMessage({
-        message: "All the field must be filled.",
-        category: "bg-error",
-      });
+      setToasts([
+        {
+          id: makeid(10),
+          message: "All the field must be filled.",
+          category: "bg-error",
+        },
+      ]);
     }
   };
   return (

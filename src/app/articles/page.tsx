@@ -80,8 +80,10 @@ function Articles() {
                   (value) => value.type === "paragraph"
                 )[0];
 
-                const title = header ? header.data.text : "Title";
-                const content = paragraph ? paragraph.data.text : "Content";
+                const title = header ? header.data.text : "No Title Yet";
+                const content = paragraph
+                  ? paragraph.data.text
+                  : "No Content Yet";
                 return (
                   <HCard
                     key={`article-${article.id}`}
