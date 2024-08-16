@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 
 function VCard({
@@ -6,15 +7,20 @@ function VCard({
   content,
   authorName,
   date,
+  articleId,
 }: {
   image: any;
   title: string;
   content: string;
   authorName: string;
   date: string;
+  articleId: string;
 }) {
   return (
-    <div className="card card-bordered bg-base-100 w-96 shadow-xl h-96 mr-1 mb-1">
+    <Link
+      className="card card-bordered bg-base-100 w-[100%] sm:w-[50%] shadow-xl h-96 mr-1 mb-1"
+      href={`/articles/${articleId}`}
+    >
       <figure className="min-h-[50%] max-h-[50%]">
         {image ? (
           <img src={image.data.file.url} alt={image.data.caption} />
@@ -35,7 +41,7 @@ function VCard({
           <div className="badge badge-outline">{date}</div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
 

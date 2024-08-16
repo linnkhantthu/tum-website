@@ -112,6 +112,7 @@ export default function Home() {
                 content={content}
                 authorName={article.author.username}
                 date={date.toDateString()}
+                articleId={article.id!}
               />
             );
           })

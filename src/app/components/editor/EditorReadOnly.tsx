@@ -102,11 +102,11 @@ const EditorBlock = ({
       ) : (
         ""
       )}
-      <div>
+      <div className="lg:px-[7rem] xl:px-[20rem] px-0">
         <span className="pr-3">@{currentAuthor.username}</span>
         <span>{new Date(publishedDate!).toDateString()}</span>
       </div>
-      <div className="w-full pointer-events-none text-justify" id={holder} />
+      <div className="pointer-events-none text-justify" id={holder} />
     </div>
   );
 };
