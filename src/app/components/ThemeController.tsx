@@ -2,8 +2,10 @@ import React from "react";
 
 function ThemeController({
   themeController,
+  themeId,
 }: {
   themeController: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  themeId: string;
 }) {
   return (
     <label className="swap swap-rotate">
@@ -11,7 +13,7 @@ function ThemeController({
       <input
         onChange={themeController}
         type="checkbox"
-        id="theme-checkbox"
+        id={themeId}
         className="theme-controller"
         value="synthwave"
       />

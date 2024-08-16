@@ -16,27 +16,36 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
 
   /**
    * Theme Controller
+   * Check - true => dark
    * @param e
    */
   const changeTheme = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTheme(e.target.checked ? "dark" : "light");
     localStorage.setItem("theme", e.target.checked ? "dark" : "light");
   };
+
   useEffect(() => {
     // Initiate Theme
+    // Get theme from local storage
     const localTheme = localStorage.getItem("theme");
-    const isCheck = document.getElementById("theme-checkbox");
+
+    const themeController_1 = document.getElementById("theme-controller-1");
+    const themeController_2 = document.getElementById("theme-controller-2");
     if (localTheme !== null) {
       setTheme(localTheme);
-      if (isCheck !== null) {
+      if (themeController_1 !== null && themeController_2 !== null) {
         // @ts-ignore
-        isCheck!.checked = localTheme === "dark" ? true : false;
+        themeController_1!.checked = localTheme === "dark" ? true : false;
+        // @ts-ignore
+        themeController_2!.checked = localTheme === "dark" ? true : false;
       }
     } else {
       setTheme("dark");
-      if (isCheck !== null) {
+      if (themeController_1 !== null && themeController_2 !== null) {
         // @ts-ignore
-        isCheck!.checked = true;
+        themeController_1!.checked = true;
+        // @ts-ignore
+        themeController_2!.checked = true;
       }
       localStorage.setItem("theme", "dark");
     }
@@ -45,10 +54,14 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const localTheme = localStorage.getItem("theme");
-    const isCheck = document.getElementById("theme-checkbox");
-    if (isCheck !== null) {
+    const themeController_1 = document.getElementById("theme-controller-1");
+    const themeController_2 = document.getElementById("theme-controller-2");
+    if (themeController_1 !== null && themeController_2 !== null) {
       // @ts-ignore
-      isCheck!.checked = localTheme === "dark" ? true : false;
+      themeController_1!.checked = localTheme === "dark" ? true : false;
+      // @ts-ignore
+      themeController_2!.checked = localTheme === "dark" ? true : false;
+      // console.log("isCheck: ", isCheck.checked);
     }
   }, [isLoading]);
 
@@ -109,6 +122,7 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
           </div>
           <div className="hidden flex-none lg:block">
             <NavbarComponents
+              themeId={"theme-controller-1"}
               isMenuHorizontal={true}
               themeController={changeTheme}
             />
@@ -129,15 +143,18 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
           </div>
         </div>
       </div>
+      {/* Drawer */}
       <div className="drawer-side z-10">
         <label
           htmlFor="my-drawer-3"
           aria-label="close sidebar"
           className="drawer-overlay"
         ></label>
+
         <NavbarComponents
           isMenuHorizontal={false}
           themeController={changeTheme}
+          themeId={"theme-controller-2"}
         />
       </div>
     </div>

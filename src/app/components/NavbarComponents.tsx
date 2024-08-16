@@ -8,9 +8,11 @@ import ThemeController from "./ThemeController";
 function NavbarComponents({
   isMenuHorizontal,
   themeController,
+  themeId,
 }: {
   isMenuHorizontal: boolean;
   themeController: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  themeId: string;
 }) {
   const { data, isLoading, isError } = useUser();
   return (
@@ -51,7 +53,11 @@ function NavbarComponents({
       )}
       <li className="flex flex-row items-end">
         <span>
-          Theme <ThemeController themeController={themeController} />
+          Theme
+          <ThemeController
+            themeController={themeController}
+            themeId={themeId}
+          />
         </span>
       </li>
     </ul>
