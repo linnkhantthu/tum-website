@@ -37,3 +37,35 @@ export function makeid(length: number) {
   }
   return result;
 }
+
+export function makeObservable(target: any) {
+  let listeners: any = [];
+  let value = target;
+
+  function get() {
+    return value;
+  }
+
+  function set(newValue: any) {
+    if (value === newValue) return;
+    value = newValue;
+    // @ts-ignore
+    listeners.forEach((l) => l(val));
+  }
+
+  function subscribe(listenerFunc: any) {
+    listeners.push(listenerFunc);
+    return () => unsubscribe(listenerFunc);
+  }
+
+  function unsubscribe(listenerFunc: any) {
+    // @ts-ignore
+    listeners = listeners.filter((l) => l !== listenerFunc);
+  }
+
+  return {
+    get,
+    set,
+    subscribe,
+  };
+}

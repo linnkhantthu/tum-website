@@ -14,6 +14,7 @@ import { EDITOR_TOOLS } from "./tools";
 import PublishDialog from "./PublishDialog";
 import { Article } from "@/lib/models";
 import { ArticleType } from "@prisma/client";
+import ArticleDetails from "../ArticleDetails";
 //props
 type Props = {
   data: OutputData;
@@ -165,6 +166,10 @@ const EditorBlock = ({
           </button>
         </div>
         <div className="flex flex-row">
+          <ArticleDetails
+            username={currentArticle.author.username}
+            publishedDate={currentArticle.date}
+          />
           <div className="w-full" id={holder} />
         </div>
         <PublishDialog uploader={uploader} />

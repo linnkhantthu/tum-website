@@ -66,25 +66,11 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
   }, [isLoading]);
 
   useEffect(() => {
-    const toasts: FlashMessage[] | null = JSON.parse(
-      localStorage.getItem("toasts")!
-    );
-    if (toasts !== null) {
-      setToasts(toasts);
-    }
-    window.addEventListener(
-      "storage",
-      () => {
-        const toasts: FlashMessage[] | null = JSON.parse(
-          localStorage.getItem("toasts")!
-        );
-        if (toasts !== null) {
-          setToasts(toasts);
-        }
-      },
-      false
-    );
-  }, []);
+    setToasts(JSON.parse(localStorage.getItem("toasts")!));
+    window.onstorage = (event) => {
+      setToasts(JSON.parse(localStorage.getItem("toasts")!));
+    };
+  }, [isLoading]);
 
   return isLoading ? (
     <div className="flex flex-col mt-10">
@@ -133,7 +119,7 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
           <Navigator />
           {children}
           <div className="toast toast-start">
-            {toasts.map((value) => (
+            {toasts?.map((value) => (
               <Toast
                 key={`toastId-${value.id}`}
                 flashMessage={value}

@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import Loading from "../Loading";
 import DeleteDialog from "../DeleteDialog";
 import { User } from "@/lib/models";
+import ArticleDetails from "../ArticleDetails";
 
 //props
 type Props = {
@@ -102,10 +103,10 @@ const EditorBlock = ({
       ) : (
         ""
       )}
-      <div className="lg:px-[7rem] xl:px-[20rem] px-0">
-        <span className="pr-3">@{currentAuthor.username}</span>
-        <span>{new Date(publishedDate!).toDateString()}</span>
-      </div>
+      <ArticleDetails
+        username={currentAuthor.username}
+        publishedDate={publishedDate!}
+      />
       <div className="pointer-events-none text-justify" id={holder} />
     </div>
   );
