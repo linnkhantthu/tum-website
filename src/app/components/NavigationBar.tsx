@@ -132,7 +132,7 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
         <div className=" text-pretty container">
           <Navigator />
           {children}
-          <div className="toast toast-start w-full">
+          <div className="toast toast-start">
             {toasts.map((value) => (
               <Toast
                 key={`toastId-${value.id}`}

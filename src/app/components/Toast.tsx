@@ -12,7 +12,7 @@ function Toast({
 }) {
   return (
     <div
-      className={`flex flex-col alert max-w-[21rem] min-w-[21rem] items-center ${flashMessage.category}`}
+      className={`flex flex-row rounded items-center alert ${flashMessage.category} max-w-[100%] min-w-[100%] sm:max-w-[22rem] sm:min-w-[22rem] py-1`}
     >
       <span className="flex flex-row items-center w-full">
         {/* Icon */}
@@ -20,16 +20,18 @@ function Toast({
           <FaInfoCircle />
         </span>
         {/* Info */}
-        <span className="line-clamp-2 text-left text-wrap text-base min-w-[250px]">
+        <span className="sm:text-base text-sm sm:line-clamp-2 line-clamp-1 text-left text-wrap sm:min-w-[250px]">
           {flashMessage.message}
         </span>
-        {/* Action */}
-        <span
-          onClick={() => {
-            onDelete(flashMessage.id);
-          }}
-          className="bg-base-100 mb-10 btn btn-circle btn-xs btn-outline btn-error"
-        >
+      </span>
+      {/* Action */}
+      <span
+        onClick={() => {
+          onDelete(flashMessage.id);
+        }}
+        className=" bg-base-100 btn btn-circle btn-xs btn-outline btn-error"
+      >
+        <span>
           <FaXmark />
         </span>
       </span>
