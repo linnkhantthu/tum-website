@@ -3,8 +3,16 @@ import { FaUserCircle, FaUserTie } from "react-icons/fa";
 import { MdEmail, MdPerson, MdSecurity, MdPassword } from "react-icons/md";
 import Btn from "./Btn";
 import Input from "./Input";
-import { FlashMessage, format, User } from "@/lib/models";
+import { FlashMessage, User } from "@/lib/models";
 import { makeid } from "@/lib/utils-fe";
+import {
+  emailValidator,
+  usernameValidator,
+  dobValidator,
+  nrcNoValidator,
+  passwordValidator,
+  confirmPasswordValidator,
+} from "@/lib/validators";
 
 function RegisterForm({
   isRegisterForm,
@@ -15,18 +23,15 @@ function RegisterForm({
   setIsRegisterForm: React.Dispatch<React.SetStateAction<boolean>>;
   setToasts: React.Dispatch<React.SetStateAction<FlashMessage[]>>;
 }) {
-  function isEmail(email: string) {
-    return String(email)
-      .toLowerCase()
-      .match(
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-      );
-  }
   const [email, emailController] = useState<string>("");
   const [username, usernameController] = useState<string>("");
   const [firstName, firstNameController] = useState<string>("");
   const [lastName, lastNameController] = useState<string>("");
-  const [dob, dobController] = useState<Date>();
+  const now = new Date();
+  now.setFullYear(now.getFullYear() - 12);
+  const [dob, dobController] = useState<string>(
+    now.toISOString().split("T")[0]
+  );
   const [nrcNo, nrcNoController] = useState<string>("");
   const [password, passwordController] = useState<string>("");
   const [confirmPassword, confirmPasswordController] = useState<string>("");
@@ -41,6 +46,10 @@ function RegisterForm({
   const [confirmPasswordError, confirmPasswordErrorController] =
     useState<string>();
 
+  /**
+   * Submit Registration form
+   * @param e
+   */
   const submitForm = async (e: FormEvent) => {
     emailErrorController(undefined);
     usernameErrorController(undefined);
@@ -61,73 +70,67 @@ function RegisterForm({
       password !== "" &&
       confirmPassword !== ""
     ) {
-      if (isEmail(email)) {
-        if (!format.test(username)) {
-          if (nrcNo.length === 14) {
-            if (password === confirmPassword) {
-              const formData = {
-                email: email,
-                username: username,
-                firstName: firstName,
-                lastName: lastName,
-                dob: dob,
-                nrcNo: nrcNo,
-                password: password,
-              };
+      if (
+        emailValidator(email, emailErrorController) &&
+        usernameValidator(username, usernameErrorController) &&
+        dobValidator(dob, dobErrorController) &&
+        nrcNoValidator(nrcNo, nrcNoErrorController) &&
+        passwordValidator(password, passwordErrorController) &&
+        confirmPasswordValidator(
+          password,
+          confirmPassword,
+          confirmPasswordErrorController
+        )
+      ) {
+        const formData = {
+          email: email,
+          username: username,
+          firstName: firstName,
+          lastName: lastName,
+          dob: dob,
+          nrcNo: nrcNo,
+          password: password,
+        };
 
-              const res = await fetch("/api/users/register", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify(formData),
-              });
-              if (res.ok) {
-                const { user, message }: { user: User; message: string } =
-                  await res.json();
-                if (user) {
-                  setToasts([
-                    {
-                      id: makeid(10),
-                      message: `Account registered as ${user.username}`,
-                      category: "bg-info",
-                    },
-                  ]);
-                  setIsRegisterForm(false);
-                } else {
-                  setToasts([
-                    {
-                      id: makeid(10),
-                      message: message,
-                      category: "bg-error",
-                    },
-                  ]);
-                }
-              } else {
-                setToasts([
-                  {
-                    id: makeid(10),
-                    message: "Connection Error",
-                    category: "bg-error",
-                  },
-                ]);
-              }
-            } else {
-              confirmPasswordErrorController(
-                "This field must be equal with the Password field."
-              );
-            }
+        const res = await fetch("/api/users/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        });
+        if (res.ok) {
+          const { user, message }: { user: User; message: string } =
+            await res.json();
+          if (user) {
+            setToasts([
+              {
+                id: makeid(10),
+                message: `Account registered as ${user.username}`,
+                category: "bg-info",
+              },
+            ]);
+            setIsRegisterForm(false);
           } else {
-            nrcNoErrorController("Invalid NRC number format.");
+            setToasts([
+              {
+                id: makeid(10),
+                message: message,
+                category: "bg-error",
+              },
+            ]);
           }
         } else {
-          usernameErrorController(
-            "Username cannot contain special characters."
-          );
+          setToasts([
+            {
+              id: makeid(10),
+              message: "Connection Error",
+              category: "bg-error",
+            },
+          ]);
         }
-      } else {
-        emailErrorController("Please fill in the valid email.");
       }
+      // Go on
     } else {
       setToasts([
         {

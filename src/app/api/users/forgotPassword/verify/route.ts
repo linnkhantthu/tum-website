@@ -5,7 +5,7 @@ import prisma from "@/db";
 import { fetchUserByResetPasswordToken } from "@/lib/query/user/query";
 
 export async function POST(request: NextRequest) {
-  let message = Results.REQUIRED_LOGOUT;
+  let message: string = Results.REQUIRED_LOGOUT;
   let dbToken: string | undefined = undefined;
   // Create response
   const response = new Response();
@@ -13,14 +13,14 @@ export async function POST(request: NextRequest) {
   const session = await getSession(request, response);
   const { user: currentUser } = session;
   if (currentUser === undefined) {
-    message = Results.FAIL;
+    message = "Token expired or invalid token.";
     // Get login data
     const { token } = await request.json();
 
     const user = await fetchUserByResetPasswordToken(token);
-    if (user !== undefined && user.resetPasswordToken) {
+    if (user && user.resetPasswordToken) {
       dbToken = token;
-      message = Results.SUCCESS;
+      message = "Checked token successfully.";
     }
     return createResponse(
       response,

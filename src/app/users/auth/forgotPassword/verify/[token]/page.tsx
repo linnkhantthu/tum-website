@@ -11,8 +11,8 @@ import { makeid, toastOnDelete } from "@/lib/utils-fe";
 
 function VerifyResetPasswordToken({ params }: { params: { token: string } }) {
   const { data, isError, isLoading: isUserLoading } = useUser();
-  const [isLoading, setIsLoading] = useState(true);
-  const [isVerified, setIsVerified] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // To check if the verifyToken function finished
+  const [isVerified, setIsVerified] = useState(false); // To Verify the token is correct
   const [toasts, setToasts] = useState<FlashMessage[]>([]);
   const [fetchedToken, setFetchedToken] = useState<string | undefined>(
     undefined
@@ -20,57 +20,30 @@ function VerifyResetPasswordToken({ params }: { params: { token: string } }) {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isResetted, setIsResetted] = useState(false);
 
-  const handleSubmit = async (e: FormEvent, token: string) => {
-    const formData = new FormData(e.currentTarget as HTMLFormElement);
-    const password = formData.get("password");
-    const res = await fetch("/api/users/forgotPassword/resetPassword", {
+  /**
+   * Check Token with Server
+   * @param token
+   */
+  async function verifyToken(token: string) {
+    const res = await fetch("/api/users/forgotPassword/verify", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ token: token, password: password?.toString() }),
+      body: JSON.stringify({ token: token }), // Send Token
     });
-    const { email, message } = await res.json();
+    const { token: fetchedToken, message } = await res.json();
     if (res.ok) {
-      if (email) {
-        setIsResetted(true);
-        setIsSubmitted(true);
-      } else {
-        setIsResetted(false);
-        setIsSubmitted(true);
-      }
-    }
-  };
-  useEffect(() => {
-    async function verifyToken(token: string) {
-      const res = await fetch("/api/users/forgotPassword/verify", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ token: token }),
-      });
-      const { token: fetchedToken, message } = await res.json();
-      if (res.ok) {
-        if (fetchedToken !== undefined) {
-          setToasts([
-            {
-              id: makeid(10),
-              message: message,
-              category: "alert-success",
-            },
-          ]);
-          setFetchedToken(fetchedToken);
-          setIsVerified(true);
-        } else {
-          setToasts([
-            {
-              id: makeid(10),
-              message: message,
-              category: "alert-error",
-            },
-          ]);
-        }
+      if (fetchedToken) {
+        setToasts([
+          {
+            id: makeid(10),
+            message: message,
+            category: "alert-success",
+          },
+        ]);
+        setFetchedToken(fetchedToken);
+        setIsVerified(true);
       } else {
         setToasts([
           {
@@ -80,11 +53,29 @@ function VerifyResetPasswordToken({ params }: { params: { token: string } }) {
           },
         ]);
       }
+    } else {
+      setToasts([
+        {
+          id: makeid(10),
+          message: message,
+          category: "alert-error",
+        },
+      ]);
     }
+  }
+
+  useEffect(() => {
     try {
+      // Check if the token is correct
       verifyToken(params.token);
     } catch (error: any) {
-      console.error(error.message);
+      setToasts([
+        {
+          id: makeid(10),
+          message: error.message,
+          category: "alert-error",
+        },
+      ]);
     } finally {
       setIsLoading(false);
     }
@@ -108,16 +99,17 @@ function VerifyResetPasswordToken({ params }: { params: { token: string } }) {
         isSubmitted && isResetted ? (
           redirect("/users/auth")
         ) : (
-          <div className="flex flex-col justify-center">
-            <span className=" flex flex-row justify-center">
+          <main className="flex flex-row justify-center">
+            <fieldset className="p-4 md:mt-5 mt-2">
               <PasswordResetForm
+                setIsSubmitted={setIsSubmitted}
+                setIsResetted={setIsResetted}
                 toasts={toasts}
-                handleSubmit={handleSubmit}
                 fetchedToken={fetchedToken}
                 setToasts={setToasts}
               />
-            </span>
-          </div>
+            </fieldset>
+          </main>
         )
       ) : (
         <div className="flex flex-row justify-center">

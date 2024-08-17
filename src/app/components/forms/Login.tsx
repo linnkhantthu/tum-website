@@ -7,6 +7,7 @@ import { FlashMessage, User } from "@/lib/models";
 import useUser from "@/lib/useUser";
 import { useRouter } from "next/navigation";
 import { makeid } from "@/lib/utils-fe";
+import { passwordValidator } from "@/lib/validators";
 
 function LoginForm({
   isRegisterForm,
@@ -22,53 +23,58 @@ function LoginForm({
   const [emailOrUsername, emailOrUsernameController] = useState("");
   const [password, passwordController] = useState("");
 
-  const [emailOrUsernameError, emailOrUsernameErrorController] = useState();
-  const [passwordError, passwordErrorController] = useState();
+  const [emailOrUsernameError, emailOrUsernameErrorController] =
+    useState<string>();
+  const [passwordError, passwordErrorController] = useState<string>();
 
   const submitForm = async (e: FormEvent) => {
     e.preventDefault();
-    const formData = {
-      emailOrUsername: emailOrUsername,
-      password: password,
-    };
-    const res = await fetch("/api/users/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    });
-    if (res.ok) {
-      const { user, message }: { user: User; message: string } =
-        await res.json();
-      if (user) {
-        // Logged in successfully
-        const toasts: FlashMessage = {
-          id: makeid(10),
-          message: message,
-          category: "alert-success",
-        };
+    emailOrUsernameErrorController(undefined);
+    passwordErrorController(undefined);
+    if (passwordValidator(password, passwordErrorController)) {
+      const formData = {
+        emailOrUsername: emailOrUsername,
+        password: password,
+      };
+      const res = await fetch("/api/users/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      if (res.ok) {
+        const { user, message }: { user: User; message: string } =
+          await res.json();
+        if (user) {
+          // Logged in successfully
+          const toasts: FlashMessage = {
+            id: makeid(10),
+            message: message,
+            category: "alert-success",
+          };
 
-        localStorage.setItem("toasts", JSON.stringify([toasts]));
-        await mutateUser({ ...data, user: user });
-        push("/");
+          localStorage.setItem("toasts", JSON.stringify([toasts]));
+          await mutateUser({ ...data, user: user });
+          push("/");
+        } else {
+          setToasts([
+            {
+              id: makeid(10),
+              message: message,
+              category: "alert-error",
+            },
+          ]);
+        }
       } else {
         setToasts([
           {
             id: makeid(10),
-            message: message,
-            category: "alert-error",
+            message: `Connection error, status code is ${res.status}`,
+            category: "bg-info",
           },
         ]);
       }
-    } else {
-      setToasts([
-        {
-          id: makeid(10),
-          message: `Connection error, status code is ${res.status}`,
-          category: "bg-info",
-        },
-      ]);
     }
   };
   return (
@@ -87,6 +93,8 @@ function LoginForm({
           Icon={FaUserCircle}
           value={emailOrUsername}
           controller={emailOrUsernameController}
+          error={emailOrUsernameError}
+          errorController={emailOrUsernameErrorController}
         />
         <Input
           label={"Password"}
@@ -95,6 +103,8 @@ function LoginForm({
           Icon={MdPassword}
           value={password}
           controller={passwordController}
+          error={passwordError}
+          errorController={passwordErrorController}
         />
         <span className="flex flex-row pt-3">
           <input

@@ -20,7 +20,7 @@ function Toast({
           <FaInfoCircle />
         </span>
         {/* Info */}
-        <span className="sm:text-base text-sm sm:line-clamp-2 line-clamp-1 text-left text-wrap sm:min-w-[250px]">
+        <span className="sm:text-base text-sm line-clamp-2 text-left text-wrap sm:min-w-[250px]">
           {flashMessage.message}
         </span>
       </span>

@@ -3,99 +3,106 @@ import React, { FormEvent, useState } from "react";
 import Submit from "./Submit";
 import Toast from "../Toast";
 import { makeid, toastOnDelete } from "@/lib/utils-fe";
+import Input from "./Input";
+import { MdPassword } from "react-icons/md";
+import Btn from "./Btn";
+import { confirmPasswordValidator, passwordValidator } from "@/lib/validators";
 
 function PasswordResetForm({
   toasts,
-  handleSubmit,
   fetchedToken,
   setToasts,
+  setIsSubmitted,
+  setIsResetted,
 }: {
   toasts: FlashMessage[] | undefined;
-  handleSubmit: (e: FormEvent, token: string) => Promise<void>;
   fetchedToken: string | undefined;
   setToasts: React.Dispatch<React.SetStateAction<FlashMessage[]>>;
+  setIsSubmitted: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsResetted: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  const [password, setPassword] = useState<string>("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [password, passwordController] = useState<string>("");
+  const [confirmPassword, confirmPasswordController] = useState("");
+  const [passwordError, passwordErrorController] = useState<string>();
+  const [confirmPasswordError, confirmPasswordErrorController] =
+    useState<string>();
 
-  const handleSubmitLocal = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (fetchedToken !== undefined) {
-      if (password === confirmPassword) {
-        setIsSubmitting(true);
-        handleSubmit(e, fetchedToken).then(() => {
-          setIsSubmitting(false);
-        });
-      } else {
-        const toast: FlashMessage = {
-          id: makeid(10),
-          message: "Password fields must be the same.",
-          category: "alert-error",
-        };
-        setToasts([toast]);
+    if (
+      passwordValidator(password, passwordErrorController) &&
+      confirmPasswordValidator(
+        password,
+        confirmPassword,
+        confirmPasswordErrorController
+      )
+    ) {
+      const res = await fetch("/api/users/forgotPassword/resetPassword", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token: fetchedToken, password: password }),
+      });
+      const { email, message } = await res.json();
+      if (res.ok) {
+        if (email) {
+          setIsResetted(true);
+          setIsSubmitted(true);
+          setToasts([
+            {
+              id: makeid(10),
+              message: message,
+              category: "alert-error",
+            },
+          ]);
+        } else {
+          setToasts([
+            {
+              id: makeid(10),
+              message: message,
+              category: "alert-error",
+            },
+          ]);
+          setIsResetted(false);
+          setIsSubmitted(true);
+        }
       }
-    } else {
-      const toast: FlashMessage = {
-        id: makeid(10),
-        message: "Invalid Token",
-        category: "alert-error",
-      };
-      setToasts([toast]);
     }
   };
   return (
     <>
-      <div className="flex flex-row justify-center m-2 w-screen">
-        <fieldset className="flex flex-col w-1/3">
-          <legend className="flex flex-col w-full">
-            <h1>Reset Passsword</h1>
-          </legend>
-          <form
-            className="flex flex-col flex-none form form-control text-lg"
-            onSubmit={handleSubmitLocal}
-          >
-            <label className="label label-text" htmlFor="email">
-              New Password
-            </label>
-            <input
-              id="password"
-              className="input input-bordered"
-              type="password"
-              name="password"
-              value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-              }}
-              required
-            />
+      <legend className="flex flex-col w-full">
+        <h1>Reset Passsword</h1>
+      </legend>
+      <form
+        onSubmit={handleSubmit}
+        className="grid grid-flow-row md:grid-cols-2 grid-cols-1"
+      >
+        <Input
+          label={"Password"}
+          type={"password"}
+          id={"password"}
+          Icon={MdPassword}
+          value={password}
+          controller={passwordController}
+          error={passwordError}
+          errorController={passwordErrorController}
+        />
 
-            <label className="label label-text" htmlFor="email">
-              Confirm Password
-            </label>
-            <input
-              id="confirmPassword"
-              className="input input-bordered"
-              type="password"
-              name="confirmPassword"
-              value={confirmPassword}
-              onChange={(e) => {
-                setConfirmPassword(e.target.value);
-              }}
-              required
-            />
-            {confirmPassword !== password ? (
-              <small className="text-red-600">
-                Confirm Password much equal to Password
-              </small>
-            ) : (
-              ""
-            )}
+        <Input
+          label={"Confirm Password"}
+          type={"password"}
+          id={"confirmPassword"}
+          Icon={MdPassword}
+          value={confirmPassword}
+          controller={confirmPasswordController}
+          error={confirmPasswordError}
+          errorController={confirmPasswordErrorController}
+        />
 
-            <Submit isSubmitting={isSubmitting} />
-          </form>
-        </fieldset>
-      </div>
+        <Btn text={"Submit"} />
+      </form>
       <div className="toast toast-start">
         {toasts?.map((toast) => (
           <Toast

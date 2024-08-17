@@ -1,53 +1,91 @@
-import { FlashMessage } from "@/lib/models";
+import { FlashMessage, responseModel } from "@/lib/models";
 import React, { FormEvent, useState } from "react";
 import Submit from "./forms/Submit";
 import Toast from "./Toast";
-import { toastOnDelete } from "@/lib/utils-fe";
+import { makeid, toastOnDelete } from "@/lib/utils-fe";
+import Input from "./forms/Input";
+import { MdEmail } from "react-icons/md";
+import Btn from "./forms/Btn";
+import { emailValidator } from "@/lib/validators";
 
-function ForgotPasswordForm({
-  toasts,
-  handleSubmit,
-  setToasts,
-}: {
-  toasts: FlashMessage[] | undefined;
-  handleSubmit: (e: FormEvent) => Promise<void>;
-  setToasts: React.Dispatch<React.SetStateAction<FlashMessage[]>>;
-}) {
-  const [email, setEmail] = useState<string>("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const handleSubmitLocal = (e: FormEvent) => {
-    setIsSubmitting(true);
-    handleSubmit(e).then(() => setIsSubmitting(false));
+function ForgotPasswordForm({}) {
+  const [email, emailController] = useState<string>("");
+  const [emailError, emailErrorController] = useState<string>();
+
+  const [toasts, setToasts] = useState<FlashMessage[]>([]);
+
+  /**
+   * Handle Forget Password Submit
+   * @param e
+   */
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    emailErrorController(undefined);
+    try {
+      if (email !== "") {
+        if (emailValidator(email, emailErrorController)) {
+          const res = await fetch("/api/users/forgotPassword", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: email,
+            }),
+          });
+          const { data, isSuccess, message }: responseModel = await res.json();
+          if (res.ok && isSuccess && data?.email && message) {
+            setToasts([
+              {
+                id: makeid(10),
+                message: message,
+                category: "alert-success",
+              },
+            ]);
+          } else {
+            throw new Error(message);
+          }
+        }
+      } else {
+        setToasts([
+          {
+            id: makeid(10),
+            message: "Please fill in the field.",
+            category: "alert-error",
+          },
+        ]);
+      }
+    } catch (error: any) {
+      setToasts([
+        {
+          id: makeid(10),
+          message: error.message,
+          category: "alert-error",
+        },
+      ]);
+    }
   };
   return (
     <>
-      <div className="flex flex-row justify-center">
-        <fieldset className="flex flex-col w-1/3">
-          <legend className="flex flex-col w-full">
-            <h1>Enter Email</h1>
-          </legend>
-          <form
-            className="flex flex-col flex-none form form-control text-lg"
-            onSubmit={handleSubmitLocal}
-          >
-            <label className="label label-text" htmlFor="email">
-              Email
-            </label>
-            <input
-              id="email"
-              className="input input-bordered"
-              type="email"
-              name="email"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-              }}
-              required
-            />
-            <Submit isSubmitting={isSubmitting} />
-          </form>
-        </fieldset>
-      </div>
+      <legend className="flex flex-col w-full">
+        <h1>Enter Email</h1>
+      </legend>
+      <form
+        className="flex flex-col flex-none form form-control text-lg"
+        onSubmit={handleSubmit}
+      >
+        <Input
+          label={"Email"}
+          type={"email"}
+          id={"email"}
+          Icon={MdEmail}
+          value={email}
+          controller={emailController}
+          error={emailError}
+          errorController={emailErrorController}
+        />
+        <Btn text={"Submit"} />
+      </form>
       <div className="toast toast-start">
         {toasts?.map((toast) => (
           <Toast

@@ -10,6 +10,7 @@ function Input({
   controller,
   error,
   errorController,
+  validator,
 }: {
   label: string;
   type: string;
@@ -19,6 +20,7 @@ function Input({
   controller: React.Dispatch<React.SetStateAction<any>>;
   error?: string;
   errorController?: React.Dispatch<React.SetStateAction<string | undefined>>;
+  validator?: any;
 }) {
   return (
     <div className="p-1">
