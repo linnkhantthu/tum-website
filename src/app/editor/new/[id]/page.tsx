@@ -69,7 +69,9 @@ function EditorPage({ params }: { params: { id: string } }) {
       />
     )
   ) : (
-    push("/")
+    <div>
+      You need to login to access this feature.<a href="/users/auth">Login?</a>
+    </div>
   );
 }
 

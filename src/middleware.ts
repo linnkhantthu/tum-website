@@ -8,7 +8,7 @@ export const middleware = async (req: NextRequest) => {
   const session = await getSession(req, res);
   const { user } = session;
 
-  if (user !== undefined) {
+  if (user) {
     return user.verified
       ? NextResponse.redirect(new URL("/", req.url))
       : NextResponse.redirect(new URL("/users/auth/pleaseVerify", req.url));
@@ -18,5 +18,5 @@ export const middleware = async (req: NextRequest) => {
 
 export const config = {
   // matcher: ["/", "/purchase/:path*"],
-  matcher: ["/users/auth/", "/editor/:path*"],
+  matcher: ["/users/auth/"],
 };

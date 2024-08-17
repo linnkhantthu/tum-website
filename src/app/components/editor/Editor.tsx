@@ -12,9 +12,11 @@ import React, {
 import EditorJS, { OutputData } from "@editorjs/editorjs";
 import { EDITOR_TOOLS } from "./tools";
 import PublishDialog from "./PublishDialog";
-import { Article } from "@/lib/models";
+import { Article, Category, Subcategory } from "@/lib/models";
 import { ArticleType } from "@prisma/client";
 import ArticleDetails from "../ArticleDetails";
+import { makeid } from "@/lib/utils-fe";
+import useUser from "@/lib/useUser";
 //props
 type Props = {
   data: OutputData;
@@ -31,6 +33,7 @@ const EditorBlock = ({
   holder,
   onChange,
 }: Props) => {
+  const { data: userData } = useUser();
   const [currentArticleId, setCurrentArticleId] = useState<string>(
     currentArticle.id!
   );
@@ -40,6 +43,12 @@ const EditorBlock = ({
   );
   const [saveBtnStatus, setSaveBtnStatus] = useState("Save");
   const [publishBtnStatus, setPublishBtnStatus] = useState("Publish");
+
+  const [categories, setCategories] = useState<Category[]>();
+  const [subcategories, setSubcategories] = useState<Subcategory[]>();
+
+  const [selectedCategory, setSelectedCategory] = useState<Category>();
+  const [selectedSubcategory, setSelectedSubcategory] = useState<Subcategory>();
 
   useEffect(() => {
     setSaveBtnStatus("Save");
@@ -83,6 +92,9 @@ const EditorBlock = ({
     return false;
   };
 
+  /**
+   * Call Publish Dialog
+   */
   const callDialog = async () => {
     // @ts-ignore
     document.getElementById("my_modal_3")?.showModal();
@@ -93,6 +105,50 @@ const EditorBlock = ({
 
   //initialize editorjs
   useEffect(() => {
+    // Initialize Category
+    const dummyCategories: Category[] = [
+      {
+        id: makeid(10),
+        date: new Date(),
+        label: "Departments",
+        subcategory: [
+          {
+            id: makeid(10),
+            date: new Date(),
+            label: "Some Subcategory",
+            author: userData.user!,
+            userId: 1,
+          },
+        ],
+        author: userData.user!,
+        userId: 1,
+      },
+      {
+        id: makeid(10),
+        date: new Date(),
+        label: "Events",
+        subcategory: [],
+        author: userData.user!,
+        userId: 1,
+      },
+      {
+        id: makeid(10),
+        date: new Date(),
+        label: "Announcements",
+        subcategory: [],
+        author: userData.user!,
+        userId: 1,
+      },
+      {
+        id: makeid(10),
+        date: new Date(),
+        label: "Timetables",
+        subcategory: [],
+        author: userData.user!,
+        userId: 1,
+      },
+    ];
+    setCategories(dummyCategories);
     //initialize editor if we don't have a reference
     if (!ref.current) {
       const editor = new EditorJS({
@@ -121,10 +177,49 @@ const EditorBlock = ({
     <>
       <div className="flex flex-col h-full w-full">
         <div className="flex flex-row justify-end m-3">
-          <form>
-            <select name="category" id="category">
-              <option value=""></option>
+          <form className="grid grid-cols-3">
+            {/* Select for Category */}
+            <select
+              name="category"
+              id="category"
+              className="select select-bordered mr-3"
+              onChange={(e) => {
+                const selectedCategoryId =
+                  e.currentTarget.options[e.currentTarget.selectedIndex].value;
+                const selectedCategory = categories?.filter(
+                  (category) => category.id === selectedCategoryId
+                )[0];
+                setSelectedCategory(selectedCategory);
+                setSubcategories(selectedCategory?.subcategory);
+              }}
+            >
+              <option value="default">Select Category</option>
+              {categories?.map((category) => (
+                <option value={`${category.id}`}>{category.label}</option>
+              ))}
             </select>
+
+            {/* Select for SubCategory */}
+            <select
+              name="subCategory"
+              id="SubCategory"
+              className="select select-bordered mr-3"
+              onChange={(e) => {
+                const selectedSubcategoryId =
+                  e.currentTarget.options[e.currentTarget.selectedIndex].value;
+                const selectedSubcategory = subcategories?.filter(
+                  (subcategory) => subcategory.id === selectedSubcategoryId
+                )[0];
+                setSelectedSubcategory(selectedSubcategory);
+              }}
+            >
+              <option value="-">Select Subcategory</option>
+              {subcategories?.map((subcategory) => (
+                <option value={`${subcategory.id}`}>{subcategory.label}</option>
+              ))}
+            </select>
+
+            {/* Select for Article Type */}
             <select
               onChange={(e) => {
                 currentArticle.type = e.currentTarget.options[
@@ -165,7 +260,7 @@ const EditorBlock = ({
             {publishBtnStatus}
           </button>
         </div>
-        <div className="flex flex-row">
+        <div>
           <ArticleDetails
             username={currentArticle.author.username}
             publishedDate={currentArticle.date}

@@ -39,19 +39,20 @@ export type Category = {
   id: string;
   date: Date;
   label: string;
-  subcategory: {
-    id: string;
-    date: Date;
-    label: string;
-    author: User;
-    userId: number;
-  };
+  subcategory: Subcategory[];
+  author: User;
+  userId: number;
+};
+export type Subcategory = {
+  id: string;
+  date: Date;
+  label: string;
   author: User;
   userId: number;
 };
 
 // Format to check if username includes special characters
-export const format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+export const usernameFormat = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
 
 /**
  * Results

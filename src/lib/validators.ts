@@ -1,4 +1,4 @@
-import { format } from "./models";
+import { usernameFormat } from "./models";
 
 export function isEmail(email: string) {
   return String(email)
@@ -42,7 +42,7 @@ export const usernameValidator = (
 ) => {
   let status = true;
   let message = undefined;
-  if (format.test(value)) {
+  if (usernameFormat.test(value)) {
     status = false;
     message = "Username cannot contain special characters.";
     errorController(message);

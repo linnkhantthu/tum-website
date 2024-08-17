@@ -1,13 +1,10 @@
 "use client";
 
 import Loading from "@/app/components/Loading";
-import Warning from "@/app/components/Warning";
 import { Article, User } from "@/lib/models";
-import useUser from "@/lib/useUser";
 //index.tsx
 import { OutputData } from "@editorjs/editorjs";
 import dynamic from "next/dynamic";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 // important that we use dynamic loading here
