@@ -16,30 +16,55 @@ import PublishDialog from "./PublishDialog";
 import { Article, Category, FlashMessage, Subcategory } from "@/lib/models";
 import { ArticleType } from "@prisma/client";
 import ArticleDetails from "../ArticleDetails";
-import { makeid, toastOnDelete } from "@/lib/utils-fe";
 import useUser from "@/lib/useUser";
-import AddNewCategoryDialog from "./AddNewCategoryDialog";
-import Toast from "../Toast";
+import CategoryDialog from "./CategoryDialog";
+import SubcategoryDialog from "./SubcategoryDialog";
 //props
 type Props = {
-  data: OutputData;
-  currentArticle: Article;
-  setCurrentArticle: Dispatch<SetStateAction<Article | undefined>>;
-  holder: string;
-  onChange(val: OutputData): void;
-  toasts: FlashMessage[];
-  setToasts: Dispatch<React.SetStateAction<FlashMessage[]>>;
-  categories: Category[];
-  setCategories: Dispatch<SetStateAction<Category[]>>;
-  subcategories: Subcategory[];
-  setSubcategories: Dispatch<SetStateAction<Subcategory[]>>;
-  newCategory: string;
-  newCategorycontroller: Dispatch<React.SetStateAction<string>>;
-  newCategoryError: string | undefined;
+  // Editor
+  data: OutputData; // To store editor data
+  onChange(val: OutputData): void; // Editor data controller
+  holder: string; // Editor ID
+
+  // Article Data
+  currentArticle: Article; // Current article
+  setCurrentArticle: Dispatch<SetStateAction<Article | undefined>>; // Controller for current controller
+
+  // Toasts
+  toasts: FlashMessage[]; // Toasts []
+  setToasts: Dispatch<React.SetStateAction<FlashMessage[]>>; // Toasts Controller
+
+  // Categories
+  categories: Category[]; // Categories
+  setCategories: Dispatch<SetStateAction<Category[]>>; // Categories controller
+  subcategories: Subcategory[]; // Subcategories
+  setSubcategories: Dispatch<SetStateAction<Subcategory[]>>; // Subcategories controller
+
+  //Category form controllers
+  newCategory: string; // New Category
+  newCategorycontroller: Dispatch<React.SetStateAction<string>>; // New Category controller
+  newCategoryError: string | undefined; // New Category error
   newCategoryErrorController: Dispatch<
     React.SetStateAction<string | undefined>
-  >;
-  handleSubmit: (e: FormEvent) => Promise<void>;
+  >; // // New Category error controller
+
+  // Subcategory form controllers
+  newSubcategory: string; // New subcategory
+  newSubcategorycontroller: Dispatch<React.SetStateAction<string>>; // New subcategory controller
+  newSubcategoryError: string | undefined; // New subcategory error
+  newSubcategoryErrorController: Dispatch<
+    React.SetStateAction<string | undefined>
+  >; // New subcategory error controller
+
+  // Handlers
+  handleCategorySubmit: (e: FormEvent) => Promise<void>;
+  handlesubcategorySubmit: (e: FormEvent) => Promise<void>;
+
+  // States for Categories and Subcategories
+  selectedCategory: Category | undefined;
+  setSelectedCategory: Dispatch<SetStateAction<Category | undefined>>;
+  selectedSubcategory: Subcategory | undefined;
+  setSelectedSubcategory: Dispatch<SetStateAction<Subcategory | undefined>>;
 };
 
 const EditorBlock = ({
@@ -48,19 +73,24 @@ const EditorBlock = ({
   setCurrentArticle,
   holder,
   onChange,
-  toasts,
-  setToasts,
   categories,
-  setCategories,
   subcategories,
   setSubcategories,
   newCategory,
   newCategorycontroller,
   newCategoryError,
   newCategoryErrorController,
-  handleSubmit,
+  handleCategorySubmit,
+  handlesubcategorySubmit,
+  newSubcategory,
+  newSubcategorycontroller,
+  newSubcategoryError,
+  newSubcategoryErrorController,
+  selectedCategory,
+  setSelectedCategory,
+  selectedSubcategory,
+  setSelectedSubcategory,
 }: Props) => {
-  const { data: userData } = useUser();
   const [currentArticleId, setCurrentArticleId] = useState<string>(
     currentArticle.id!
   );
@@ -71,9 +101,6 @@ const EditorBlock = ({
   const [saveBtnStatus, setSaveBtnStatus] = useState("Save");
   const [publishBtnStatus, setPublishBtnStatus] = useState("Publish");
 
-  const [selectedCategory, setSelectedCategory] = useState<Category>();
-  const [selectedSubcategory, setSelectedSubcategory] = useState<Subcategory>();
-
   useEffect(() => {
     setSaveBtnStatus("Save");
     setIsSaveBtnDisabled(false);
@@ -82,7 +109,7 @@ const EditorBlock = ({
   /**
    * Upload
    */
-  const uploader = async (isSave: boolean) => {
+  const articleUploader = async (isSave: boolean) => {
     // Setting Status
     setSaveBtnStatus(isSave ? "Saving..." : "Save");
     setPublishBtnStatus(!isSave ? "Publishing" : "Publish");
@@ -125,12 +152,20 @@ const EditorBlock = ({
   };
 
   /**
-   * Call Publish Dialog
+   * Call Category Dialog
    */
-  const openAddNewCategoryDialog = async () => {
+  const openCategoryDialog = async () => {
     // @ts-ignore
-    document.getElementById("add_new_category_dialog")?.showModal();
+    document.getElementById("category_dialog")?.showModal();
   };
+  /**
+   * Call Category Dialog
+   */
+  const openSubcategoryDialog = async () => {
+    // @ts-ignore
+    document.getElementById("subcategory_dialog")?.showModal();
+  };
+
   //add a reference to editor
   const ref = useRef<EditorJS>();
 
@@ -167,31 +202,32 @@ const EditorBlock = ({
           <form className="grid grid-cols-3">
             {/* Select for Category */}
             <select
-              defaultValue={selectedCategory?.label}
+              defaultValue={"default"}
               name="category"
-              id="category"
+              id="category_select"
               className="select select-bordered mr-3"
               onChange={(e) => {
-                const selectedCategoryLabel =
+                const selectedCategoryId =
                   e.currentTarget.options[e.currentTarget.selectedIndex].value;
+
                 const selectedCategory = categories?.filter(
-                  (category) => category.label === selectedCategoryLabel
+                  (category) => category.id === selectedCategoryId
                 )[0];
                 setSelectedCategory(selectedCategory);
-                setSubcategories(selectedCategory?.subcategory);
-                if (selectedCategoryLabel === "addNew") {
-                  openAddNewCategoryDialog();
+                setSubcategories(selectedCategory?.subcategory || []);
+
+                // Reset Subcategory Element
+                const element = document.getElementById("subcategory_select");
+                // @ts-ignore
+                element!.value = "default";
+                if (selectedCategoryId === "addNew") {
+                  openCategoryDialog();
                   // Reset the select option
                   e.currentTarget.selectedIndex = 0;
                 }
               }}
             >
-              <option
-                key={`category-default`}
-                value="default"
-                disabled
-                selected
-              >
+              <option key={`category-default`} value="default" disabled>
                 Select Category
               </option>
               {categories?.map((category) => (
@@ -209,36 +245,37 @@ const EditorBlock = ({
 
             {/* Select for SubCategory */}
             <select
-              defaultValue={selectedSubcategory?.label}
+              defaultValue={"default"}
               name="subCategory"
-              id="SubCategory"
+              id="subcategory_select"
               className="select select-bordered mr-3"
               onChange={(e) => {
-                const selectedSubcategoryLabel =
+                const selectedSubcategoryId =
                   e.currentTarget.options[e.currentTarget.selectedIndex].value;
                 const selectedSubcategory = subcategories?.filter(
-                  (subcategory) => subcategory.id === selectedSubcategoryLabel
+                  (subcategory) => subcategory.id === selectedSubcategoryId
                 )[0];
                 setSelectedSubcategory(selectedSubcategory);
-                e.currentTarget.selectedIndex = 0;
+                if (selectedSubcategoryId === "addNew") {
+                  openSubcategoryDialog();
+                  // Reset the select option
+                  e.currentTarget.selectedIndex = 0;
+                }
               }}
             >
-              <option
-                key={`subcategory-default`}
-                value="default"
-                disabled
-                selected
-              >
+              <option key={`subcategory-default`} value="default" disabled>
                 Select Subcategory
               </option>
-              {subcategories?.map((subcategory) => (
-                <option
-                  key={`subcategory-${subcategory.id}`}
-                  value={`${subcategory.id}`}
-                >
-                  {subcategory.label}
-                </option>
-              ))}
+              {subcategories
+                ? subcategories?.map((subcategory) => (
+                    <option
+                      key={`subcategory-${subcategory.id}`}
+                      value={`${subcategory.id}`}
+                    >
+                      {subcategory.label}
+                    </option>
+                  ))
+                : ""}
               <option key={`subcategory-new`} value="addNew">
                 Add New
               </option>
@@ -272,7 +309,7 @@ const EditorBlock = ({
             </select>
           </form>
           <button
-            onClick={() => uploader(true)}
+            onClick={() => articleUploader(true)}
             className="btn btn-primary mr-3"
             disabled={isSaveBtnDisabled}
           >
@@ -293,13 +330,20 @@ const EditorBlock = ({
           />
           <div className="w-full" id={holder} />
         </div>
-        <PublishDialog uploader={uploader} />
-        <AddNewCategoryDialog
+        <PublishDialog uploader={articleUploader} />
+        <CategoryDialog
           value={newCategory}
           controller={newCategorycontroller}
           error={newCategoryError}
           errorController={newCategoryErrorController}
-          handleSubmit={handleSubmit}
+          handleSubmit={handleCategorySubmit}
+        />
+        <SubcategoryDialog
+          value={newSubcategory}
+          controller={newSubcategorycontroller}
+          error={newSubcategoryError}
+          errorController={newSubcategoryErrorController}
+          handleSubmit={handlesubcategorySubmit}
         />
       </div>
     </>

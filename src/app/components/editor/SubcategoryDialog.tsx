@@ -2,7 +2,7 @@ import React, { FormEvent } from "react";
 import Input from "../forms/Input";
 import { MdCategory } from "react-icons/md";
 
-function AddNewCategoryDialog({
+function SubcategoryDialog({
   value,
   controller,
   error,
@@ -18,7 +18,7 @@ function AddNewCategoryDialog({
   return (
     <div>
       {/* You can open the modal using document.getElementById('ID').showModal() method */}
-      <dialog id="add_new_category_dialog" className="modal">
+      <dialog id="subcategory_dialog" className="modal">
         <div className="modal-box">
           <form method="dialog">
             {/* if there is a button in form, it will close the modal */}
@@ -26,7 +26,7 @@ function AddNewCategoryDialog({
               ✕
             </button>
           </form>
-          <h3 className="font-bold text-lg">Add New Category</h3>
+          <h3 className="font-bold text-lg">Add Subcategory under: </h3>
 
           <div>
             <form
@@ -55,4 +55,4 @@ function AddNewCategoryDialog({
   );
 }
 
-export default AddNewCategoryDialog;
+export default SubcategoryDialog;

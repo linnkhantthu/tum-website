@@ -49,6 +49,7 @@ export type Subcategory = {
   label: string;
   author: User;
   userId: number;
+  categoryId: string;
 };
 
 // Format to check if username includes special characters

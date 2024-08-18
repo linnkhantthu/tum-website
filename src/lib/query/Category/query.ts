@@ -59,7 +59,25 @@ export async function getAllCategories() {
   let message;
   let categories;
   try {
-    categories = await prisma.category.findMany();
+    categories = await prisma.category.findMany({
+      include: {
+        subcategory: {
+          include: {
+            author: {
+              select: {
+                id: true,
+                email: true,
+                username: true,
+                lastName: true,
+                role: true,
+                sessionId: true,
+                verified: true,
+              },
+            },
+          },
+        },
+      },
+    });
     message = "Fetched categories successfully.";
   } catch (error) {
     message = "Internal server error";

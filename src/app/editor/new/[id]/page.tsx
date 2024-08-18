@@ -9,7 +9,7 @@ import { makeid, toastOnDelete } from "@/lib/utils-fe";
 //index.tsx
 import { OutputData } from "@editorjs/editorjs";
 import dynamic from "next/dynamic";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, SetStateAction, useEffect, useState } from "react";
 
 // important that we use dynamic loading here
 // editorjs should only be rendered on the client side.
@@ -26,16 +26,14 @@ function EditorPage({ params }: { params: { id: string } }) {
   const [toasts, setToasts] = useState<FlashMessage[]>([]);
   const [newCategory, newCategoryController] = useState<string>("");
   const [newCategoryError, newCategoryErrorController] = useState<string>();
+  const [newSubcategory, newSubcategoryController] = useState<string>("");
+  const [newSubcategoryError, newSubcategoryErrorController] =
+    useState<string>();
+  const [selectedCategory, setSelectedCategory] = useState<Category>();
+  const [selectedSubcategory, setSelectedSubcategory] = useState<Subcategory>();
+
   const [categories, setCategories] = useState<Category[]>([]);
   const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
-
-  /**
-   * Call Category Dialog
-   */
-  const closeAddNewCategoryDialog = async () => {
-    // @ts-ignore
-    document.getElementById("add_new_category_dialog")?.close();
-  };
 
   /**
    * Fetch existing data
@@ -73,8 +71,15 @@ function EditorPage({ params }: { params: { id: string } }) {
     return true;
   };
 
+  /**
+   * Close Category Dialog
+   */
+  const closeCategoryDialog = async () => {
+    // @ts-ignore
+    document.getElementById("category_dialog")?.close();
+  };
   // Submit Data
-  const handleSubmit = async (e: FormEvent) => {
+  const handleCategorySubmit = async (e: FormEvent) => {
     e.preventDefault();
     const res = await fetch("/api/articles/categories", {
       method: "POST",
@@ -96,13 +101,6 @@ function EditorPage({ params }: { params: { id: string } }) {
           },
           ...toasts,
         ]);
-        // setToasts([
-        //   {
-        //     id: makeid(10),
-        //     message: message,
-        //     category: "alert-success",
-        //   },
-        // ]);
       } else {
         setToasts((toasts) => [
           {
@@ -112,13 +110,6 @@ function EditorPage({ params }: { params: { id: string } }) {
           },
           ...toasts,
         ]);
-        // setToasts([
-        //   {
-        //     id: makeid(10),
-        //     message: message,
-        //     category: "alert-success",
-        //   },
-        // ]);
       }
     } else {
       try {
@@ -131,13 +122,6 @@ function EditorPage({ params }: { params: { id: string } }) {
           },
           ...toasts,
         ]);
-        // setToasts([
-        //   {
-        //     id: makeid(10),
-        //     message: message,
-        //     category: "alert-success",
-        //   },
-        // ]);
       } catch (error) {
         setToasts((toasts) => [
           {
@@ -151,9 +135,94 @@ function EditorPage({ params }: { params: { id: string } }) {
       }
     }
     newCategoryController("");
-    closeAddNewCategoryDialog();
+    closeCategoryDialog();
+  };
+  /**
+   * Close Subcategory Dialog
+   */
+  const closeSubcategoryDialog = async () => {
+    // @ts-ignore
+    document.getElementById("subcategory_dialog")?.close();
   };
 
+  // Submit Data
+  const handleSubcategorySubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    const res = await fetch("/api/articles/categories/subcategories", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        subcategoryName: newSubcategory,
+        categoryId: selectedCategory?.id,
+      }),
+    });
+    if (res.ok) {
+      const {
+        subcategory,
+        message,
+      }: { subcategory: Subcategory; message: string } = await res.json();
+      if (subcategory) {
+        // if (subcategories !== undefined) {
+        //   setSubcategories((subcategories) => [...subcategories!, subcategory]);
+        // } else {
+        //   setSubcategories([subcategory]);
+        // }
+        const indexToUpdate = categories.findIndex(
+          (category) => category.id === subcategory.categoryId
+        );
+        console.log(indexToUpdate);
+        const updatedCategories = [...categories];
+        updatedCategories[indexToUpdate].subcategory.push(subcategory);
+        console.log(updatedCategories);
+        setCategories(updatedCategories);
+        setToasts((toasts) => [
+          {
+            id: makeid(10),
+            message: message,
+            category: "alert-success",
+          },
+          ...toasts,
+        ]);
+      } else {
+        setToasts((toasts) => [
+          {
+            id: makeid(10),
+            message: message,
+            category: "alert-error",
+          },
+          ...toasts,
+        ]);
+      }
+    } else {
+      try {
+        const { message } = await res.json();
+        setToasts((toasts) => [
+          {
+            id: makeid(10),
+            message: message,
+            category: "alert-error",
+          },
+          ...toasts,
+        ]);
+      } catch (error) {
+        setToasts((toasts) => [
+          {
+            id: makeid(10),
+            //@ts-ignore
+            message: error.message,
+            category: "alert-success",
+          },
+          ...toasts,
+        ]);
+      }
+    }
+    newCategoryController("");
+    closeSubcategoryDialog();
+  };
+
+  /**
+   * Fetch Categories
+   */
   const fetchCategories = async () => {
     const res = await fetch("/api/articles/categories", {
       method: "GET",
@@ -210,13 +279,22 @@ function EditorPage({ params }: { params: { id: string } }) {
             setToasts={setToasts}
             categories={categories}
             setCategories={setCategories}
-            subcategories={subcategories}
+            subcategories={subcategories!}
             setSubcategories={setSubcategories}
             newCategory={newCategory}
             newCategorycontroller={newCategoryController}
             newCategoryError={newCategoryError}
             newCategoryErrorController={newCategoryErrorController}
-            handleSubmit={handleSubmit}
+            handleCategorySubmit={handleCategorySubmit}
+            newSubcategory={newSubcategory}
+            newSubcategorycontroller={newSubcategoryController}
+            newSubcategoryError={newSubcategoryError}
+            newSubcategoryErrorController={newSubcategoryErrorController}
+            handlesubcategorySubmit={handleSubcategorySubmit}
+            selectedCategory={selectedCategory}
+            setSelectedCategory={setSelectedCategory}
+            selectedSubcategory={selectedSubcategory}
+            setSelectedSubcategory={setSelectedSubcategory}
           />
         </main>
         <div className="toast toast-start z-10">

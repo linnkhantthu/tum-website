@@ -1,27 +1,7 @@
-import {
-  getAllCategories,
-  insertCategoryByUserId,
-} from "@/lib/query/Category/query";
+import { insertSubcategoryByUserId } from "@/lib/query/subcategory/query";
 import { createResponse } from "@/lib/session";
 import { isAuth } from "@/lib/utils";
 import { NextRequest } from "next/server";
-
-export async function GET(request: NextRequest) {
-  // Create response
-  const response = new Response();
-  const { categories, message } = await getAllCategories();
-
-  return createResponse(
-    response,
-    JSON.stringify({
-      categories: categories,
-      message: message,
-    }),
-    {
-      status: 200,
-    }
-  );
-}
 
 export async function POST(request: NextRequest) {
   // Create response
@@ -29,16 +9,20 @@ export async function POST(request: NextRequest) {
   // Create session
   const { currentUser } = await isAuth(request, response);
   if (currentUser?.role === "ADMIN" && currentUser.verified) {
-    const { categoryName }: { categoryName: string } = await request.json();
+    const {
+      subcategoryName,
+      categoryId,
+    }: { subcategoryName: string; categoryId: string } = await request.json();
     // Query
-    const { category, message } = await insertCategoryByUserId(
+    const { subcategory, message } = await insertSubcategoryByUserId(
       currentUser.id,
-      categoryName
+      subcategoryName,
+      categoryId
     );
     return createResponse(
       response,
       JSON.stringify({
-        category: category,
+        subcategory: subcategory,
         message: message,
       }),
       {
