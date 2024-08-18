@@ -17,7 +17,7 @@ function PublishDialog({
             </button>
           </form>
           <h3 className="font-bold text-lg">Ready to publish?</h3>
-          <p className="">
+          <div>
             <form method="dialog" className="flex flex-row w-full justify-end">
               <button className="btn btn-error btn-sm mr-2">Cancel</button>
               <button
@@ -29,7 +29,7 @@ function PublishDialog({
                 Publish
               </button>
             </form>
-          </p>
+          </div>
         </div>
       </dialog>
     </div>

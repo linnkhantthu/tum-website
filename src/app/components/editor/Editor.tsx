@@ -3,6 +3,7 @@
 //./components/Editor
 import React, {
   Dispatch,
+  FormEvent,
   memo,
   SetStateAction,
   useEffect,
@@ -12,12 +13,13 @@ import React, {
 import EditorJS, { OutputData } from "@editorjs/editorjs";
 import { EDITOR_TOOLS } from "./tools";
 import PublishDialog from "./PublishDialog";
-import { Article, Category, Subcategory } from "@/lib/models";
+import { Article, Category, FlashMessage, Subcategory } from "@/lib/models";
 import { ArticleType } from "@prisma/client";
 import ArticleDetails from "../ArticleDetails";
-import { makeid } from "@/lib/utils-fe";
+import { makeid, toastOnDelete } from "@/lib/utils-fe";
 import useUser from "@/lib/useUser";
 import AddNewCategoryDialog from "./AddNewCategoryDialog";
+import Toast from "../Toast";
 //props
 type Props = {
   data: OutputData;
@@ -25,6 +27,19 @@ type Props = {
   setCurrentArticle: Dispatch<SetStateAction<Article | undefined>>;
   holder: string;
   onChange(val: OutputData): void;
+  toasts: FlashMessage[];
+  setToasts: Dispatch<React.SetStateAction<FlashMessage[]>>;
+  categories: Category[];
+  setCategories: Dispatch<SetStateAction<Category[]>>;
+  subcategories: Subcategory[];
+  setSubcategories: Dispatch<SetStateAction<Subcategory[]>>;
+  newCategory: string;
+  newCategorycontroller: Dispatch<React.SetStateAction<string>>;
+  newCategoryError: string | undefined;
+  newCategoryErrorController: Dispatch<
+    React.SetStateAction<string | undefined>
+  >;
+  handleSubmit: (e: FormEvent) => Promise<void>;
 };
 
 const EditorBlock = ({
@@ -33,6 +48,17 @@ const EditorBlock = ({
   setCurrentArticle,
   holder,
   onChange,
+  toasts,
+  setToasts,
+  categories,
+  setCategories,
+  subcategories,
+  setSubcategories,
+  newCategory,
+  newCategorycontroller,
+  newCategoryError,
+  newCategoryErrorController,
+  handleSubmit,
 }: Props) => {
   const { data: userData } = useUser();
   const [currentArticleId, setCurrentArticleId] = useState<string>(
@@ -45,14 +71,8 @@ const EditorBlock = ({
   const [saveBtnStatus, setSaveBtnStatus] = useState("Save");
   const [publishBtnStatus, setPublishBtnStatus] = useState("Publish");
 
-  const [categories, setCategories] = useState<Category[]>();
-  const [subcategories, setSubcategories] = useState<Subcategory[]>();
-
   const [selectedCategory, setSelectedCategory] = useState<Category>();
   const [selectedSubcategory, setSelectedSubcategory] = useState<Subcategory>();
-
-  const [newCategory, newCategoryController] = useState<string>("");
-  const [newCategoryError, newCategoryErrorController] = useState<string>();
 
   useEffect(() => {
     setSaveBtnStatus("Save");
@@ -109,58 +129,13 @@ const EditorBlock = ({
    */
   const openAddNewCategoryDialog = async () => {
     // @ts-ignore
-    document.getElementById("add-new-category-dialog")?.showModal();
+    document.getElementById("add_new_category_dialog")?.showModal();
   };
   //add a reference to editor
   const ref = useRef<EditorJS>();
 
   //initialize editorjs
   useEffect(() => {
-    // Initialize Category
-    const dummyCategories: Category[] = [
-      {
-        id: makeid(10),
-        date: new Date(),
-        label: "Departments",
-        subcategory: [
-          {
-            id: makeid(10),
-            date: new Date(),
-            label: "Some Subcategory",
-            author: userData.user!,
-            userId: 1,
-          },
-        ],
-        author: userData.user!,
-        userId: 1,
-      },
-      {
-        id: makeid(10),
-        date: new Date(),
-        label: "Events",
-        subcategory: [],
-        author: userData.user!,
-        userId: 1,
-      },
-      {
-        id: makeid(10),
-        date: new Date(),
-        label: "Announcements",
-        subcategory: [],
-        author: userData.user!,
-        userId: 1,
-      },
-      {
-        id: makeid(10),
-        date: new Date(),
-        label: "Timetables",
-        subcategory: [],
-        author: userData.user!,
-        userId: 1,
-      },
-    ];
-
-    setCategories(dummyCategories);
     //initialize editor if we don't have a reference
     if (!ref.current) {
       const editor = new EditorJS({
@@ -192,6 +167,7 @@ const EditorBlock = ({
           <form className="grid grid-cols-3">
             {/* Select for Category */}
             <select
+              defaultValue={selectedCategory?.label}
               name="category"
               id="category"
               className="select select-bordered mr-3"
@@ -205,10 +181,17 @@ const EditorBlock = ({
                 setSubcategories(selectedCategory?.subcategory);
                 if (selectedCategoryLabel === "addNew") {
                   openAddNewCategoryDialog();
+                  // Reset the select option
+                  e.currentTarget.selectedIndex = 0;
                 }
               }}
             >
-              <option key={`category-default`} value="default">
+              <option
+                key={`category-default`}
+                value="default"
+                disabled
+                selected
+              >
                 Select Category
               </option>
               {categories?.map((category) => (
@@ -219,30 +202,33 @@ const EditorBlock = ({
                   {category.label}
                 </option>
               ))}
-              <option
-                // onTouchStart={() => openAddNewCategoryDialog()}
-                key={`category-new`}
-                value="addNew"
-              >
+              <option key={`category-new`} value="addNew">
                 Add New
               </option>
             </select>
 
             {/* Select for SubCategory */}
             <select
+              defaultValue={selectedSubcategory?.label}
               name="subCategory"
               id="SubCategory"
               className="select select-bordered mr-3"
               onChange={(e) => {
-                const selectedSubcategoryId =
+                const selectedSubcategoryLabel =
                   e.currentTarget.options[e.currentTarget.selectedIndex].value;
                 const selectedSubcategory = subcategories?.filter(
-                  (subcategory) => subcategory.id === selectedSubcategoryId
+                  (subcategory) => subcategory.id === selectedSubcategoryLabel
                 )[0];
                 setSelectedSubcategory(selectedSubcategory);
+                e.currentTarget.selectedIndex = 0;
               }}
             >
-              <option key={`subcategory-default`} value="-">
+              <option
+                key={`subcategory-default`}
+                value="default"
+                disabled
+                selected
+              >
                 Select Subcategory
               </option>
               {subcategories?.map((subcategory) => (
@@ -260,6 +246,7 @@ const EditorBlock = ({
 
             {/* Select for Article Type */}
             <select
+              defaultValue={currentArticle.type}
               onChange={(e) => {
                 currentArticle.type = e.currentTarget.options[
                   e.currentTarget.selectedIndex
@@ -272,13 +259,13 @@ const EditorBlock = ({
             >
               <option
                 value="PRIVATE"
-                selected={currentArticle.type === "PRIVATE"}
+                // selected={currentArticle.type === "PRIVATE"}
               >
                 Private
               </option>
               <option
                 value="PUBLIC"
-                selected={currentArticle.type === "PUBLIC"}
+                // selected={currentArticle.type === "PUBLIC"}
               >
                 Public
               </option>
@@ -309,9 +296,10 @@ const EditorBlock = ({
         <PublishDialog uploader={uploader} />
         <AddNewCategoryDialog
           value={newCategory}
-          controller={newCategoryController}
+          controller={newCategorycontroller}
           error={newCategoryError}
           errorController={newCategoryErrorController}
+          handleSubmit={handleSubmit}
         />
       </div>
     </>
