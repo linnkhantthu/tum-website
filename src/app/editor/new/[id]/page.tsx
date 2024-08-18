@@ -50,6 +50,10 @@ function EditorPage({ params }: { params: { id: string } }) {
       await res.json();
     if (articles) {
       setCurrentArticle(articles);
+      setSubcategories(articles.category?.subcategory!);
+      console.log("Subcategory: ", articles.Subcategory);
+      setSelectedSubcategory(articles.Subcategory);
+
       setToasts((toasts) => [
         {
           id: makeid(10),

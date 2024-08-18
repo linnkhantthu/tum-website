@@ -1,4 +1,5 @@
 import prisma from "@/db";
+import { Category, Subcategory } from "@/lib/models";
 import {
   deletedArticleById,
   getArticleById,
@@ -30,12 +31,16 @@ export async function POST(request: NextRequest) {
       articleId,
       articleType,
       categoryId,
+      selectedCategory,
+      selectedSubcategory,
     }: {
       data: object;
       isPublished: boolean;
       articleId: string | undefined;
       articleType: ArticleType;
       categoryId: string;
+      selectedCategory: Category;
+      selectedSubcategory: Subcategory;
     } = await request.json();
     // Create new article
     const { article, message } = articleId
@@ -45,7 +50,8 @@ export async function POST(request: NextRequest) {
           isPublished,
           articleType,
           currentUser?.id,
-          categoryId
+          selectedCategory,
+          selectedSubcategory
         )
       : await insertArticleByUsername(currentUser?.username);
     return createResponse(

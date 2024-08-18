@@ -33,6 +33,7 @@ export type Article = {
   content: OutputData;
   author: User;
   category: Category | undefined;
+  Subcategory: Subcategory | undefined;
 };
 
 export type Category = {

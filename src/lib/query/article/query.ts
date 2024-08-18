@@ -1,6 +1,6 @@
 import prisma from "@/db";
 import { storage } from "@/lib/firebase";
-import { Article, Category } from "@/lib/models";
+import { Article, Category, Subcategory } from "@/lib/models";
 import { ArticleType } from "@prisma/client";
 import { deleteObject, ref } from "firebase/storage";
 
@@ -56,7 +56,8 @@ export async function updateArticleById(
   isPublished = false,
   articleType: ArticleType,
   userId: number,
-  categoryId?: string
+  selectedCategory?: Category,
+  selectedSubcategory?: Subcategory
 ) {
   let article;
   let message;
@@ -86,7 +87,8 @@ export async function updateArticleById(
         content: data,
         isPublished: isPublished,
         type: articleType,
-        categoryId: categoryId,
+        categoryId: selectedCategory?.id,
+        subcategoryId: selectedSubcategory?.id,
       },
     });
     message = "Updated article successfully.";
@@ -141,6 +143,46 @@ export async function getArticleById(
         content: true,
         isPublished: true,
         type: true,
+        Subcategory: {
+          select: {
+            id: true,
+            date: true,
+            label: true,
+            author: {
+              select: {
+                id: true,
+                email: true,
+                username: true,
+                lastName: true,
+                role: true,
+                sessionId: true,
+                verified: true,
+              },
+            },
+            userId: true,
+            categoryId: true,
+          },
+        },
+        category: {
+          select: {
+            id: true,
+            date: true,
+            label: true,
+            author: {
+              select: {
+                id: true,
+                email: true,
+                username: true,
+                lastName: true,
+                role: true,
+                sessionId: true,
+                verified: true,
+              },
+            },
+            userId: true,
+            subcategory: true,
+          },
+        },
         author: {
           select: {
             id: true,

@@ -125,6 +125,8 @@ const EditorBlock = ({
         isPublished: !isSave,
         articleId: currentArticleId,
         articleType: currentArticle.type,
+        selectedCategory: selectedCategory,
+        selectedSubcategory: selectedSubcategory,
       }),
     });
     if (res.ok) {
@@ -194,134 +196,155 @@ const EditorBlock = ({
       }
     };
   }, []);
-
+  console.log("Article: ", selectedSubcategory);
   return (
     <>
       <div className="flex flex-col h-full w-full">
-        <div className="flex flex-row justify-end m-3">
-          <form className="grid grid-cols-3">
+        <div className="flex flex-row justify-start lg:justify-end m-3 w-full sm:w-[95%] lg:w-auto">
+          <form className="grid-cols-2 grid lg:grid-cols-5 items-end w-full sm:w-[95%] lg:w-auto">
             {/* Select for Category */}
-            <select
-              defaultValue={"default"}
-              name="category"
-              id="category_select"
-              className="select select-bordered mr-3"
-              onChange={(e) => {
-                const selectedCategoryId =
-                  e.currentTarget.options[e.currentTarget.selectedIndex].value;
+            <div>
+              <label htmlFor="category_select" className="label text-xs">
+                Category:
+              </label>
+              <select
+                defaultValue={currentArticle.category?.id || "default"}
+                name="category_select"
+                id="category_select"
+                className="select select-bordered mr-1 sm:mr-3 select-md text-xs sm:text-base"
+                onChange={(e) => {
+                  const selectedCategoryId =
+                    e.currentTarget.options[e.currentTarget.selectedIndex]
+                      .value;
 
-                const selectedCategory = categories?.filter(
-                  (category) => category.id === selectedCategoryId
-                )[0];
-                setSelectedCategory(selectedCategory);
-                setSubcategories(selectedCategory?.subcategory || []);
+                  const selectedCategory = categories?.filter(
+                    (category) => category.id === selectedCategoryId
+                  )[0];
+                  setSelectedCategory(selectedCategory);
+                  setSubcategories(selectedCategory?.subcategory || []);
 
-                // Reset Subcategory Element
-                const element = document.getElementById("subcategory_select");
-                // @ts-ignore
-                element!.value = "default";
-                if (selectedCategoryId === "addNew") {
-                  openCategoryDialog();
-                  // Reset the select option
-                  e.currentTarget.selectedIndex = 0;
-                }
-              }}
-            >
-              <option key={`category-default`} value="default" disabled>
-                Select Category
-              </option>
-              {categories?.map((category) => (
-                <option
-                  key={`category-${category.id}`}
-                  value={`${category.id}`}
-                >
-                  {category.label}
+                  // Reset Subcategory Element
+                  const element = document.getElementById("subcategory_select");
+                  // @ts-ignore
+                  element!.value = "default";
+                  if (selectedCategoryId === "addNew") {
+                    openCategoryDialog();
+                    // Reset the select option
+                    e.currentTarget.selectedIndex = 0;
+                  }
+                }}
+              >
+                <option key={`category-default`} value="default" disabled>
+                  Select Category
                 </option>
-              ))}
-              <option key={`category-new`} value="addNew">
-                Add New
-              </option>
-            </select>
+                {categories?.map((category) => (
+                  <option
+                    key={`category-${category.id}`}
+                    value={`${category.id}`}
+                  >
+                    {category.label}
+                  </option>
+                ))}
+                <option key={`category-new`} value="addNew">
+                  Add New
+                </option>
+              </select>
+            </div>
 
             {/* Select for SubCategory */}
-            <select
-              defaultValue={"default"}
-              name="subCategory"
-              id="subcategory_select"
-              className="select select-bordered mr-3"
-              onChange={(e) => {
-                const selectedSubcategoryId =
-                  e.currentTarget.options[e.currentTarget.selectedIndex].value;
-                const selectedSubcategory = subcategories?.filter(
-                  (subcategory) => subcategory.id === selectedSubcategoryId
-                )[0];
-                setSelectedSubcategory(selectedSubcategory);
-                if (selectedSubcategoryId === "addNew") {
-                  openSubcategoryDialog();
-                  // Reset the select option
-                  e.currentTarget.selectedIndex = 0;
-                }
-              }}
-            >
-              <option key={`subcategory-default`} value="default" disabled>
-                Select Subcategory
-              </option>
-              {subcategories
-                ? subcategories?.map((subcategory) => (
-                    <option
-                      key={`subcategory-${subcategory.id}`}
-                      value={`${subcategory.id}`}
-                    >
-                      {subcategory.label}
-                    </option>
-                  ))
-                : ""}
-              <option key={`subcategory-new`} value="addNew">
-                Add New
-              </option>
-            </select>
+            <div>
+              <label htmlFor="subcategory_select" className="label text-xs">
+                Subcategory:
+              </label>
+              <select
+                defaultValue={selectedSubcategory?.id || "default"}
+                name="subcategory_select"
+                id="subcategory_select"
+                className="select select-bordered mr-1 sm:mr-3 select-md text-xs sm:text-base"
+                onChange={(e) => {
+                  const selectedSubcategoryId =
+                    e.currentTarget.options[e.currentTarget.selectedIndex]
+                      .value;
+                  const selectedSubcategory = subcategories?.filter(
+                    (subcategory) => subcategory.id === selectedSubcategoryId
+                  )[0];
+                  setSelectedSubcategory(selectedSubcategory);
+                  if (selectedSubcategoryId === "addNew") {
+                    openSubcategoryDialog();
+                    // Reset the select option
+                    e.currentTarget.selectedIndex = 0;
+                  }
+                }}
+              >
+                <option key={`subcategory-default`} value="default" disabled>
+                  Select Subcategory
+                </option>
+                {subcategories
+                  ? subcategories?.map((subcategory) => (
+                      <option
+                        key={`subcategory-${subcategory.id}`}
+                        value={`${subcategory.id}`}
+                      >
+                        {subcategory.label}
+                      </option>
+                    ))
+                  : ""}
+                <option key={`subcategory-new`} value="addNew">
+                  Add New
+                </option>
+              </select>
+            </div>
 
             {/* Select for Article Type */}
-            <select
-              defaultValue={currentArticle.type}
-              onChange={(e) => {
-                currentArticle.type = e.currentTarget.options[
-                  e.currentTarget.selectedIndex
-                ].value as ArticleType;
-                setCurrentArticle(currentArticle);
-              }}
-              className="select select-bordered mr-3"
-              name="articleType"
-              id="articleType"
-            >
-              <option
-                value="PRIVATE"
-                // selected={currentArticle.type === "PRIVATE"}
+            <div>
+              <label htmlFor="articleType_select" className="label text-xs">
+                Audiance:
+              </label>
+              <select
+                className="select select-bordered mr-1 sm:mr-3 select-md text-xs sm:text-base"
+                name="articleType_select"
+                id="articleType_select"
+                defaultValue={currentArticle.type}
+                onChange={(e) => {
+                  currentArticle.type = e.currentTarget.options[
+                    e.currentTarget.selectedIndex
+                  ].value as ArticleType;
+                  setCurrentArticle(currentArticle);
+                }}
               >
-                Private
-              </option>
-              <option
-                value="PUBLIC"
-                // selected={currentArticle.type === "PUBLIC"}
+                <option
+                  value="PRIVATE"
+                  // selected={currentArticle.type === "PRIVATE"}
+                >
+                  Private
+                </option>
+                <option
+                  value="PUBLIC"
+                  // selected={currentArticle.type === "PUBLIC"}
+                >
+                  Public
+                </option>
+              </select>
+            </div>
+            <div className="grid grid-cols-2">
+              <button
+                type="button"
+                onClick={() => articleUploader(true)}
+                className="btn btn-primary mr-3"
+                disabled={isSaveBtnDisabled}
               >
-                Public
-              </option>
-            </select>
+                {saveBtnStatus}
+              </button>
+              <button
+                type="button"
+                onClick={openPublishDialog}
+                className="btn btn-success"
+                disabled={isPublishBtnDisabled}
+              >
+                {publishBtnStatus}
+              </button>
+            </div>
           </form>
-          <button
-            onClick={() => articleUploader(true)}
-            className="btn btn-primary mr-3"
-            disabled={isSaveBtnDisabled}
-          >
-            {saveBtnStatus}
-          </button>
-          <button
-            onClick={openPublishDialog}
-            className="btn btn-success"
-            disabled={isPublishBtnDisabled}
-          >
-            {publishBtnStatus}
-          </button>
         </div>
         <div>
           <ArticleDetails
