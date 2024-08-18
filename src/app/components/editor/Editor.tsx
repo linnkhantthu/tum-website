@@ -17,6 +17,7 @@ import { ArticleType } from "@prisma/client";
 import ArticleDetails from "../ArticleDetails";
 import { makeid } from "@/lib/utils-fe";
 import useUser from "@/lib/useUser";
+import AddNewCategoryDialog from "./AddNewCategoryDialog";
 //props
 type Props = {
   data: OutputData;
@@ -49,6 +50,9 @@ const EditorBlock = ({
 
   const [selectedCategory, setSelectedCategory] = useState<Category>();
   const [selectedSubcategory, setSelectedSubcategory] = useState<Subcategory>();
+
+  const [newCategory, newCategoryController] = useState<string>("");
+  const [newCategoryError, newCategoryErrorController] = useState<string>();
 
   useEffect(() => {
     setSaveBtnStatus("Save");
@@ -95,11 +99,18 @@ const EditorBlock = ({
   /**
    * Call Publish Dialog
    */
-  const callDialog = async () => {
+  const openPublishDialog = async () => {
     // @ts-ignore
     document.getElementById("my_modal_3")?.showModal();
   };
 
+  /**
+   * Call Publish Dialog
+   */
+  const openAddNewCategoryDialog = async () => {
+    // @ts-ignore
+    document.getElementById("add-new-category-dialog")?.showModal();
+  };
   //add a reference to editor
   const ref = useRef<EditorJS>();
 
@@ -148,6 +159,7 @@ const EditorBlock = ({
         userId: 1,
       },
     ];
+
     setCategories(dummyCategories);
     //initialize editor if we don't have a reference
     if (!ref.current) {
@@ -184,19 +196,36 @@ const EditorBlock = ({
               id="category"
               className="select select-bordered mr-3"
               onChange={(e) => {
-                const selectedCategoryId =
+                const selectedCategoryLabel =
                   e.currentTarget.options[e.currentTarget.selectedIndex].value;
                 const selectedCategory = categories?.filter(
-                  (category) => category.id === selectedCategoryId
+                  (category) => category.label === selectedCategoryLabel
                 )[0];
                 setSelectedCategory(selectedCategory);
                 setSubcategories(selectedCategory?.subcategory);
+                if (selectedCategoryLabel === "addNew") {
+                  openAddNewCategoryDialog();
+                }
               }}
             >
-              <option value="default">Select Category</option>
+              <option key={`category-default`} value="default">
+                Select Category
+              </option>
               {categories?.map((category) => (
-                <option value={`${category.id}`}>{category.label}</option>
+                <option
+                  key={`category-${category.id}`}
+                  value={`${category.id}`}
+                >
+                  {category.label}
+                </option>
               ))}
+              <option
+                // onTouchStart={() => openAddNewCategoryDialog()}
+                key={`category-new`}
+                value="addNew"
+              >
+                Add New
+              </option>
             </select>
 
             {/* Select for SubCategory */}
@@ -213,10 +242,20 @@ const EditorBlock = ({
                 setSelectedSubcategory(selectedSubcategory);
               }}
             >
-              <option value="-">Select Subcategory</option>
+              <option key={`subcategory-default`} value="-">
+                Select Subcategory
+              </option>
               {subcategories?.map((subcategory) => (
-                <option value={`${subcategory.id}`}>{subcategory.label}</option>
+                <option
+                  key={`subcategory-${subcategory.id}`}
+                  value={`${subcategory.id}`}
+                >
+                  {subcategory.label}
+                </option>
               ))}
+              <option key={`subcategory-new`} value="addNew">
+                Add New
+              </option>
             </select>
 
             {/* Select for Article Type */}
@@ -253,7 +292,7 @@ const EditorBlock = ({
             {saveBtnStatus}
           </button>
           <button
-            onClick={callDialog}
+            onClick={openPublishDialog}
             className="btn btn-success"
             disabled={isPublishBtnDisabled}
           >
@@ -268,6 +307,12 @@ const EditorBlock = ({
           <div className="w-full" id={holder} />
         </div>
         <PublishDialog uploader={uploader} />
+        <AddNewCategoryDialog
+          value={newCategory}
+          controller={newCategoryController}
+          error={newCategoryError}
+          errorController={newCategoryErrorController}
+        />
       </div>
     </>
   );
