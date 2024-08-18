@@ -98,7 +98,15 @@ export async function isAuth(request: Request, response: Response) {
   if (user) {
     const dbUser = await getUserByUsername(user.username);
     if (dbUser && user.sessionId === dbUser.sessionId) {
-      session.user = dbUser as unknown as User;
+      session.user = {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        lastName: user.lastName,
+        role: user.role,
+        verified: user.verified,
+        sessionId: user.sessionId,
+      };
       await session.save();
       return { isLoggedIn: true, currentUser: user };
     }
