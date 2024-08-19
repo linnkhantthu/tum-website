@@ -51,7 +51,7 @@ function EditorPage({ params }: { params: { id: string } }) {
     if (articles) {
       setCurrentArticle(articles);
       setSubcategories(articles.category?.subcategory!);
-      console.log("Subcategory: ", articles.Subcategory);
+      setSelectedCategory(articles.category);
       setSelectedSubcategory(articles.Subcategory);
 
       setToasts((toasts) => [
@@ -166,18 +166,12 @@ function EditorPage({ params }: { params: { id: string } }) {
         message,
       }: { subcategory: Subcategory; message: string } = await res.json();
       if (subcategory) {
-        // if (subcategories !== undefined) {
-        //   setSubcategories((subcategories) => [...subcategories!, subcategory]);
-        // } else {
-        //   setSubcategories([subcategory]);
-        // }
         const indexToUpdate = categories.findIndex(
           (category) => category.id === subcategory.categoryId
         );
-        console.log(indexToUpdate);
         const updatedCategories = [...categories];
-        updatedCategories[indexToUpdate].subcategory.push(subcategory);
-        console.log(updatedCategories);
+        console.log("Updated Cat: ", updatedCategories);
+        updatedCategories[indexToUpdate]?.subcategory.push(subcategory);
         setCategories(updatedCategories);
         setToasts((toasts) => [
           {

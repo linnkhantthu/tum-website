@@ -19,6 +19,10 @@ import ArticleDetails from "../ArticleDetails";
 import useUser from "@/lib/useUser";
 import CategoryDialog from "./CategoryDialog";
 import SubcategoryDialog from "./SubcategoryDialog";
+import CategoryDropdown from "../CategoryDropdown";
+import { IconBaseProps } from "react-icons";
+import { MdCategory, MdOutlineCategory } from "react-icons/md";
+import SubcategoryDropdown from "../SubcategoryDropdown";
 //props
 type Props = {
   // Editor
@@ -196,14 +200,13 @@ const EditorBlock = ({
       }
     };
   }, []);
-  console.log("Article: ", selectedSubcategory);
   return (
     <>
       <div className="flex flex-col h-full w-full">
-        <div className="flex flex-row justify-start lg:justify-end m-3 w-full sm:w-[95%] lg:w-auto">
-          <form className="grid-cols-2 grid lg:grid-cols-5 items-end w-full sm:w-[95%] lg:w-auto">
+        <div className="flex flex-row justify-center lg:justify-center m-3 w-full sm:w-[95%] lg:w-auto">
+          <form className="grid-cols-2 grid lg:grid-cols-4 items-end w-full sm:w-[95%] lg:w-auto">
             {/* Select for Category */}
-            <div>
+            {/* <div>
               <label htmlFor="category_select" className="label text-xs">
                 Category:
               </label>
@@ -239,6 +242,7 @@ const EditorBlock = ({
                 </option>
                 {categories?.map((category) => (
                   <option
+                    tabIndex={0}
                     key={`category-${category.id}`}
                     value={`${category.id}`}
                   >
@@ -249,10 +253,28 @@ const EditorBlock = ({
                   Add New
                 </option>
               </select>
+            </div> */}
+            <div className="w-full pr-3">
+              <CategoryDropdown
+                Icon={MdCategory}
+                selectedCategory={selectedCategory}
+                setSelectedCategory={setSelectedCategory}
+                categories={categories}
+                setSubcategories={setSubcategories}
+              />
             </div>
 
+            <div className="w-full">
+              <SubcategoryDropdown
+                Icon={MdOutlineCategory}
+                selectedSubcategory={selectedSubcategory}
+                setSelectedSubcategory={setSelectedSubcategory}
+                setSubcategories={setSubcategories}
+                subcategories={subcategories}
+              />
+            </div>
             {/* Select for SubCategory */}
-            <div>
+            {/* <div>
               <label htmlFor="subcategory_select" className="label text-xs">
                 Subcategory:
               </label>
@@ -293,7 +315,7 @@ const EditorBlock = ({
                   Add New
                 </option>
               </select>
-            </div>
+            </div> */}
 
             {/* Select for Article Type */}
             <div>
