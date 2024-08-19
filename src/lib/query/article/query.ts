@@ -61,6 +61,7 @@ export async function updateArticleById(
 ) {
   let article;
   let message;
+  console.log("ID: ", selectedSubcategory?.id);
   try {
     article = await prisma.article.update({
       select: {
@@ -70,6 +71,7 @@ export async function updateArticleById(
         isPublished: true,
         type: true,
         category: true,
+        Subcategory: true,
         author: {
           select: {
             id: true,
@@ -88,9 +90,10 @@ export async function updateArticleById(
         isPublished: isPublished,
         type: articleType,
         categoryId: selectedCategory?.id,
-        subcategoryId: selectedSubcategory?.id,
+        subcategoryId: selectedSubcategory?.id || null,
       },
     });
+    console.log("Updated article: ", article);
     message = "Updated article successfully.";
   } catch (error) {
     console.error(error);

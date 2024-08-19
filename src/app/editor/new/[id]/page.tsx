@@ -9,7 +9,7 @@ import { makeid, toastOnDelete } from "@/lib/utils-fe";
 //index.tsx
 import { OutputData } from "@editorjs/editorjs";
 import dynamic from "next/dynamic";
-import { FormEvent, SetStateAction, useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 
 // important that we use dynamic loading here
 // editorjs should only be rendered on the client side.

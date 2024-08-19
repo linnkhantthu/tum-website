@@ -30,7 +30,6 @@ export async function POST(request: NextRequest) {
       isPublished,
       articleId,
       articleType,
-      categoryId,
       selectedCategory,
       selectedSubcategory,
     }: {
@@ -38,7 +37,6 @@ export async function POST(request: NextRequest) {
       isPublished: boolean;
       articleId: string | undefined;
       articleType: ArticleType;
-      categoryId: string;
       selectedCategory: Category;
       selectedSubcategory: Subcategory;
     } = await request.json();

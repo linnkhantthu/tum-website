@@ -1,8 +1,8 @@
 "use client";
 
 import { Category, Subcategory } from "@/lib/models";
-import React, { useState } from "react";
 import { IconType } from "react-icons";
+import { FaAngleDown } from "react-icons/fa";
 import { MdCheck } from "react-icons/md";
 
 function CategoryDropdown({
@@ -11,6 +11,7 @@ function CategoryDropdown({
   setSelectedCategory,
   setSubcategories,
   categories,
+  setSelectedSubcategory,
 }: {
   Icon: IconType;
   selectedCategory: Category | undefined;
@@ -19,15 +20,22 @@ function CategoryDropdown({
   >;
   setSubcategories: React.Dispatch<React.SetStateAction<Subcategory[]>>;
   categories: Category[];
+  setSelectedSubcategory: React.Dispatch<
+    React.SetStateAction<Subcategory | undefined>
+  >;
 }) {
+  /**
+   * Call Category Dialog
+   */
+  const openCategoryDialog = async () => {
+    // @ts-ignore
+    document.getElementById("category_dialog")?.showModal();
+  };
   return (
     <div className="dropdown dropdown-end bg-base-200 w-full">
-      <div
-        tabIndex={0}
-        role="button"
-        className=" justify-start btn btn-ghost btn-sm w-full"
-      >
-        {<Icon />} {selectedCategory?.label || "Category"}
+      <div tabIndex={0} role="button" className=" btn btn-ghost w-full">
+        {<Icon />} {selectedCategory?.label || "Select Category"}
+        <FaAngleDown className="text-right" />
       </div>
       <div>
         <ul
@@ -45,7 +53,8 @@ function CategoryDropdown({
                 }
                 onClick={() => {
                   setSelectedCategory(category);
-                  setSubcategories(selectedCategory?.subcategory || []);
+                  setSelectedSubcategory(undefined);
+                  setSubcategories(category?.subcategory!);
                   const element = document.activeElement;
                   if (element) {
                     // @ts-ignore
@@ -60,6 +69,9 @@ function CategoryDropdown({
               </li>
             );
           })}
+          <li key={`category-new`} onClick={openCategoryDialog}>
+            <span>Add New</span>
+          </li>
         </ul>
       </div>
     </div>

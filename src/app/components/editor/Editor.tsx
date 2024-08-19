@@ -108,7 +108,7 @@ const EditorBlock = ({
   useEffect(() => {
     setSaveBtnStatus("Save");
     setIsSaveBtnDisabled(false);
-  }, [data]);
+  }, [data, selectedCategory, selectedSubcategory]);
 
   /**
    * Upload
@@ -157,21 +157,6 @@ const EditorBlock = ({
     document.getElementById("my_modal_3")?.showModal();
   };
 
-  /**
-   * Call Category Dialog
-   */
-  const openCategoryDialog = async () => {
-    // @ts-ignore
-    document.getElementById("category_dialog")?.showModal();
-  };
-  /**
-   * Call Category Dialog
-   */
-  const openSubcategoryDialog = async () => {
-    // @ts-ignore
-    document.getElementById("subcategory_dialog")?.showModal();
-  };
-
   //add a reference to editor
   const ref = useRef<EditorJS>();
 
@@ -203,8 +188,8 @@ const EditorBlock = ({
   return (
     <>
       <div className="flex flex-col h-full w-full">
-        <div className="flex flex-row justify-center lg:justify-center m-3 w-full sm:w-[95%] lg:w-auto">
-          <form className="grid-cols-2 grid lg:grid-cols-4 items-end w-full sm:w-[95%] lg:w-auto">
+        <div className="lg:px-[7rem] xl:px-[14rem] 2xl:px-[20rem] px-0 flex flex-row justify-center lg:justify-start m-3 w-full lg:w-auto">
+          <div className=" grid-cols-2 grid lg:grid-cols-2 items-center w-full">
             {/* Select for Category */}
             {/* <div>
               <label htmlFor="category_select" className="label text-xs">
@@ -254,17 +239,18 @@ const EditorBlock = ({
                 </option>
               </select>
             </div> */}
-            <div className="w-full pr-3">
+            <div className="min-w-full max-w-full pr-1 bg-base-200 border border-base-300">
               <CategoryDropdown
                 Icon={MdCategory}
                 selectedCategory={selectedCategory}
                 setSelectedCategory={setSelectedCategory}
+                setSelectedSubcategory={setSelectedSubcategory}
                 categories={categories}
                 setSubcategories={setSubcategories}
               />
             </div>
 
-            <div className="w-full">
+            <div className="min-w-full max-w-full pr-1 bg-base-200 border border-base-300">
               <SubcategoryDropdown
                 Icon={MdOutlineCategory}
                 selectedSubcategory={selectedSubcategory}
@@ -366,7 +352,7 @@ const EditorBlock = ({
                 {publishBtnStatus}
               </button>
             </div>
-          </form>
+          </div>
         </div>
         <div>
           <ArticleDetails
@@ -389,6 +375,7 @@ const EditorBlock = ({
           error={newSubcategoryError}
           errorController={newSubcategoryErrorController}
           handleSubmit={handlesubcategorySubmit}
+          selectedCategory={selectedCategory}
         />
       </div>
     </>

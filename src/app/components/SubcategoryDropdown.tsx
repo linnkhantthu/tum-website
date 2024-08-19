@@ -3,6 +3,7 @@
 import { Subcategory } from "@/lib/models";
 import React, { useState } from "react";
 import { IconType } from "react-icons";
+import { FaAngleDown } from "react-icons/fa";
 import { MdCheck } from "react-icons/md";
 
 function SubcategoryDropdown({
@@ -20,14 +21,18 @@ function SubcategoryDropdown({
   setSubcategories: React.Dispatch<React.SetStateAction<Subcategory[]>>;
   subcategories: Subcategory[];
 }) {
+  /**
+   * Call Subcategory Dialog
+   */
+  const openSubcategoryDialog = async () => {
+    // @ts-ignore
+    document.getElementById("subcategory_dialog")?.showModal();
+  };
   return (
     <div className="dropdown dropdown-end bg-base-200 w-full">
-      <div
-        tabIndex={0}
-        role="button"
-        className=" justify-start btn btn-ghost btn-sm w-full"
-      >
-        {<Icon />} {selectedSubcategory?.label || "Category"}
+      <div tabIndex={0} role="button" className=" btn btn-ghost w-full">
+        {<Icon />} {selectedSubcategory?.label || "Select Subcategory"}
+        <FaAngleDown className="text-right" />
       </div>
       <div>
         <ul
@@ -64,6 +69,9 @@ function SubcategoryDropdown({
               </li>
             );
           })}
+          <li key={`subcategory-new`} onClick={openSubcategoryDialog}>
+            <span>Add New</span>
+          </li>
         </ul>
       </div>
     </div>

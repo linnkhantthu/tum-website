@@ -1,6 +1,7 @@
 import React, { FormEvent } from "react";
 import Input from "../forms/Input";
 import { MdCategory } from "react-icons/md";
+import { Category } from "@/lib/models";
 
 function SubcategoryDialog({
   value,
@@ -8,12 +9,14 @@ function SubcategoryDialog({
   error,
   errorController,
   handleSubmit,
+  selectedCategory,
 }: {
   value: string;
   controller: React.Dispatch<React.SetStateAction<string>>;
   error: string | undefined;
   errorController: React.Dispatch<React.SetStateAction<string | undefined>>;
   handleSubmit: (e: FormEvent) => Promise<void>;
+  selectedCategory: Category | undefined;
 }) {
   return (
     <div>
@@ -26,7 +29,9 @@ function SubcategoryDialog({
               ✕
             </button>
           </form>
-          <h3 className="font-bold text-lg">Add Subcategory under: </h3>
+          <h3 className="font-bold text-lg">
+            Add Subcategory under: {selectedCategory?.label}?
+          </h3>
 
           <div>
             <form
