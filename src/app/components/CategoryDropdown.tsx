@@ -3,6 +3,7 @@
 import { Category, Subcategory } from "@/lib/models";
 import { IconType } from "react-icons";
 import { FaAngleDown } from "react-icons/fa";
+import { FaXmark } from "react-icons/fa6";
 import { MdCheck } from "react-icons/md";
 
 function CategoryDropdown({
@@ -51,25 +52,45 @@ function CategoryDropdown({
                     ? "bg-base-100 cursor-pointer p-1"
                     : "cursor-pointer p-1"
                 }
-                onClick={() => {
-                  setSelectedCategory(category);
-                  setSelectedSubcategory(undefined);
-                  setSubcategories(category?.subcategory!);
-                  const element = document.activeElement;
-                  if (element) {
-                    // @ts-ignore
-                    element?.blur();
-                  }
-                }}
               >
-                <span>
-                  {category.label}
-                  {selectedCategory?.id === category.id ? <MdCheck /> : ""}
-                </span>
+                <div className="flex flex-row w-full h-full">
+                  <div
+                    onClick={() => {
+                      setSelectedCategory(category);
+                      setSelectedSubcategory(undefined);
+                      setSubcategories(category?.subcategory!);
+                      const element = document.activeElement;
+                      if (element) {
+                        // @ts-ignore
+                        element?.blur();
+                      }
+                    }}
+                    className="flex flex-row items-center w-full"
+                  >
+                    {category.label}
+                    {selectedCategory?.id === category.id ? (
+                      <div>
+                        <MdCheck />
+                      </div>
+                    ) : (
+                      ""
+                    )}
+                  </div>
+                  <div
+                    className="text-error hover:text-secondary"
+                    onClick={() => console.log("Clicked delete")}
+                  >
+                    <FaXmark />
+                  </div>
+                </div>
               </li>
             );
           })}
-          <li key={`category-new`} onClick={openCategoryDialog}>
+          <li
+            className=" border-t-2 border-base-300"
+            key={`category-new`}
+            onClick={openCategoryDialog}
+          >
             <span>Add New</span>
           </li>
         </ul>

@@ -4,7 +4,8 @@ import { Subcategory } from "@/lib/models";
 import React, { useState } from "react";
 import { IconType } from "react-icons";
 import { FaAngleDown } from "react-icons/fa";
-import { MdCheck } from "react-icons/md";
+import { FaXmark } from "react-icons/fa6";
+import { MdCheck, MdDelete } from "react-icons/md";
 
 function SubcategoryDropdown({
   Icon,
@@ -45,31 +46,47 @@ function SubcategoryDropdown({
                 key={`category_li_${subcategory.id}`}
                 className={
                   selectedSubcategory?.id === subcategory.id
-                    ? "bg-base-100 cursor-pointer p-1"
-                    : "cursor-pointer p-1"
+                    ? "bg-base-100 cursor-pointer p-1 w-full"
+                    : "cursor-pointer p-1 w-full"
                 }
-                onClick={() => {
-                  setSelectedSubcategory(subcategory);
-                  //   setSubcategories(selectedSubcategory?.subcategory || []);
-                  const element = document.activeElement;
-                  if (element) {
-                    // @ts-ignore
-                    element?.blur();
-                  }
-                }}
               >
-                <span>
-                  {subcategory.label}
-                  {selectedSubcategory?.id === subcategory.id ? (
-                    <MdCheck />
-                  ) : (
-                    ""
-                  )}
-                </span>
+                <div className="flex flex-row w-full h-full">
+                  <div
+                    onClick={(e) => {
+                      setSelectedSubcategory(subcategory);
+                      //   setSubcategories(selectedSubcategory?.subcategory || []);
+                      const element = document.activeElement;
+                      if (element) {
+                        // @ts-ignore
+                        element?.blur();
+                      }
+                    }}
+                    className="flex flex-row items-center w-full"
+                  >
+                    {subcategory.label}
+                    {selectedSubcategory?.id === subcategory.id ? (
+                      <div>
+                        <MdCheck />
+                      </div>
+                    ) : (
+                      ""
+                    )}
+                  </div>
+                  <div
+                    className="text-error hover:text-secondary"
+                    onClick={() => console.log("Clicked delete")}
+                  >
+                    <FaXmark />
+                  </div>
+                </div>
               </li>
             );
           })}
-          <li key={`subcategory-new`} onClick={openSubcategoryDialog}>
+          <li
+            className=" border-t-2 border-base-300"
+            key={`subcategory-new`}
+            onClick={openSubcategoryDialog}
+          >
             <span>Add New</span>
           </li>
         </ul>
