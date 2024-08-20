@@ -257,6 +257,70 @@ function EditorPage({ params }: { params: { id: string } }) {
 
   useEffect(() => setData(currentArticle?.content!), [currentArticle]);
 
+  const deleteCategory = async (categoryId: string) => {
+    try {
+      const res = await fetch("/api/articles/categories", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ categoryId: categoryId }),
+      });
+      const {
+        category: deletedCategory,
+        message,
+      }: { category: Category; message: string } = await res.json();
+      if (res.ok) {
+        if (deletedCategory) {
+          // Delete Category from Categories
+          setCategories((categories) => [
+            ...categories.filter(
+              (category) => category.id !== deletedCategory.id
+            ),
+          ]);
+
+          // Delete Subcategories
+          setSubcategories(
+            deletedCategory === selectedCategory ? [] : subcategories
+          );
+
+          // Delete Selected Category
+          setSelectedCategory(
+            deletedCategory === selectedCategory ? undefined : selectedCategory
+          );
+
+          // Delete Selected Subcategory
+          setSelectedSubcategory(
+            deletedCategory === selectedCategory
+              ? undefined
+              : selectedSubcategory
+          );
+
+          setToasts((toasts) => [
+            { id: makeid(10), message: message, category: "alert-warning" },
+            ...toasts,
+          ]);
+          return;
+        }
+        setToasts((toasts) => [
+          { id: makeid(10), message: message, category: "alert-error" },
+          ...toasts,
+        ]);
+        return;
+      }
+      setToasts((toasts) => [
+        { id: makeid(10), message: message, category: "alert-error" },
+        ...toasts,
+      ]);
+      return;
+    } catch (error) {
+      setToasts((toasts) => [
+        // @ts-ignore
+        { id: makeid(10), message: error.message, category: "alert-error" },
+        ...toasts,
+      ]);
+      return;
+    }
+  };
+
   return isUserLoading ? (
     <Loading label="Loading..." />
   ) : isError ? (
@@ -293,6 +357,7 @@ function EditorPage({ params }: { params: { id: string } }) {
             setSelectedCategory={setSelectedCategory}
             selectedSubcategory={selectedSubcategory}
             setSelectedSubcategory={setSelectedSubcategory}
+            deleteCategory={deleteCategory}
           />
         </main>
         <div className="toast toast-start z-10">

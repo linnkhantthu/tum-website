@@ -13,6 +13,7 @@ function CategoryDropdown({
   setSubcategories,
   categories,
   setSelectedSubcategory,
+  deleteCategory,
 }: {
   Icon: IconType;
   selectedCategory: Category | undefined;
@@ -24,6 +25,7 @@ function CategoryDropdown({
   setSelectedSubcategory: React.Dispatch<
     React.SetStateAction<Subcategory | undefined>
   >;
+  deleteCategory: (articleId: string) => Promise<void>;
 }) {
   /**
    * Call Category Dialog
@@ -78,7 +80,7 @@ function CategoryDropdown({
                   </div>
                   <div
                     className="text-error hover:text-secondary"
-                    onClick={() => console.log("Clicked delete")}
+                    onClick={() => deleteCategory(category.id)}
                   >
                     <FaXmark />
                   </div>

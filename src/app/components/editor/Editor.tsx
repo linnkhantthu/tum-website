@@ -69,6 +69,7 @@ type Props = {
   setSelectedCategory: Dispatch<SetStateAction<Category | undefined>>;
   selectedSubcategory: Subcategory | undefined;
   setSelectedSubcategory: Dispatch<SetStateAction<Subcategory | undefined>>;
+  deleteCategory: (articleId: string) => Promise<void>;
 };
 
 const EditorBlock = ({
@@ -94,6 +95,7 @@ const EditorBlock = ({
   setSelectedCategory,
   selectedSubcategory,
   setSelectedSubcategory,
+  deleteCategory,
 }: Props) => {
   const [currentArticleId, setCurrentArticleId] = useState<string>(
     currentArticle.id!
@@ -185,60 +187,13 @@ const EditorBlock = ({
       }
     };
   }, []);
+
   return (
     <>
       <div className="flex flex-col h-full w-full">
         <div className="lg:px-[7rem] xl:px-[14rem] 2xl:px-[20rem] px-0 flex flex-row justify-center lg:justify-start m-3 w-full lg:w-auto">
           <div className=" grid-cols-2 grid lg:grid-cols-2 items-center w-full">
-            {/* Select for Category */}
-            {/* <div>
-              <label htmlFor="category_select" className="label text-xs">
-                Category:
-              </label>
-              <select
-                defaultValue={currentArticle.category?.id || "default"}
-                name="category_select"
-                id="category_select"
-                className="select select-bordered mr-1 sm:mr-3 select-md text-xs sm:text-base"
-                onChange={(e) => {
-                  const selectedCategoryId =
-                    e.currentTarget.options[e.currentTarget.selectedIndex]
-                      .value;
-
-                  const selectedCategory = categories?.filter(
-                    (category) => category.id === selectedCategoryId
-                  )[0];
-                  setSelectedCategory(selectedCategory);
-                  setSubcategories(selectedCategory?.subcategory || []);
-
-                  // Reset Subcategory Element
-                  const element = document.getElementById("subcategory_select");
-                  // @ts-ignore
-                  element!.value = "default";
-                  if (selectedCategoryId === "addNew") {
-                    openCategoryDialog();
-                    // Reset the select option
-                    e.currentTarget.selectedIndex = 0;
-                  }
-                }}
-              >
-                <option key={`category-default`} value="default" disabled>
-                  Select Category
-                </option>
-                {categories?.map((category) => (
-                  <option
-                    tabIndex={0}
-                    key={`category-${category.id}`}
-                    value={`${category.id}`}
-                  >
-                    {category.label}
-                  </option>
-                ))}
-                <option key={`category-new`} value="addNew">
-                  Add New
-                </option>
-              </select>
-            </div> */}
+            {/* Dropdown for Category */}
             <div className="min-w-full max-w-full pr-1 bg-base-200 border border-base-300">
               <CategoryDropdown
                 Icon={MdCategory}
@@ -247,9 +202,10 @@ const EditorBlock = ({
                 setSelectedSubcategory={setSelectedSubcategory}
                 categories={categories}
                 setSubcategories={setSubcategories}
+                deleteCategory={deleteCategory}
               />
             </div>
-
+            {/* Dropdown for Category */}
             <div className="min-w-full max-w-full pr-1 bg-base-200 border border-base-300">
               <SubcategoryDropdown
                 Icon={MdOutlineCategory}
@@ -259,49 +215,6 @@ const EditorBlock = ({
                 subcategories={subcategories}
               />
             </div>
-            {/* Select for SubCategory */}
-            {/* <div>
-              <label htmlFor="subcategory_select" className="label text-xs">
-                Subcategory:
-              </label>
-              <select
-                defaultValue={selectedSubcategory?.id || "default"}
-                name="subcategory_select"
-                id="subcategory_select"
-                className="select select-bordered mr-1 sm:mr-3 select-md text-xs sm:text-base"
-                onChange={(e) => {
-                  const selectedSubcategoryId =
-                    e.currentTarget.options[e.currentTarget.selectedIndex]
-                      .value;
-                  const selectedSubcategory = subcategories?.filter(
-                    (subcategory) => subcategory.id === selectedSubcategoryId
-                  )[0];
-                  setSelectedSubcategory(selectedSubcategory);
-                  if (selectedSubcategoryId === "addNew") {
-                    openSubcategoryDialog();
-                    // Reset the select option
-                    e.currentTarget.selectedIndex = 0;
-                  }
-                }}
-              >
-                <option key={`subcategory-default`} value="default" disabled>
-                  Select Subcategory
-                </option>
-                {subcategories
-                  ? subcategories?.map((subcategory) => (
-                      <option
-                        key={`subcategory-${subcategory.id}`}
-                        value={`${subcategory.id}`}
-                      >
-                        {subcategory.label}
-                      </option>
-                    ))
-                  : ""}
-                <option key={`subcategory-new`} value="addNew">
-                  Add New
-                </option>
-              </select>
-            </div> */}
 
             {/* Select for Article Type */}
             <div>
