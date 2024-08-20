@@ -25,7 +25,7 @@ function CategoryDropdown({
   setSelectedSubcategory: React.Dispatch<
     React.SetStateAction<Subcategory | undefined>
   >;
-  deleteCategory: (articleId: string) => Promise<void>;
+  deleteCategory: (categoryId: string) => Promise<void>;
 }) {
   /**
    * Call Category Dialog

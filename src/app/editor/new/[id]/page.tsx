@@ -172,7 +172,8 @@ function EditorPage({ params }: { params: { id: string } }) {
         const updatedCategories = [...categories];
         console.log("Updated Cat: ", updatedCategories);
         updatedCategories[indexToUpdate]?.subcategory.push(subcategory);
-        setCategories(updatedCategories);
+        setCategories((updatedCategories) => [...updatedCategories]);
+        setSubcategories((subcategories) => [...subcategories, subcategory]);
         setToasts((toasts) => [
           {
             id: makeid(10),
@@ -279,17 +280,19 @@ function EditorPage({ params }: { params: { id: string } }) {
 
           // Delete Subcategories
           setSubcategories(
-            deletedCategory === selectedCategory ? [] : subcategories
+            deletedCategory.id === selectedCategory?.id ? [] : subcategories
           );
 
           // Delete Selected Category
           setSelectedCategory(
-            deletedCategory === selectedCategory ? undefined : selectedCategory
+            deletedCategory.id === selectedCategory?.id
+              ? undefined
+              : selectedCategory
           );
 
           // Delete Selected Subcategory
           setSelectedSubcategory(
-            deletedCategory === selectedCategory
+            deletedCategory.id === selectedCategory?.id
               ? undefined
               : selectedSubcategory
           );
@@ -311,6 +314,64 @@ function EditorPage({ params }: { params: { id: string } }) {
         ...toasts,
       ]);
       return;
+    } catch (error) {
+      setToasts((toasts) => [
+        // @ts-ignore
+        { id: makeid(10), message: error.message, category: "alert-error" },
+        ...toasts,
+      ]);
+      return;
+    }
+  };
+  const deleteSubcategory = async (subcategoryId: string) => {
+    try {
+      const res = await fetch("/api/articles/categories/subcategories", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ subcategoryId: subcategoryId }),
+      });
+
+      if (res.ok) {
+        const {
+          subcategory: deletedSubcategory,
+          message,
+        }: { subcategory: Subcategory | undefined; message: string } =
+          await res.json();
+        if (deletedSubcategory) {
+          // Delete Category from Categories
+          setSubcategories((subcategories) => [
+            ...subcategories.filter(
+              (subcategory) => subcategory.id !== deletedSubcategory.id
+            ),
+          ]);
+
+          // Delete Selected Subcategory
+          setSelectedSubcategory(
+            deletedSubcategory.id === selectedSubcategory?.id
+              ? undefined
+              : selectedSubcategory
+          );
+
+          setToasts((toasts) => [
+            { id: makeid(10), message: message, category: "alert-warning" },
+            ...toasts,
+          ]);
+          return;
+        }
+        setToasts((toasts) => [
+          { id: makeid(10), message: message, category: "alert-error" },
+          ...toasts,
+        ]);
+        return;
+      } else {
+        const { message } = await res.json();
+        console.log(message);
+        setToasts((toasts) => [
+          { id: makeid(10), message: message, category: "alert-error" },
+          ...toasts,
+        ]);
+        return;
+      }
     } catch (error) {
       setToasts((toasts) => [
         // @ts-ignore
@@ -358,6 +419,7 @@ function EditorPage({ params }: { params: { id: string } }) {
             selectedSubcategory={selectedSubcategory}
             setSelectedSubcategory={setSelectedSubcategory}
             deleteCategory={deleteCategory}
+            deleteSubcategory={deleteSubcategory}
           />
         </main>
         <div className="toast toast-start z-10">
@@ -365,6 +427,7 @@ function EditorPage({ params }: { params: { id: string } }) {
             return (
               <Toast
                 key={`toastId-${value.id}`}
+                toastId={value.id}
                 flashMessage={value}
                 onDelete={() => toastOnDelete(value.id, toasts, setToasts)}
               />

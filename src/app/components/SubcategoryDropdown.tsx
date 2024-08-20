@@ -13,6 +13,7 @@ function SubcategoryDropdown({
   setSelectedSubcategory,
   setSubcategories,
   subcategories,
+  deleteSubcategory,
 }: {
   Icon: IconType;
   selectedSubcategory: Subcategory | undefined;
@@ -21,6 +22,7 @@ function SubcategoryDropdown({
   >;
   setSubcategories: React.Dispatch<React.SetStateAction<Subcategory[]>>;
   subcategories: Subcategory[];
+  deleteSubcategory: (subcategoryId: string) => Promise<void>;
 }) {
   /**
    * Call Subcategory Dialog
@@ -74,7 +76,7 @@ function SubcategoryDropdown({
                   </div>
                   <div
                     className="text-error hover:text-secondary"
-                    onClick={() => console.log("Clicked delete")}
+                    onClick={() => deleteSubcategory(subcategory.id)}
                   >
                     <FaXmark />
                   </div>

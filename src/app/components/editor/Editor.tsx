@@ -69,7 +69,8 @@ type Props = {
   setSelectedCategory: Dispatch<SetStateAction<Category | undefined>>;
   selectedSubcategory: Subcategory | undefined;
   setSelectedSubcategory: Dispatch<SetStateAction<Subcategory | undefined>>;
-  deleteCategory: (articleId: string) => Promise<void>;
+  deleteCategory: (categoryId: string) => Promise<void>;
+  deleteSubcategory: (subcategoryId: string) => Promise<void>;
 };
 
 const EditorBlock = ({
@@ -96,6 +97,7 @@ const EditorBlock = ({
   selectedSubcategory,
   setSelectedSubcategory,
   deleteCategory,
+  deleteSubcategory,
 }: Props) => {
   const [currentArticleId, setCurrentArticleId] = useState<string>(
     currentArticle.id!
@@ -213,6 +215,7 @@ const EditorBlock = ({
                 setSelectedSubcategory={setSelectedSubcategory}
                 setSubcategories={setSubcategories}
                 subcategories={subcategories}
+                deleteSubcategory={deleteSubcategory}
               />
             </div>
 

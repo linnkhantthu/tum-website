@@ -1,4 +1,5 @@
 import {
+  deleteCategoryById,
   getAllCategories,
   insertCategoryByUserId,
 } from "@/lib/query/Category/query";
@@ -58,36 +59,34 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// export async function DELETE(request: NextRequest) {
-//   // Create response
-//   const response = new Response();
-//   // Create session
-//   const { currentUser } = await isAuth(request, response);
-//   if (currentUser?.role === "ADMIN" && currentUser.verified) {
-//     return createResponse(
-//       response,
-//       JSON.stringify(
-//         JSON.stringify({
-//           success: true,
-//           message: "Deleted image successfully.",
-//         })
-//       ),
-//       {
-//         status: 200,
-//       }
-//     );
-//   } else {
-//     return createResponse(
-//       response,
-//       JSON.stringify(
-//         JSON.stringify({
-//           success: false,
-//           message: "Access to the requested resource is forbidden.",
-//         })
-//       ),
-//       {
-//         status: 403,
-//       }
-//     );
-//   }
-// }
+export async function DELETE(request: NextRequest) {
+  // Create response
+  const response = new Response();
+  // Create session
+  const { currentUser } = await isAuth(request, response);
+  if (currentUser?.role === "ADMIN" && currentUser.verified) {
+    const { categoryId }: { categoryId: string } = await request.json();
+    const { category, message } = await deleteCategoryById(categoryId);
+    return createResponse(
+      response,
+      JSON.stringify({
+        category: category,
+        message: message,
+      }),
+      {
+        status: 200,
+      }
+    );
+  } else {
+    return createResponse(
+      response,
+      JSON.stringify({
+        success: false,
+        message: "Access to the requested resource is forbidden.",
+      }),
+      {
+        status: 403,
+      }
+    );
+  }
+}

@@ -27,3 +27,21 @@ export async function insertSubcategoryByUserId(
   }
   return { subcategory, message };
 }
+
+export async function deleteSubcategoryById(subcategoryId: string) {
+  let subcategory;
+  let message;
+  const articlesCount = await prisma.article.count({
+    where: { subcategoryId: subcategoryId },
+  });
+
+  message = `There are ${articlesCount} related articles with this subcategory. Please unrelate those subcategories.`;
+  if (articlesCount === 0) {
+    subcategory = await prisma.subcategory.delete({
+      where: { id: subcategoryId },
+    });
+    message = `Deleted Subcategory: ${subcategory.label}.`;
+  }
+  console.log(message);
+  return { subcategory, message };
+}

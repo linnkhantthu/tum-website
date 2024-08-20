@@ -119,11 +119,12 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
           <Navigator />
           {children}
           <div className="toast toast-start z-10">
-            {toasts?.map((value) => (
+            {toasts?.map((toast) => (
               <Toast
-                key={`toastId-${value.id}`}
-                flashMessage={value}
-                onDelete={() => toastOnDelete(value.id, toasts, setToasts)}
+                key={`toastId-${toast.id}`}
+                flashMessage={toast}
+                onDelete={() => toastOnDelete(toast.id, toasts, setToasts)}
+                toastId={toast.id}
               />
             ))}
           </div>

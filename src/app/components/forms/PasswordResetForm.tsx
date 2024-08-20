@@ -108,6 +108,7 @@ function PasswordResetForm({
             key={`toastId-${toast.id}`}
             flashMessage={toast}
             onDelete={() => toastOnDelete(toast.id, toasts, setToasts)}
+            toastId={toast.id}
           />
         ))}
       </div>

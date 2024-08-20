@@ -84,3 +84,18 @@ export async function getAllCategories() {
   }
   return { categories, message };
 }
+
+export async function deleteCategoryById(categoryId: string) {
+  let category;
+  let message;
+  const articlesCount = await prisma.article.count({
+    where: { categoryId: categoryId },
+  });
+
+  message = `There are ${articlesCount} related articles with this category. Please unrelate those categories.`;
+  if (articlesCount === 0) {
+    category = await prisma.category.delete({ where: { id: categoryId } });
+    message = `Deleted category: ${category.label}.`;
+  }
+  return { category, message };
+}
