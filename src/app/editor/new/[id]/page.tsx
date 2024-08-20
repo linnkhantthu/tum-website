@@ -26,6 +26,8 @@ function EditorPage({ params }: { params: { id: string } }) {
   const [toasts, setToasts] = useState<FlashMessage[]>([]);
   const [newCategory, newCategoryController] = useState<string>("");
   const [newCategoryError, newCategoryErrorController] = useState<string>();
+  const [isSpecial, isSpecialController] = useState(false);
+
   const [newSubcategory, newSubcategoryController] = useState<string>("");
   const [newSubcategoryError, newSubcategoryErrorController] =
     useState<string>();
@@ -90,6 +92,7 @@ function EditorPage({ params }: { params: { id: string } }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         categoryName: newCategory,
+        isSpecial: isSpecial,
       }),
     });
     if (res.ok) {
@@ -170,7 +173,6 @@ function EditorPage({ params }: { params: { id: string } }) {
           (category) => category.id === subcategory.categoryId
         );
         const updatedCategories = [...categories];
-        console.log("Updated Cat: ", updatedCategories);
         updatedCategories[indexToUpdate]?.subcategory.push(subcategory);
         setCategories((updatedCategories) => [...updatedCategories]);
         setSubcategories((subcategories) => [...subcategories, subcategory]);
@@ -365,7 +367,6 @@ function EditorPage({ params }: { params: { id: string } }) {
         return;
       } else {
         const { message } = await res.json();
-        console.log(message);
         setToasts((toasts) => [
           { id: makeid(10), message: message, category: "alert-error" },
           ...toasts,
@@ -420,6 +421,8 @@ function EditorPage({ params }: { params: { id: string } }) {
             setSelectedSubcategory={setSelectedSubcategory}
             deleteCategory={deleteCategory}
             deleteSubcategory={deleteSubcategory}
+            isSpecial={isSpecial}
+            isSpecialController={isSpecialController}
           />
         </main>
         <div className="toast toast-start z-10">

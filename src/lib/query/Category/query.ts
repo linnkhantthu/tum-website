@@ -1,6 +1,10 @@
 import prisma from "@/db";
 
-export async function insertCategoryByUserId(userId: number, label: string) {
+export async function insertCategoryByUserId(
+  userId: number,
+  label: string,
+  isSpecial: boolean
+) {
   let message = "Category is already existed";
   let category;
   // Check if the category is existing
@@ -13,6 +17,7 @@ export async function insertCategoryByUserId(userId: number, label: string) {
         data: {
           label: label,
           userId: userId,
+          isSpecial: isSpecial,
         },
         include: {
           subcategory: {

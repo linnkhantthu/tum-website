@@ -8,11 +8,14 @@ import Loading from "./Loading";
 import Toast from "./Toast";
 import { FlashMessage } from "@/lib/models";
 import { toastOnDelete } from "@/lib/utils-fe";
+import { useRouter } from "next/navigation";
 
 function NavigationBar({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<string>();
   const [isLoading, setIsLoading] = useState(true);
   const [toasts, setToasts] = useState<FlashMessage[]>([]);
+
+  const { push } = useRouter();
 
   /**
    * Theme Controller
@@ -104,7 +107,14 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
             </label>
           </div>
           <div className="mx-2 flex-1 px-2">
-            <Image src="/tum-logo.png" alt="tum-logo" width={50} height={50} />
+            <Image
+              src="/tum-logo.png"
+              alt="tum-logo"
+              width={50}
+              height={50}
+              className="cursor-pointer"
+              onClick={() => push("/")}
+            />
           </div>
           <div className="hidden flex-none lg:block">
             <NavbarComponents

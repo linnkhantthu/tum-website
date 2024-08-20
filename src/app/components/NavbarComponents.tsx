@@ -4,6 +4,7 @@ import React from "react";
 import Loading from "./Loading";
 import useUser from "@/lib/useUser";
 import ThemeController from "./ThemeController";
+import NavbarDropdown from "./NavbarDropdown";
 
 function NavbarComponents({
   isMenuHorizontal,
@@ -19,11 +20,14 @@ function NavbarComponents({
     <ul
       className={
         isMenuHorizontal
-          ? "menu menu-horizontal"
+          ? "menu menu-horizontal items-center"
           : "menu bg-base-200 min-h-full w-80 p-4"
       }
     >
       {/* Sidebar content here */}
+      <li>
+        <NavbarDropdown />
+      </li>
       <li>
         <a href="/articles">Articles</a>
       </li>

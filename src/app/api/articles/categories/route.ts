@@ -30,11 +30,15 @@ export async function POST(request: NextRequest) {
   // Create session
   const { currentUser } = await isAuth(request, response);
   if (currentUser?.role === "ADMIN" && currentUser.verified) {
-    const { categoryName }: { categoryName: string } = await request.json();
+    const {
+      categoryName,
+      isSpecial,
+    }: { categoryName: string; isSpecial: boolean } = await request.json();
     // Query
     const { category, message } = await insertCategoryByUserId(
       currentUser.id,
-      categoryName
+      categoryName,
+      isSpecial
     );
     return createResponse(
       response,

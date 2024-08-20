@@ -50,9 +50,10 @@ function CategoryDropdown({
               <li
                 key={`category_li_${category.id}`}
                 className={
-                  selectedCategory?.id === category.id
+                  (selectedCategory?.id === category.id
                     ? "bg-base-100 cursor-pointer p-1"
-                    : "cursor-pointer p-1"
+                    : "cursor-pointer p-1") +
+                  (category.isSpecial ? " text-warning" : "")
                 }
               >
                 <div className="flex flex-row w-full h-full">

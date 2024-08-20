@@ -59,6 +59,7 @@ model Category {
   id          String        @id @default(uuid())
   date        DateTime      @default(now())
   label       String
+  isSpecial   Boolean       @default(false)
   author      User          @relation(fields: [userId], references: [id])
   userId      Int
   Article     Article[]

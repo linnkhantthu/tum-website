@@ -63,7 +63,6 @@ export async function updateArticleById(
 ) {
   let article;
   let message;
-  console.log("ID: ", selectedSubcategory?.id);
   try {
     article = await prisma.article.update({
       select: {
@@ -95,7 +94,6 @@ export async function updateArticleById(
         subcategoryId: selectedSubcategory?.id || null,
       },
     });
-    console.log("Updated article: ", article);
     message = "Updated article successfully.";
   } catch (error) {
     console.error(error);
@@ -173,6 +171,7 @@ export async function getArticleById(
             id: true,
             date: true,
             label: true,
+            isSpecial: true,
             author: {
               select: {
                 id: true,
@@ -214,6 +213,47 @@ export async function getArticleById(
         content: true,
         isPublished: true,
         type: true,
+        Subcategory: {
+          select: {
+            id: true,
+            date: true,
+            label: true,
+            author: {
+              select: {
+                id: true,
+                email: true,
+                username: true,
+                lastName: true,
+                role: true,
+                sessionId: true,
+                verified: true,
+              },
+            },
+            userId: true,
+            categoryId: true,
+          },
+        },
+        category: {
+          select: {
+            id: true,
+            date: true,
+            label: true,
+            isSpecial: true,
+            author: {
+              select: {
+                id: true,
+                email: true,
+                username: true,
+                lastName: true,
+                role: true,
+                sessionId: true,
+                verified: true,
+              },
+            },
+            userId: true,
+            subcategory: true,
+          },
+        },
         author: {
           select: {
             id: true,

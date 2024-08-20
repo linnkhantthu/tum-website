@@ -40,6 +40,7 @@ export type Category = {
   id: string;
   date: Date;
   label: string;
+  isSpecial: boolean;
   subcategory: Subcategory[];
   author: User;
   userId: number;

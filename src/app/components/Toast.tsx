@@ -18,7 +18,6 @@ function Toast({
 
     // First time out to set opacity 0
     setTimeout(() => {
-      console.log(`First timeout for: `, flashMessage.id);
       const isThereFullOpacity = elementClassList?.contains("opacity-100");
       if (!isThereFullOpacity) {
         // Set Opacity after 5s
@@ -26,7 +25,6 @@ function Toast({
 
         // Second time out for deleting toast
         setTimeout(() => {
-          console.log(`Second timeout for: `, flashMessage.id);
           // Is there opacity class
           const isThereOpacity = elementClassList?.contains("opacity-0");
           if (isThereOpacity) {

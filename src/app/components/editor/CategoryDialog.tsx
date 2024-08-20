@@ -1,4 +1,4 @@
-import React, { FormEvent } from "react";
+import React, { Dispatch, FormEvent, SetStateAction } from "react";
 import Input from "../forms/Input";
 import { MdCategory } from "react-icons/md";
 
@@ -8,12 +8,16 @@ function CategoryDialog({
   error,
   errorController,
   handleSubmit,
+  isSpecial,
+  isSpecialController,
 }: {
   value: string;
   controller: React.Dispatch<React.SetStateAction<string>>;
   error: string | undefined;
   errorController: React.Dispatch<React.SetStateAction<string | undefined>>;
   handleSubmit: (e: FormEvent) => Promise<void>;
+  isSpecial: boolean;
+  isSpecialController: Dispatch<SetStateAction<boolean>>;
 }) {
   return (
     <div>
@@ -29,10 +33,7 @@ function CategoryDialog({
           <h3 className="font-bold text-lg">Add New Category</h3>
 
           <div>
-            <form
-              onSubmit={handleSubmit}
-              className="grid grid-flow-row grid-cols-1"
-            >
+            <form onSubmit={handleSubmit} className="grid grid-cols-2">
               <Input
                 label={"Category Name"}
                 type={"text"}
@@ -43,6 +44,25 @@ function CategoryDialog({
                 error={error}
                 errorController={errorController}
               />
+
+              <div className="p-1">
+                <div className=" w-full flex flex-row justify-center items-center mt-10">
+                  <input
+                    type="checkbox"
+                    className="checkbox checkbox-info"
+                    name="isSpecial_checkbox"
+                    id="isSpecial_checkbox"
+                    onChange={(e) => isSpecialController(e.target.checked)}
+                    checked={isSpecial}
+                  />
+                  <label
+                    htmlFor="isSpecial_checkbox"
+                    className=" label label-text"
+                  >
+                    Show on Navigation Bar?
+                  </label>
+                </div>
+              </div>
               <div className="mt-2">
                 <span className="btn btn-error mr-2">Cancel</span>
                 <button className="btn btn-success">Submit</button>

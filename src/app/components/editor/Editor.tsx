@@ -59,6 +59,8 @@ type Props = {
   newSubcategoryErrorController: Dispatch<
     React.SetStateAction<string | undefined>
   >; // New subcategory error controller
+  isSpecial: boolean;
+  isSpecialController: Dispatch<SetStateAction<boolean>>;
 
   // Handlers
   handleCategorySubmit: (e: FormEvent) => Promise<void>;
@@ -92,6 +94,8 @@ const EditorBlock = ({
   newSubcategorycontroller,
   newSubcategoryError,
   newSubcategoryErrorController,
+  isSpecial,
+  isSpecialController,
   selectedCategory,
   setSelectedCategory,
   selectedSubcategory,
@@ -275,7 +279,7 @@ const EditorBlock = ({
             username={currentArticle.author.username}
             publishedDate={currentArticle.date}
           />
-          <div className="w-full" id={holder} />
+          <div className="w-full text-justify" id={holder} />
         </div>
         <PublishDialog uploader={articleUploader} />
         <CategoryDialog
@@ -284,6 +288,8 @@ const EditorBlock = ({
           error={newCategoryError}
           errorController={newCategoryErrorController}
           handleSubmit={handleCategorySubmit}
+          isSpecial={isSpecial}
+          isSpecialController={isSpecialController}
         />
         <SubcategoryDialog
           value={newSubcategory}
