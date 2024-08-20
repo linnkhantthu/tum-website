@@ -26,8 +26,10 @@ export async function insertArticleByUsername(username?: string) {
           id: true,
           date: true,
           // content: true,
-          type: true,
           isPublished: true,
+          type: true,
+          category: true,
+          Subcategory: true,
           author: {
             select: {
               id: true,
@@ -254,8 +256,56 @@ export async function getArticles(
         content: true,
         isPublished: true,
         type: true,
+        Subcategory: {
+          select: {
+            id: true,
+            date: true,
+            label: true,
+            author: {
+              select: {
+                id: true,
+                email: true,
+                username: true,
+                lastName: true,
+                role: true,
+                sessionId: true,
+                verified: true,
+              },
+            },
+            userId: true,
+            categoryId: true,
+          },
+        },
+        category: {
+          select: {
+            id: true,
+            date: true,
+            label: true,
+            author: {
+              select: {
+                id: true,
+                email: true,
+                username: true,
+                lastName: true,
+                role: true,
+                sessionId: true,
+                verified: true,
+              },
+            },
+            userId: true,
+            subcategory: true,
+          },
+        },
         author: {
-          select: { username: true },
+          select: {
+            id: true,
+            email: true,
+            username: true,
+            lastName: true,
+            role: true,
+            sessionId: true,
+            verified: true,
+          },
         },
       },
     });
@@ -276,8 +326,56 @@ export async function getArticles(
         content: true,
         isPublished: true,
         type: true,
+        Subcategory: {
+          select: {
+            id: true,
+            date: true,
+            label: true,
+            author: {
+              select: {
+                id: true,
+                email: true,
+                username: true,
+                lastName: true,
+                role: true,
+                sessionId: true,
+                verified: true,
+              },
+            },
+            userId: true,
+            categoryId: true,
+          },
+        },
+        category: {
+          select: {
+            id: true,
+            date: true,
+            label: true,
+            author: {
+              select: {
+                id: true,
+                email: true,
+                username: true,
+                lastName: true,
+                role: true,
+                sessionId: true,
+                verified: true,
+              },
+            },
+            userId: true,
+            subcategory: true,
+          },
+        },
         author: {
-          select: { username: true },
+          select: {
+            id: true,
+            email: true,
+            username: true,
+            lastName: true,
+            role: true,
+            sessionId: true,
+            verified: true,
+          },
         },
       },
     });

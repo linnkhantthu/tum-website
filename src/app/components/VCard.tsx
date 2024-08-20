@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
@@ -20,9 +21,14 @@ function VCard({
     <div className="card card-bordered bg-base-100 w-[100%] sm:w-[49%] shadow-xl h-96 mr-1 mb-1">
       <figure className="min-h-[50%] max-h-[50%]">
         {image ? (
-          <img src={image.data.file.url} alt={image.data.caption} />
+          <Image
+            src={image.data.file.url}
+            alt={image.data.caption}
+            width={500}
+            height={500}
+          />
         ) : (
-          <img src="/tum-logo.png" alt="image" />
+          <Image src="/tum-logo.png" alt="image" width={500} height={500} />
         )}
       </figure>
       <div className="card-body h-1/2 pt-3">

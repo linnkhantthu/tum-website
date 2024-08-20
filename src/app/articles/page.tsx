@@ -90,7 +90,7 @@ function Articles() {
                     image={image}
                     title={title}
                     content={content}
-                    articleId={article.id!}
+                    article={article}
                   />
                 );
               })
