@@ -277,15 +277,19 @@ export async function getArticleById(
 }
 
 export async function getArticles(
-  take = -8,
+  take: number,
   isPublished = true,
   isLoggedIn: boolean,
-  isVerified: boolean
+  isVerified: boolean,
+  skip: number
 ) {
   let article;
   let message;
+  console.log("Take: ", take);
+  console.log("Skip:", skip);
   if (isLoggedIn && isVerified) {
     article = await prisma.article.findMany({
+      skip: skip,
       take: take,
       where: {
         isPublished: isPublished,
@@ -355,6 +359,7 @@ export async function getArticles(
         : "Fetched articles successfully.";
   } else {
     article = await prisma.article.findMany({
+      skip: skip,
       take: take,
       where: {
         isPublished: true,
@@ -424,5 +429,6 @@ export async function getArticles(
         ? "Articles are not yet publicly published."
         : "Fetched articles successfully.";
   }
+
   return { article, message };
 }

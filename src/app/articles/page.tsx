@@ -15,90 +15,135 @@ function Articles() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isPublished, setIsPublished] = useState<boolean>(true);
-  const fetchData = async () => {
-    const res = await fetch(`/api/articles?isPublished=${isPublished}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    if (res.ok) {
-      const { articles, message } = await res.json();
-
-      if (articles) {
-        setIsLoading(false);
-        setArticles(articles);
-      }
+  const [skip, setSkip] = useState(-10);
+  const [totalNoOfPages, setTotalNoOfPages] = useState(0);
+  const [currentPageNo, setCurrentPageNo] = useState(0);
+  const fetchArticles = async (isNext: boolean) => {
+    if (!isNext && skip < 0) {
+      console.error("Page number cannot be negative");
     } else {
-      const { message } = await res.json();
-      alert(message);
+      const prvSkip = skip;
+      const currentSkip = isNext ? prvSkip + 10 : prvSkip - 10;
+
+      const res = await fetch(
+        `/api/articles?isPublished=${isPublished}&skip=${currentSkip}&take=10`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (res.ok) {
+        const { articles, message }: { articles: Article[]; message: string } =
+          await res.json();
+
+        if (articles) {
+          setSkip(currentSkip);
+          setCurrentPageNo(isNext ? currentPageNo + 1 : currentPageNo - 1);
+          setTotalNoOfPages(Math.ceil(articles.length / 10));
+          setIsLoading(false);
+          setArticles(articles);
+        }
+      } else {
+        const { message } = await res.json();
+        alert(message);
+      }
     }
   };
 
   useEffect(() => {
-    fetchData();
+    fetchArticles(true);
   }, []);
   return (
-    <main>
-      {isLoading ? (
-        <div className="flex flex-col mt-20">
-          <Loading />
-        </div>
-      ) : (
-        <div>
-          {/* Filter */}
-          {isUserLoading ? (
-            "Loading Filter"
-          ) : isError ? (
-            <Warning />
-          ) : data.user?.role === "ADMIN" ? (
-            <Filter
-              setArticles={setArticles}
-              isPublished={isPublished}
-              setIsPublished={setIsPublished}
-            />
-          ) : (
-            ""
-          )}
-          {/* Articles */}
-          <div>
-            {articles.length === 0 ? (
-              <div className="flex flex-row justify-center items-center w-full mt-10">
-                No Articles yet.
-              </div>
-            ) : (
-              articles.map((article) => {
-                const blocks =
-                  article.content === null ? undefined : article.content.blocks;
-                const image = blocks?.filter(
-                  (value) => value.type === "image"
-                )[0];
-                const header = blocks?.filter(
-                  (value) => value.type === "header"
-                )[0];
-                const paragraph = blocks?.filter(
-                  (value) => value.type === "paragraph"
-                )[0];
-
-                const title = header ? header.data.text : "No Title Yet";
-                const content = paragraph
-                  ? paragraph.data.text
-                  : "No Content Yet";
-                return (
-                  <HCard
-                    key={`article-${article.id}`}
-                    image={image}
-                    title={title}
-                    content={content}
-                    article={article}
-                  />
-                );
-              })
-            )}
+    <>
+      <main className="h-[1300px]">
+        {isLoading ? (
+          <div className="flex flex-col mt-20">
+            <Loading />
           </div>
-        </div>
-      )}
-    </main>
+        ) : (
+          <div className=" flex flex-col">
+            <div className="flex flex-row items-center w-full justify-end">
+              {/* Filter */}
+              <div>
+                {isUserLoading ? (
+                  "Loading Filter"
+                ) : isError ? (
+                  <Warning />
+                ) : data.user?.role === "ADMIN" ? (
+                  <Filter
+                    setArticles={setArticles}
+                    isPublished={isPublished}
+                    setIsPublished={setIsPublished}
+                  />
+                ) : (
+                  ""
+                )}
+              </div>
+              <div className="join">
+                <button
+                  className="join-item btn"
+                  onClick={() => {
+                    fetchArticles(false);
+                  }}
+                  disabled={skip === 0}
+                >
+                  «
+                </button>
+                <button className="join-item btn">Page {currentPageNo}</button>
+                <button
+                  className="join-item btn"
+                  onClick={() => {
+                    fetchArticles(true);
+                  }}
+                >
+                  »
+                </button>
+              </div>
+            </div>
+            {/* Articles */}
+            <div>
+              {articles.length === 0 ? (
+                <div className="flex flex-row justify-center items-center w-full mt-10">
+                  No Articles yet.
+                </div>
+              ) : (
+                articles.map((article) => {
+                  const blocks =
+                    article.content === null
+                      ? undefined
+                      : article.content.blocks;
+                  const image = blocks?.filter(
+                    (value) => value.type === "image"
+                  )[0];
+                  const header = blocks?.filter(
+                    (value) => value.type === "header"
+                  )[0];
+                  const paragraph = blocks?.filter(
+                    (value) => value.type === "paragraph"
+                  )[0];
+
+                  const title = header ? header.data.text : "No Title Yet";
+                  const content = paragraph
+                    ? paragraph.data.text
+                    : "No Content Yet";
+                  return (
+                    <HCard
+                      key={`article-${article.id}`}
+                      image={image}
+                      title={title}
+                      content={content}
+                      article={article}
+                    />
+                  );
+                })
+              )}
+            </div>
+          </div>
+        )}
+      </main>
+    </>
   );
 }
 

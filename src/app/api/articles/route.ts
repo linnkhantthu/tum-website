@@ -88,14 +88,28 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const articleId = searchParams.get("id");
   const isPublished = searchParams.get("isPublished") === "true";
+  const skip = parseInt(searchParams.get("skip")!);
+  const take = parseInt(searchParams.get("take")!);
   const { article, message } =
     articleId !== null
       ? await getArticleById(articleId, isLoggedIn, currentUser?.verified!)
       : isPublished
-      ? await getArticles(-8, isPublished, isLoggedIn, currentUser?.verified!)
+      ? await getArticles(
+          take,
+          isPublished,
+          isLoggedIn,
+          currentUser?.verified!,
+          skip
+        )
       : currentUser?.role === "ADMIN"
-      ? await getArticles(-8, isPublished, isLoggedIn, currentUser?.verified!)
-      : await getArticles(-8, true, isLoggedIn, currentUser?.verified!);
+      ? await getArticles(
+          take,
+          isPublished,
+          isLoggedIn,
+          currentUser?.verified!,
+          skip
+        )
+      : await getArticles(take, true, isLoggedIn, currentUser?.verified!, skip);
   return createResponse(
     response,
     JSON.stringify({
