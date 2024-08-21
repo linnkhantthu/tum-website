@@ -8,7 +8,7 @@ export default function Home() {
   const [articles, setArticles] = useState<Article[]>([]);
 
   useEffect(() => {
-    fetch(`/api/articles?isPublished=${true}`, {
+    fetch(`/api/articles?isPublished=${true}&skip=${0}&take=-10`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

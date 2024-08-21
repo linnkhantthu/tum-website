@@ -19,6 +19,7 @@ function Articles() {
   const [totalNoOfPages, setTotalNoOfPages] = useState(0);
   const [currentPageNo, setCurrentPageNo] = useState(0);
   const fetchArticles = async (isNext: boolean) => {
+    setIsLoading(true);
     if (!isNext && skip < 0) {
       console.error("Page number cannot be negative");
     } else {
@@ -50,59 +51,61 @@ function Articles() {
         alert(message);
       }
     }
+    setIsLoading(false);
   };
 
   useEffect(() => {
     fetchArticles(true);
-  }, []);
+  }, [isPublished]);
   return (
     <>
       <main className="h-[1300px]">
-        {isLoading ? (
-          <div className="flex flex-col mt-20">
-            <Loading />
-          </div>
-        ) : (
-          <div className=" flex flex-col">
-            <div className="flex flex-row items-center w-full justify-end">
-              {/* Filter */}
-              <div>
-                {isUserLoading ? (
-                  "Loading Filter"
-                ) : isError ? (
-                  <Warning />
-                ) : data.user?.role === "ADMIN" ? (
-                  <Filter
-                    setArticles={setArticles}
-                    isPublished={isPublished}
-                    setIsPublished={setIsPublished}
-                  />
-                ) : (
-                  ""
-                )}
-              </div>
-              <div className="join">
-                <button
-                  className="join-item btn"
-                  onClick={() => {
-                    fetchArticles(false);
-                  }}
-                  disabled={skip === 0}
-                >
-                  «
-                </button>
-                <button className="join-item btn">Page {currentPageNo}</button>
-                <button
-                  className="join-item btn"
-                  onClick={() => {
-                    fetchArticles(true);
-                  }}
-                >
-                  »
-                </button>
-              </div>
+        <div className=" flex flex-col">
+          <div className="flex flex-row items-center w-full justify-end">
+            {/* Filter */}
+            <div>
+              {isUserLoading ? (
+                "Loading Filter"
+              ) : isError ? (
+                <Warning />
+              ) : data.user?.role === "ADMIN" ? (
+                <Filter
+                  isPublished={isPublished}
+                  setIsPublished={setIsPublished}
+                  setSkip={setSkip}
+                  setCurrentPageNo={setCurrentPageNo}
+                />
+              ) : (
+                ""
+              )}
             </div>
-            {/* Articles */}
+            <div className="join">
+              <button
+                className="join-item btn"
+                onClick={() => {
+                  fetchArticles(false);
+                }}
+                disabled={skip === 0}
+              >
+                «
+              </button>
+              <button className="join-item btn">
+                {currentPageNo === 0 ? "..." : `Page ${currentPageNo}`}
+              </button>
+              <button
+                className="join-item btn"
+                onClick={() => {
+                  fetchArticles(true);
+                }}
+              >
+                »
+              </button>
+            </div>
+          </div>
+          {/* Articles */}
+          {isLoading ? (
+            <Loading label="Fetching articles..." />
+          ) : (
             <div>
               {articles.length === 0 ? (
                 <div className="flex flex-row justify-center items-center w-full mt-10">
@@ -140,8 +143,8 @@ function Articles() {
                 })
               )}
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </main>
     </>
   );

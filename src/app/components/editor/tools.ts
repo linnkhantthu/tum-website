@@ -47,11 +47,12 @@ class CustomImageTool extends Image {
 export const EDITOR_TOOLS = {
   list: {
     class: List,
+    inlineToolbar: true,
     shortcut: "CTRL+SHIFT+L",
   },
   header: {
     class: Header,
-    inlineToolbar: ["marker", "link"],
+    inlineToolbar: true,
     shortcut: "CTRL+SHIFT+H",
     config: {
       defaultLevel: 1,
@@ -68,10 +69,12 @@ export const EDITOR_TOOLS = {
   },
   quote: {
     class: Quote,
+    inlineToolbar: true,
     shortcut: "CTRL+SHIFT+Q",
   },
   image: {
     class: CustomImageTool,
+    inlineToolbar: true,
     config: {
       endpoints: {
         byFile: `http://${window.location.host}/api/articles/uploadImage`, // Your backend file uploader endpoint
@@ -81,10 +84,12 @@ export const EDITOR_TOOLS = {
   },
   inlineCode: {
     class: InlineCode,
+    inlineToolbar: true,
     shortcut: "CMD+SHIFT+G",
   },
   marker: {
     class: Marker,
+    inlineToolbar: true,
     shortcut: "CTRL+SHIFT+M",
   },
   nestedList: {
@@ -100,12 +105,19 @@ export const EDITOR_TOOLS = {
   },
   linkTool: {
     class: LinkTool,
+    inlineToolbar: true,
     config: {
       endpoint: "http://localhost:8008/fetchUrl", // Your backend endpoint for url data fetching,
     },
   },
-  embed: Embed,
-  delimiter: Delimiter,
+  embed: {
+    class: Embed,
+    inlineToolbar: true,
+  },
+  delimiter: {
+    class: Delimiter,
+    inlineToolbar: true,
+  },
   warning: {
     class: Warning,
     inlineToolbar: true,
@@ -115,12 +127,18 @@ export const EDITOR_TOOLS = {
       messagePlaceholder: "Message",
     },
   },
-  raw: RawTool,
+  raw: {
+    class: RawTool,
+    inlineToolbar: true,
+  },
   attaches: {
     class: AttachesTool,
     config: {
       endpoint: "http://localhost:8008/uploadFile",
     },
   },
-  paragraph: Paragraph,
+  paragraph: {
+    class: Paragraph,
+    inlineToolbar: true,
+  },
 };
