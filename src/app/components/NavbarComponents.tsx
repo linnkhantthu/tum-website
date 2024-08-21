@@ -1,10 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Loading from "./Loading";
 import useUser from "@/lib/useUser";
 import ThemeController from "./ThemeController";
 import NavbarDropdown from "./NavbarDropdown";
+import { Category, SpecialCategory } from "@/lib/models";
 
 function NavbarComponents({
   isMenuHorizontal,
@@ -16,6 +17,40 @@ function NavbarComponents({
   themeId: string;
 }) {
   const { data, isLoading, isError } = useUser();
+  const [categories, setCategories] = useState<SpecialCategory[]>([]);
+
+  const fetchSpecialCategories = async () => {
+    try {
+      const res = await fetch(
+        "/api/articles/categories?isSpecial=true&take=5",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (res.ok) {
+        const {
+          categories,
+          message,
+        }: { categories: SpecialCategory[]; message: string } =
+          await res.json();
+        console.log(message);
+        setCategories(categories);
+      } else {
+        const { message } = await res.json();
+        console.log(message);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchSpecialCategories();
+  }, []);
+
   return (
     <ul
       className={
@@ -25,9 +60,11 @@ function NavbarComponents({
       }
     >
       {/* Sidebar content here */}
+
       <li>
-        <NavbarDropdown />
+        <NavbarDropdown categories={categories} />
       </li>
+
       <li>
         <a href="/articles">Articles</a>
       </li>
@@ -35,7 +72,7 @@ function NavbarComponents({
         <Loading />
       ) : isError ? (
         <li>
-          <span>An error occurred.</span>
+          <span>ConnectionError</span>
         </li>
       ) : data.isLoggedIn ? (
         <>

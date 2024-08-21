@@ -45,10 +45,31 @@ export type Category = {
   author: User;
   userId: number;
 };
+
+export type SpecialCategory = {
+  id: string;
+  date: Date;
+  label: string;
+  isSpecial: boolean;
+  Article: Article[];
+  subcategory: SpecialSubcategory[];
+  author: User;
+  userId: number;
+};
+
 export type Subcategory = {
   id: string;
   date: Date;
   label: string;
+  author: User;
+  userId: number;
+  categoryId: string;
+};
+export type SpecialSubcategory = {
+  id: string;
+  date: Date;
+  label: string;
+  Article: Article[];
   author: User;
   userId: number;
   categoryId: string;

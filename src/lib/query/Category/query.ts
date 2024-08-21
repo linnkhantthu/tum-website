@@ -90,6 +90,45 @@ export async function getAllCategories() {
   return { categories, message };
 }
 
+export async function getSpecialCategoriesAndArticles(take: number) {
+  let message;
+  let categories;
+  try {
+    categories = await prisma.category.findMany({
+      take: take,
+      where: { isSpecial: true },
+      include: {
+        Article: {
+          where: { type: "PUBLIC", isPublished: true },
+          include: { Subcategory: true },
+        },
+        subcategory: {
+          include: {
+            Article: {
+              where: { type: "PUBLIC", isPublished: true },
+            },
+            author: {
+              select: {
+                id: true,
+                email: true,
+                username: true,
+                lastName: true,
+                role: true,
+                sessionId: true,
+                verified: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    message = "Fetched categories successfully.";
+  } catch (error) {
+    message = "Internal server error";
+  }
+  return { categories, message };
+}
+
 export async function deleteCategoryById(categoryId: string) {
   let category;
   let message;

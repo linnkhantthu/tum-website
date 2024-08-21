@@ -155,69 +155,80 @@ function EditorPage({ params }: { params: { id: string } }) {
   // Submit Data
   const handleSubcategorySubmit = async (e: FormEvent) => {
     e.preventDefault();
-    const res = await fetch("/api/articles/categories/subcategories", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        subcategoryName: newSubcategory,
-        categoryId: selectedCategory?.id,
-      }),
-    });
-    if (res.ok) {
-      const {
-        subcategory,
-        message,
-      }: { subcategory: Subcategory; message: string } = await res.json();
-      if (subcategory) {
-        const indexToUpdate = categories.findIndex(
-          (category) => category.id === subcategory.categoryId
-        );
-        const updatedCategories = [...categories];
-        updatedCategories[indexToUpdate]?.subcategory.push(subcategory);
-        setCategories((updatedCategories) => [...updatedCategories]);
-        setSubcategories((subcategories) => [...subcategories, subcategory]);
-        setToasts((toasts) => [
-          {
-            id: makeid(10),
-            message: message,
-            category: "alert-success",
-          },
-          ...toasts,
-        ]);
+    if (selectedCategory) {
+      const res = await fetch("/api/articles/categories/subcategories", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          subcategoryName: newSubcategory,
+          categoryId: selectedCategory?.id,
+        }),
+      });
+      if (res.ok) {
+        const {
+          subcategory,
+          message,
+        }: { subcategory: Subcategory; message: string } = await res.json();
+        if (subcategory) {
+          const indexToUpdate = categories.findIndex(
+            (category) => category.id === subcategory.categoryId
+          );
+          const updatedCategories = [...categories];
+          updatedCategories[indexToUpdate]?.subcategory.push(subcategory);
+          setCategories((updatedCategories) => [...updatedCategories]);
+          setSubcategories((subcategories) => [...subcategories, subcategory]);
+          setToasts((toasts) => [
+            {
+              id: makeid(10),
+              message: message,
+              category: "alert-success",
+            },
+            ...toasts,
+          ]);
+        } else {
+          setToasts((toasts) => [
+            {
+              id: makeid(10),
+              message: message,
+              category: "alert-error",
+            },
+            ...toasts,
+          ]);
+        }
       } else {
-        setToasts((toasts) => [
-          {
-            id: makeid(10),
-            message: message,
-            category: "alert-error",
-          },
-          ...toasts,
-        ]);
+        try {
+          const { message } = await res.json();
+          setToasts((toasts) => [
+            {
+              id: makeid(10),
+              message: message,
+              category: "alert-error",
+            },
+            ...toasts,
+          ]);
+        } catch (error) {
+          setToasts((toasts) => [
+            {
+              id: makeid(10),
+              //@ts-ignore
+              message: error.message,
+              category: "alert-success",
+            },
+            ...toasts,
+          ]);
+        }
       }
+      newCategoryController("");
     } else {
-      try {
-        const { message } = await res.json();
-        setToasts((toasts) => [
-          {
-            id: makeid(10),
-            message: message,
-            category: "alert-error",
-          },
-          ...toasts,
-        ]);
-      } catch (error) {
-        setToasts((toasts) => [
-          {
-            id: makeid(10),
-            //@ts-ignore
-            message: error.message,
-            category: "alert-success",
-          },
-          ...toasts,
-        ]);
-      }
+      setToasts((toasts) => [
+        {
+          id: makeid(10),
+          message: "Please select a Category to add its subcategory.",
+          category: "alert-info",
+        },
+        ...toasts,
+      ]);
     }
-    newCategoryController("");
     closeSubcategoryDialog();
   };
 

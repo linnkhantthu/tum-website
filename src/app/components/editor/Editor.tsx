@@ -146,7 +146,7 @@ const EditorBlock = ({
         await res.json();
 
       // onChange(article.content);
-      // setCurrentArticle(article);
+      setCurrentArticle(article);
       // Set Status
       setSaveBtnStatus(isSave ? "Saved" : "Save");
       setIsSaveBtnDisabled(isSave);
@@ -220,6 +220,7 @@ const EditorBlock = ({
                 setSubcategories={setSubcategories}
                 subcategories={subcategories}
                 deleteSubcategory={deleteSubcategory}
+                selectedCategory={selectedCategory}
               />
             </div>
 

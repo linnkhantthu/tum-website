@@ -1,6 +1,6 @@
 "use client";
 
-import { Subcategory } from "@/lib/models";
+import { Category, Subcategory } from "@/lib/models";
 import React, { useState } from "react";
 import { IconType } from "react-icons";
 import { FaAngleDown } from "react-icons/fa";
@@ -14,6 +14,7 @@ function SubcategoryDropdown({
   setSubcategories,
   subcategories,
   deleteSubcategory,
+  selectedCategory,
 }: {
   Icon: IconType;
   selectedSubcategory: Subcategory | undefined;
@@ -23,6 +24,7 @@ function SubcategoryDropdown({
   setSubcategories: React.Dispatch<React.SetStateAction<Subcategory[]>>;
   subcategories: Subcategory[];
   deleteSubcategory: (subcategoryId: string) => Promise<void>;
+  selectedCategory: Category | undefined;
 }) {
   /**
    * Call Subcategory Dialog
@@ -84,13 +86,17 @@ function SubcategoryDropdown({
               </li>
             );
           })}
-          <li
-            className=" border-t-2 border-base-300"
-            key={`subcategory-new`}
-            onClick={openSubcategoryDialog}
-          >
-            <span>Add New</span>
-          </li>
+          {selectedCategory ? (
+            <li
+              className=" border-t-2 border-base-300"
+              key={`subcategory-new`}
+              onClick={openSubcategoryDialog}
+            >
+              <span>Add New</span>
+            </li>
+          ) : (
+            ""
+          )}
         </ul>
       </div>
     </div>

@@ -1,6 +1,7 @@
 import {
   deleteCategoryById,
   getAllCategories,
+  getSpecialCategoriesAndArticles,
   insertCategoryByUserId,
 } from "@/lib/query/Category/query";
 import { createResponse } from "@/lib/session";
@@ -10,7 +11,12 @@ import { NextRequest } from "next/server";
 export async function GET(request: NextRequest) {
   // Create response
   const response = new Response();
-  const { categories, message } = await getAllCategories();
+  const { searchParams } = new URL(request.url);
+  const isSpecial = searchParams.get("isSpecial") === "true";
+  const take = parseInt(searchParams.get("take")!);
+  const { categories, message } = isSpecial
+    ? await getSpecialCategoriesAndArticles(take)
+    : await getAllCategories();
 
   return createResponse(
     response,
