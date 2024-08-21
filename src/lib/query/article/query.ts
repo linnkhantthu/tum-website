@@ -137,6 +137,7 @@ export async function getArticleById(
 ) {
   let article;
   let message;
+  let count = 1;
   if (isLoggedIn && isVerified) {
     article = await prisma.article.findFirst({
       where: { AND: { id: id } },
@@ -273,7 +274,7 @@ export async function getArticleById(
         : "Fetched article successfully.";
   }
 
-  return { article, message };
+  return { article, message, count };
 }
 
 export async function getArticles(
@@ -283,152 +284,292 @@ export async function getArticles(
   isVerified: boolean,
   skip: number
 ) {
-  let article;
+  let articles;
   let message;
-  console.log("Take: ", take);
-  console.log("Skip:", skip);
+  let count;
   if (isLoggedIn && isVerified) {
-    article = await prisma.article.findMany({
-      skip: skip,
-      take: take,
-      where: {
-        isPublished: isPublished,
-      },
-      select: {
-        id: true,
-        date: true,
-        content: true,
-        isPublished: true,
-        type: true,
-        Subcategory: {
-          select: {
-            id: true,
-            date: true,
-            label: true,
-            author: {
-              select: {
-                id: true,
-                email: true,
-                username: true,
-                lastName: true,
-                role: true,
-                sessionId: true,
-                verified: true,
+    const [fetchedArticles, fetchedCount] = await prisma.$transaction([
+      prisma.article.findMany({
+        skip: skip,
+        take: take,
+        where: {
+          isPublished: isPublished,
+        },
+        select: {
+          id: true,
+          date: true,
+          content: true,
+          isPublished: true,
+          type: true,
+          Subcategory: {
+            select: {
+              id: true,
+              date: true,
+              label: true,
+              author: {
+                select: {
+                  id: true,
+                  email: true,
+                  username: true,
+                  lastName: true,
+                  role: true,
+                  sessionId: true,
+                  verified: true,
+                },
               },
+              userId: true,
+              categoryId: true,
             },
-            userId: true,
-            categoryId: true,
           },
-        },
-        category: {
-          select: {
-            id: true,
-            date: true,
-            label: true,
-            author: {
-              select: {
-                id: true,
-                email: true,
-                username: true,
-                lastName: true,
-                role: true,
-                sessionId: true,
-                verified: true,
+          category: {
+            select: {
+              id: true,
+              date: true,
+              label: true,
+              author: {
+                select: {
+                  id: true,
+                  email: true,
+                  username: true,
+                  lastName: true,
+                  role: true,
+                  sessionId: true,
+                  verified: true,
+                },
               },
+              userId: true,
+              subcategory: true,
             },
-            userId: true,
-            subcategory: true,
+          },
+          author: {
+            select: {
+              id: true,
+              email: true,
+              username: true,
+              lastName: true,
+              role: true,
+              sessionId: true,
+              verified: true,
+            },
           },
         },
-        author: {
-          select: {
-            id: true,
-            email: true,
-            username: true,
-            lastName: true,
-            role: true,
-            sessionId: true,
-            verified: true,
-          },
-        },
-      },
-    });
+      }),
+      prisma.article.count(),
+    ]);
+    articles = fetchedArticles;
+    count = fetchedCount;
+    // article = await prisma.article.findMany({
+    //   skip: skip,
+    //   take: take,
+    //   where: {
+    //     isPublished: isPublished,
+    //   },
+    //   select: {
+    //     id: true,
+    //     date: true,
+    //     content: true,
+    //     isPublished: true,
+    //     type: true,
+    //     Subcategory: {
+    //       select: {
+    //         id: true,
+    //         date: true,
+    //         label: true,
+    //         author: {
+    //           select: {
+    //             id: true,
+    //             email: true,
+    //             username: true,
+    //             lastName: true,
+    //             role: true,
+    //             sessionId: true,
+    //             verified: true,
+    //           },
+    //         },
+    //         userId: true,
+    //         categoryId: true,
+    //       },
+    //     },
+    //     category: {
+    //       select: {
+    //         id: true,
+    //         date: true,
+    //         label: true,
+    //         author: {
+    //           select: {
+    //             id: true,
+    //             email: true,
+    //             username: true,
+    //             lastName: true,
+    //             role: true,
+    //             sessionId: true,
+    //             verified: true,
+    //           },
+    //         },
+    //         userId: true,
+    //         subcategory: true,
+    //       },
+    //     },
+    //     author: {
+    //       select: {
+    //         id: true,
+    //         email: true,
+    //         username: true,
+    //         lastName: true,
+    //         role: true,
+    //         sessionId: true,
+    //         verified: true,
+    //       },
+    //     },
+    //   },
+    // });
     message =
-      article.length === 0
+      articles.length === 0
         ? "No articles for public and non-verified users yet."
         : "Fetched articles successfully.";
   } else {
-    article = await prisma.article.findMany({
-      skip: skip,
-      take: take,
-      where: {
-        isPublished: true,
-        type: "PUBLIC",
-      },
-      select: {
-        id: true,
-        date: true,
-        content: true,
-        isPublished: true,
-        type: true,
-        Subcategory: {
-          select: {
-            id: true,
-            date: true,
-            label: true,
-            author: {
-              select: {
-                id: true,
-                email: true,
-                username: true,
-                lastName: true,
-                role: true,
-                sessionId: true,
-                verified: true,
+    const [fetchedArticles, fetchedCount] = await prisma.$transaction([
+      prisma.article.findMany({
+        skip: skip,
+        take: take,
+        where: {
+          isPublished: true,
+          type: "PUBLIC",
+        },
+        select: {
+          id: true,
+          date: true,
+          content: true,
+          isPublished: true,
+          type: true,
+          Subcategory: {
+            select: {
+              id: true,
+              date: true,
+              label: true,
+              author: {
+                select: {
+                  id: true,
+                  email: true,
+                  username: true,
+                  lastName: true,
+                  role: true,
+                  sessionId: true,
+                  verified: true,
+                },
               },
+              userId: true,
+              categoryId: true,
             },
-            userId: true,
-            categoryId: true,
           },
-        },
-        category: {
-          select: {
-            id: true,
-            date: true,
-            label: true,
-            author: {
-              select: {
-                id: true,
-                email: true,
-                username: true,
-                lastName: true,
-                role: true,
-                sessionId: true,
-                verified: true,
+          category: {
+            select: {
+              id: true,
+              date: true,
+              label: true,
+              author: {
+                select: {
+                  id: true,
+                  email: true,
+                  username: true,
+                  lastName: true,
+                  role: true,
+                  sessionId: true,
+                  verified: true,
+                },
               },
+              userId: true,
+              subcategory: true,
             },
-            userId: true,
-            subcategory: true,
+          },
+          author: {
+            select: {
+              id: true,
+              email: true,
+              username: true,
+              lastName: true,
+              role: true,
+              sessionId: true,
+              verified: true,
+            },
           },
         },
-        author: {
-          select: {
-            id: true,
-            email: true,
-            username: true,
-            lastName: true,
-            role: true,
-            sessionId: true,
-            verified: true,
-          },
-        },
-      },
-    });
+      }),
+      prisma.article.count(),
+    ]);
+    articles = fetchedArticles;
+    count = fetchedCount;
+    // article = await prisma.article.findMany({
+    //   skip: skip,
+    //   take: take,
+    //   where: {
+    //     isPublished: true,
+    //     type: "PUBLIC",
+    //   },
+    //   select: {
+    //     id: true,
+    //     date: true,
+    //     content: true,
+    //     isPublished: true,
+    //     type: true,
+    //     Subcategory: {
+    //       select: {
+    //         id: true,
+    //         date: true,
+    //         label: true,
+    //         author: {
+    //           select: {
+    //             id: true,
+    //             email: true,
+    //             username: true,
+    //             lastName: true,
+    //             role: true,
+    //             sessionId: true,
+    //             verified: true,
+    //           },
+    //         },
+    //         userId: true,
+    //         categoryId: true,
+    //       },
+    //     },
+    //     category: {
+    //       select: {
+    //         id: true,
+    //         date: true,
+    //         label: true,
+    //         author: {
+    //           select: {
+    //             id: true,
+    //             email: true,
+    //             username: true,
+    //             lastName: true,
+    //             role: true,
+    //             sessionId: true,
+    //             verified: true,
+    //           },
+    //         },
+    //         userId: true,
+    //         subcategory: true,
+    //       },
+    //     },
+    //     author: {
+    //       select: {
+    //         id: true,
+    //         email: true,
+    //         username: true,
+    //         lastName: true,
+    //         role: true,
+    //         sessionId: true,
+    //         verified: true,
+    //       },
+    //     },
+    //   },
+    // });
     message =
-      article.length === 0
+      articles.length === 0
         ? "Articles are not yet publicly published."
         : "Fetched articles successfully.";
   }
 
-  return { article, message };
+  return { article: articles, message, count };
 }

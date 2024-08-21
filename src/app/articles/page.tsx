@@ -18,13 +18,18 @@ function Articles() {
   const [skip, setSkip] = useState(-10);
   const [totalNoOfPages, setTotalNoOfPages] = useState(0);
   const [currentPageNo, setCurrentPageNo] = useState(0);
-  const fetchArticles = async (isNext: boolean) => {
+  const [pageNo, pageNoController] = useState(1);
+
+  const fetchArticles = async (
+    isNext: boolean,
+    skip: number,
+    currentPageNo: number
+  ) => {
     setIsLoading(true);
     if (!isNext && skip < 0) {
       console.error("Page number cannot be negative");
     } else {
-      const prvSkip = skip;
-      const currentSkip = isNext ? prvSkip + 10 : prvSkip - 10;
+      const currentSkip = isNext ? skip + 10 : skip - 10;
 
       const res = await fetch(
         `/api/articles?isPublished=${isPublished}&skip=${currentSkip}&take=10`,
@@ -36,15 +41,21 @@ function Articles() {
         }
       );
       if (res.ok) {
-        const { articles, message }: { articles: Article[]; message: string } =
+        const {
+          articles,
+          message,
+          count,
+        }: { articles: Article[]; message: string; count: number } =
           await res.json();
 
         if (articles) {
           setSkip(currentSkip);
           setCurrentPageNo(isNext ? currentPageNo + 1 : currentPageNo - 1);
-          setTotalNoOfPages(Math.ceil(articles.length / 10));
+          setTotalNoOfPages(Math.ceil(count / 10));
           setIsLoading(false);
           setArticles(articles);
+        } else {
+          console.error(message);
         }
       } else {
         const { message } = await res.json();
@@ -55,7 +66,7 @@ function Articles() {
   };
 
   useEffect(() => {
-    fetchArticles(true);
+    fetchArticles(true, skip, currentPageNo);
   }, [isPublished]);
   return (
     <>
@@ -83,20 +94,49 @@ function Articles() {
               <button
                 className="join-item btn"
                 onClick={() => {
-                  fetchArticles(false);
+                  fetchArticles(false, skip, currentPageNo);
                 }}
-                disabled={skip === 0}
+                disabled={currentPageNo === 1}
               >
                 «
               </button>
-              <button className="join-item btn">
-                {currentPageNo === 0 ? "..." : `Page ${currentPageNo}`}
-              </button>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (pageNo > 0) {
+                    const skip = pageNo * 10;
+                    const currentPageNo = pageNo + 1;
+                    fetchArticles(false, skip, currentPageNo);
+                  } else {
+                    console.error("Page number must be greater than zero");
+                  }
+                }}
+                className="px-3"
+              >
+                <label htmlFor="pageNumber" className="text-sm pr-1">
+                  Page:
+                </label>
+                <input
+                  type="number"
+                  className=" input max-w-[5rem] text-right"
+                  name="pageNumber"
+                  id="pageNumber"
+                  value={pageNo}
+                  onChange={(e) => pageNoController(parseInt(e.target.value))}
+                />
+                <span>/{totalNoOfPages}</span>
+              </form>
+              {/* <button className="join-item btn">
+                {currentPageNo === 0
+                  ? "..."
+                  : `Page ${currentPageNo}/${totalNoOfPages}`}
+              </button> */}
               <button
                 className="join-item btn"
                 onClick={() => {
-                  fetchArticles(true);
+                  fetchArticles(true, skip, currentPageNo);
                 }}
+                disabled={currentPageNo === totalNoOfPages}
               >
                 »
               </button>

@@ -37,7 +37,6 @@ function NavbarDropdown({ categories }: { categories: SpecialCategory[] }) {
                     <li>No Articles Yet</li>
                   ) : (
                     category.Article.map((article) => {
-                      console.log(`${category.label}: ${article.Subcategory}`);
                       if (article.Subcategory === null) {
                         const blocks =
                           article.content === null

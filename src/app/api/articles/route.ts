@@ -90,7 +90,7 @@ export async function GET(request: NextRequest) {
   const isPublished = searchParams.get("isPublished") === "true";
   const skip = parseInt(searchParams.get("skip")!);
   const take = parseInt(searchParams.get("take")!);
-  const { article, message } =
+  const { article, message, count } =
     articleId !== null
       ? await getArticleById(articleId, isLoggedIn, currentUser?.verified!)
       : isPublished
@@ -115,6 +115,7 @@ export async function GET(request: NextRequest) {
     JSON.stringify({
       articles: article === null ? undefined : article,
       message: message,
+      count: count,
     }),
     {
       status: 200,

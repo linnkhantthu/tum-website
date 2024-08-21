@@ -36,7 +36,6 @@ function NavbarComponents({
           message,
         }: { categories: SpecialCategory[]; message: string } =
           await res.json();
-        console.log(message);
         setCategories(categories);
       } else {
         const { message } = await res.json();
