@@ -6,7 +6,7 @@ import {
   generateToken,
   getExpireDate,
   isEmail,
-  sendMail,
+  sendMailWithNodemailer,
 } from "@/lib/utils";
 
 /**
@@ -199,30 +199,30 @@ export async function insertUser(
         if (user) {
           registeredUser = user as User;
           message = `Registered successfully as ${registeredUser.username}.`;
-          const sentEmailId = await sendMail(
+          // const sentEmailId = await sendMail(
+          //   user.email,
+          //   "TUM: Verify your email before using further features.",
+          //   EmailTemplate({
+          //     description: "to complete the verification",
+          //     lastName: user.lastName,
+          //     token: user.verifyToken!,
+          //     host: host!,
+          //     path: "/auth/users/verify/",
+          //     buttonValue: "Verify",
+          //   })
+          // );
+          const sentEmailId = await sendMailWithNodemailer(
             user.email,
             "TUM: Verify your email before using further features.",
             EmailTemplate({
               description: "to complete the verification",
-              lastName: user.lastName,
+              lastName: user.lastName!,
               token: user.verifyToken!,
               host: host!,
               path: "/auth/users/verify/",
               buttonValue: "Verify",
             })
           );
-          // const sentEmailId = await sendMailWithNodemailer(
-          //   user.email,
-          //   "Todo: Verify your email",
-          //   EmailTemplate({
-          //     description: "to complete the verification",
-          //     lastName: user.lastName!,
-          //     token: user.verifyToken!,
-          //     host: host!,
-          //     path: "/users/verify/",
-          //     buttonValue: "Verify",
-          //   })
-          // );
           message = sentEmailId
             ? message + ` And sent the verification link to ${user.email}.`
             : message +
