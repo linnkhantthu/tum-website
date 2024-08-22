@@ -25,6 +25,8 @@ import AttachesTool from "@editorjs/attaches";
 import InlineCode from "@editorjs/inline-code";
 // @ts-ignore
 import Paragraph from "@editorjs/paragraph";
+// @ts-ignore
+import CodeTool from "@editorjs/code";
 
 class CustomImageTool extends Image {
   removed() {
@@ -35,6 +37,24 @@ class CustomImageTool extends Image {
     // const filename = url.split("images/")[1].replace('"', "");
     const filename = url.split("%2F")[1].split("?")[0];
     fetch("/api/articles/uploadImage/", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ filename: filename }),
+    });
+  }
+}
+
+class CustomAttachesTool extends AttachesTool {
+  removed() {
+    // @ts-ignore
+    const { file } = this._data;
+    console.log("File: ", file);
+    const url: string = file.url;
+    // const filename = url.split("images/")[1].replace('"', "");
+    const filename = url.split("%2F")[1].split("?")[0];
+    fetch("/api/articles/uploadFile/", {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -132,13 +152,17 @@ export const EDITOR_TOOLS = {
     inlineToolbar: true,
   },
   attaches: {
-    class: AttachesTool,
+    class: CustomAttachesTool,
     config: {
-      endpoint: "http://localhost:8008/uploadFile",
+      endpoint: `http://${window.location.host}/api/articles/uploadFile`,
     },
   },
   paragraph: {
     class: Paragraph,
+    inlineToolbar: true,
+  },
+  code: {
+    class: CodeTool,
     inlineToolbar: true,
   },
 };
