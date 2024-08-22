@@ -39,18 +39,6 @@ export async function POST(request: NextRequest) {
         if (token) {
           // Try to send the token as a form of react element with a Button
           try {
-            // const emailRes = await sendMail(
-            //   user.email,
-            //   "TUM: Reset your Password",
-            //   EmailTemplate({
-            //     description: "to reset your password.",
-            //     host: request.headers.get("host")!,
-            //     lastName: user.lastName,
-            //     token: token,
-            //     path: "/users/auth/forgotPassword/verify/",
-            //     buttonValue: "Reset Password",
-            //   })
-            // );
             const sentEmailId = await sendMailWithNodemailer(
               user.email,
               "TUM: Reset your Password",
@@ -107,22 +95,12 @@ export async function POST(request: NextRequest) {
   // If the user is loggedout
 }
 
-getUserByEmail()
-  .then(async () => {
-    await prisma.$disconnect();
-  })
-  .catch(async (e) => {
-    console.error(e);
-    await prisma.$disconnect();
-    process.exit(1);
-  });
-
-insertResetPasswordTokenByEmail()
-  .then(async () => {
-    await prisma.$disconnect();
-  })
-  .catch(async (e) => {
-    console.error(e);
-    await prisma.$disconnect();
-    process.exit(1);
-  });
+// getUserByEmail()
+//   .then(async () => {
+//     await prisma.$disconnect();
+//   })
+//   .catch(async (e) => {
+//     console.error(e);
+//     await prisma.$disconnect();
+//     process.exit(1);
+//   });

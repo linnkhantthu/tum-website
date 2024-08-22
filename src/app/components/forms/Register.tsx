@@ -17,10 +17,12 @@ import {
 function RegisterForm({
   isRegisterForm,
   setIsRegisterForm,
+  toasts,
   setToasts,
 }: {
   isRegisterForm: boolean;
   setIsRegisterForm: React.Dispatch<React.SetStateAction<boolean>>;
+  toasts: FlashMessage[];
   setToasts: React.Dispatch<React.SetStateAction<FlashMessage[]>>;
 }) {
   const [email, emailController] = useState<string>("");
@@ -103,41 +105,45 @@ function RegisterForm({
           const { user, message }: { user: User; message: string } =
             await res.json();
           if (user) {
-            setToasts([
+            setToasts((toasts) => [
               {
                 id: makeid(10),
                 message: `Account registered as ${user.username}`,
-                category: "bg-info",
+                category: "alert-info",
               },
+              ...toasts,
             ]);
             setIsRegisterForm(false);
           } else {
-            setToasts([
+            setToasts((toasts) => [
               {
                 id: makeid(10),
                 message: message,
-                category: "bg-error",
+                category: "alert-error",
               },
+              ...toasts,
             ]);
           }
         } else {
-          setToasts([
+          setToasts((toasts) => [
             {
               id: makeid(10),
-              message: "Connection Error",
-              category: "bg-error",
+              message: "There was a problem connecting to the server.",
+              category: "alert-error",
             },
+            ...toasts,
           ]);
         }
       }
       // Go on
     } else {
-      setToasts([
+      setToasts((toasts) => [
         {
           id: makeid(10),
           message: "All the field must be filled.",
-          category: "bg-error",
+          category: "alert-info",
         },
+        ...toasts,
       ]);
     }
   };

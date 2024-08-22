@@ -3,10 +3,7 @@ import { Messages, Results } from "@/lib/models";
 import { createResponse, getSession } from "@/lib/session";
 import prisma from "@/db";
 import EmailTemplate from "@/emails/EmailTemplate";
-import {
-  getUserByEmail,
-  insertVerifyTokenByEmail,
-} from "@/lib/query/user/query";
+import { insertVerifyTokenByEmail } from "@/lib/query/user/query";
 import { isAuth, sendMailWithNodemailer } from "@/lib/utils";
 
 // {email: string, message: Results}
@@ -71,13 +68,3 @@ export async function POST(request: NextRequest) {
     }
   );
 }
-
-getUserByEmail()
-  .then(async () => {
-    await prisma.$disconnect();
-  })
-  .catch(async (e) => {
-    console.error(e);
-    await prisma.$disconnect();
-    process.exit(1);
-  });

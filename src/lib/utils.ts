@@ -3,7 +3,6 @@ import { Resend } from "resend";
 import nodemailer from "nodemailer";
 import { getSession } from "./session";
 import { getUserByUsername } from "./query/user/query";
-import { User } from "./models";
 
 export function generateToken(): string {
   return crypto.randomBytes(16).toString("hex");

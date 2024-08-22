@@ -20,6 +20,7 @@ function AuthPage() {
             <RegisterForm
               isRegisterForm={isRegisterForm}
               setIsRegisterForm={setIsRegisterForm}
+              toasts={toasts}
               setToasts={setToasts}
             />
           ) : (
