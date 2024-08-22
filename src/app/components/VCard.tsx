@@ -18,7 +18,7 @@ function VCard({
   articleId: string;
 }) {
   return (
-    <div className="card card-bordered bg-base-100 w-[100%] sm:w-[49%] shadow-xl h-96 mr-1 mb-1">
+    <div className="card card-bordered bg-base-200 w-[100%] sm:w-[49%] shadow-xl h-96 mr-1 mb-1">
       <figure className="min-h-[50%] max-h-[50%]">
         {image ? (
           <Image

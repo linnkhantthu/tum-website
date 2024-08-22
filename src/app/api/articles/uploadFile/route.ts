@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData();
     // @ts-ignore
     const file: File = formData.get("file")!;
-    const filename = generateToken() + ".sql";
+    const filename = generateToken() + `.${file.type.split("/")[1]}`;
     // Upload to firebase storage
     const storageRef = ref(storage, `attachments/${filename}`);
     const { metadata, ref: ubRef } = await uploadBytes(storageRef, file);
