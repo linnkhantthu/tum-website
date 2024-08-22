@@ -1,5 +1,6 @@
 import { SpecialCategory } from "@/lib/models";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 function NavbarDropdown({ categories }: { categories: SpecialCategory[] }) {
@@ -10,6 +11,7 @@ function NavbarDropdown({ categories }: { categories: SpecialCategory[] }) {
       element?.blur();
     }
   };
+  const { push } = useRouter();
   return (
     <div className="dropdown dropdown-bottom lg:dropdown-left lg:dropdown-bottom p-0 m-0">
       <div
@@ -55,6 +57,7 @@ function NavbarDropdown({ categories }: { categories: SpecialCategory[] }) {
                           <li
                             key={`ddliulli-${article.id}`}
                             className="border-t-[1px] border-base-200"
+                            onTouchStart={() => push(`/articles/${article.id}`)}
                           >
                             <Link
                               href={`/articles/${article.id}`}
@@ -98,6 +101,9 @@ function NavbarDropdown({ categories }: { categories: SpecialCategory[] }) {
                                   <li
                                     key={`ddliulliulli-${article.id}`}
                                     className="border-t-[1px] border-base-200"
+                                    onTouchStart={() =>
+                                      push(`/articles/${article.id}`)
+                                    }
                                   >
                                     <Link
                                       href={`/articles/${article.id}`}
