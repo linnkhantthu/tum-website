@@ -76,7 +76,7 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
   }, [isLoading]);
 
   return isLoading ? (
-    <div className="flex flex-col mt-10">
+    <div className="flex flex-col h-screen justify-center">
       <Loading label="Loading theme..." />
     </div>
   ) : (
@@ -125,7 +125,7 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
           </div>
         </div>
         {/* Page content here */}
-        <div className=" text-pretty container">
+        <div className=" text-pretty container min-h-screen">
           <Navigator />
           {children}
           <div className="toast toast-start z-10">

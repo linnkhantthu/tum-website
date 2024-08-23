@@ -28,18 +28,15 @@ function NavbarDropdown({ categories }: { categories: SpecialCategory[] }) {
       >
         {/* First Col */}
         {categories.length === 0 ? (
-          <li className="border-t-[1px] border-base-200">No Categories Yet</li>
+          <li>No Categories Yet</li>
         ) : (
           categories.map((category) => {
             return (
-              <li
-                key={`ddli-${category.id}`}
-                className="border-t-[1px] border-base-200"
-              >
-                <span className=" text-lg">{category.label}</span>
+              <li key={`ddli-${category.id}`}>
+                <span className="text-lg">{category.label}</span>
                 <ul key={`ddliul-${category.id}`}>
                   {category.Article.length === 0 ? (
-                    <li className="border-t-[1px] border-base-200">
+                    <li className="border-t-[1px] border-neutral">
                       No Articles Yet
                     </li>
                   ) : (
@@ -56,7 +53,7 @@ function NavbarDropdown({ categories }: { categories: SpecialCategory[] }) {
                         return (
                           <li
                             key={`ddliulli-${article.id}`}
-                            className="border-t-[1px] border-base-200"
+                            className="border-t-[1px] border-neutral"
                             onTouchStart={() => push(`/articles/${article.id}`)}
                           >
                             <Link
@@ -75,14 +72,11 @@ function NavbarDropdown({ categories }: { categories: SpecialCategory[] }) {
                   ) : (
                     category.subcategory.map((subcategory) => {
                       return (
-                        <li
-                          key={`ddliulli-${subcategory.id}`}
-                          className="border-t-[1px] border-base-200"
-                        >
+                        <li key={`ddliulli-${subcategory.id}`}>
                           <span className="text-base">{subcategory.label}</span>
                           <ul key={`ddliulliul-${subcategory.id}`}>
                             {subcategory.Article.length === 0 ? (
-                              <li className="border-t-[1px] border-base-200">
+                              <li className="border-t-[1px] border-neutral">
                                 No Subarticles Yet
                               </li>
                             ) : (
@@ -100,7 +94,7 @@ function NavbarDropdown({ categories }: { categories: SpecialCategory[] }) {
                                 return (
                                   <li
                                     key={`ddliulliulli-${article.id}`}
-                                    className="border-t-[1px] border-base-200"
+                                    className="border-t-[1px] border-neutral"
                                     onTouchStart={() =>
                                       push(`/articles/${article.id}`)
                                     }
