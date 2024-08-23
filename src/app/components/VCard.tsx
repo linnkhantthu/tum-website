@@ -18,7 +18,7 @@ function VCard({
   articleId: string;
 }) {
   return (
-    <div className="card card-bordered bg-base-200 shadow-xl h-96 ring-1">
+    <div className="card card-bordered bg-base-200 shadow-xl h-96 ring-1 ring-neutral">
       {/* Image */}
       <figure className="min-h-[50%] max-h-[50%] border-b-[0.5px] border-neutral">
         {image ? (
@@ -47,16 +47,16 @@ function VCard({
         </h2>
 
         {/* Card Content */}
-        <div className="line-clamp-3 text-sm lg:text-base h-[60%] text-justify">
+        <div className="line-clamp-3 text-sm lg:text-base h-[55%] text-justify">
           {content.replaceAll("&nbsp;", "")}
         </div>
 
         {/* Card Actions */}
-        <div className="card-actions h-[10%] justify-end">
-          <div className="badge badge-outline badge-sm md:badge-md">
+        <div className="card-actions h-[15%] justify-end">
+          <div className="badge badge-outline badge-sm lg:badge-md">
             {authorName}
           </div>
-          <div className="badge badge-outline badge-sm md:badge-md">{date}</div>
+          <div className="badge badge-outline badge-sm lg:badge-md">{date}</div>
         </div>
       </div>
     </div>

@@ -76,85 +76,93 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
   }, [isLoading]);
 
   return isLoading ? (
-    <div className="flex flex-col h-screen justify-center">
-      <Loading label="Loading theme..." />
-    </div>
+    <html lang="en" data-theme={theme}>
+      <body className="m-0 h-full" suppressHydrationWarning={true}>
+        <div className="flex flex-col h-screen justify-center">
+          <Loading label="Loading theme..." />
+        </div>
+      </body>
+    </html>
   ) : (
-    <div className="drawer m-0 min-h-screen" data-theme={theme}>
-      <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
-      <div className="drawer-content flex flex-col">
-        {/* Navbar */}
-        <div className="navbar bg-base-300 w-full">
-          <div className="flex-none lg:hidden">
+    <html lang="en" data-theme={theme}>
+      <body className="m-0 h-full" suppressHydrationWarning={true}>
+        <div className="drawer m-0 min-h-screen">
+          <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
+          <div className="drawer-content flex flex-col">
+            {/* Navbar */}
+            <div className="navbar bg-base-300 w-full">
+              <div className="flex-none lg:hidden">
+                <label
+                  htmlFor="my-drawer-3"
+                  aria-label="open sidebar"
+                  className="btn btn-square btn-ghost"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    className="inline-block h-6 w-6 stroke-current"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M4 6h16M4 12h16M4 18h16"
+                    ></path>
+                  </svg>
+                </label>
+              </div>
+              <div className="mx-2 flex-1 px-2">
+                <Image
+                  src="/tum-logo.png"
+                  alt="tum-logo"
+                  width={50}
+                  height={50}
+                  className="cursor-pointer"
+                  onClick={() => push("/")}
+                />
+              </div>
+              <div className="hidden flex-none lg:block">
+                <NavbarComponents
+                  themeId={"theme-controller-1"}
+                  isMenuHorizontal={true}
+                  themeController={changeTheme}
+                />
+              </div>
+            </div>
+            {/* Page content here */}
+            <div className="text-pretty container min-h-screen">
+              <Navigator />
+              {children}
+              <div className="toast toast-start z-10">
+                {toasts?.map((toast) => (
+                  <Toast
+                    key={`toastId-${toast.id}`}
+                    flashMessage={toast}
+                    onDelete={() => toastOnDelete(toast.id, toasts, setToasts)}
+                    toastId={toast.id}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+          {/* Drawer */}
+          <div className="drawer-side z-10">
             <label
               htmlFor="my-drawer-3"
-              aria-label="open sidebar"
-              className="btn btn-square btn-ghost"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                className="inline-block h-6 w-6 stroke-current"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 6h16M4 12h16M4 18h16"
-                ></path>
-              </svg>
-            </label>
-          </div>
-          <div className="mx-2 flex-1 px-2">
-            <Image
-              src="/tum-logo.png"
-              alt="tum-logo"
-              width={50}
-              height={50}
-              className="cursor-pointer"
-              onClick={() => push("/")}
-            />
-          </div>
-          <div className="hidden flex-none lg:block">
-            <NavbarComponents
-              themeId={"theme-controller-1"}
-              isMenuHorizontal={true}
-              themeController={changeTheme}
-            />
-          </div>
-        </div>
-        {/* Page content here */}
-        <div className=" text-pretty container min-h-screen">
-          <Navigator />
-          {children}
-          <div className="toast toast-start z-10">
-            {toasts?.map((toast) => (
-              <Toast
-                key={`toastId-${toast.id}`}
-                flashMessage={toast}
-                onDelete={() => toastOnDelete(toast.id, toasts, setToasts)}
-                toastId={toast.id}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
-      {/* Drawer */}
-      <div className="drawer-side z-10">
-        <label
-          htmlFor="my-drawer-3"
-          aria-label="close sidebar"
-          className="drawer-overlay"
-        ></label>
+              aria-label="close sidebar"
+              className="drawer-overlay"
+            ></label>
 
-        <NavbarComponents
-          isMenuHorizontal={false}
-          themeController={changeTheme}
-          themeId={"theme-controller-2"}
-        />
-      </div>
-    </div>
+            <NavbarComponents
+              isMenuHorizontal={false}
+              themeController={changeTheme}
+              themeId={"theme-controller-2"}
+            />
+          </div>
+        </div>
+      </body>
+    </html>
   );
 }
 

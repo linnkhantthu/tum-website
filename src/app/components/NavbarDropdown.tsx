@@ -36,7 +36,7 @@ function NavbarDropdown({ categories }: { categories: SpecialCategory[] }) {
                 <span className="text-lg">{category.label}</span>
                 <ul key={`ddliul-${category.id}`}>
                   {category.Article.length === 0 ? (
-                    <li className="border-t-[1px] border-neutral">
+                    <li className="border-b-[1px] border-neutral">
                       No Articles Yet
                     </li>
                   ) : (
@@ -53,7 +53,7 @@ function NavbarDropdown({ categories }: { categories: SpecialCategory[] }) {
                         return (
                           <li
                             key={`ddliulli-${article.id}`}
-                            className="border-t-[1px] border-neutral"
+                            className="border-b-[1px] border-neutral"
                             onTouchStart={() => push(`/articles/${article.id}`)}
                           >
                             <Link
@@ -76,7 +76,7 @@ function NavbarDropdown({ categories }: { categories: SpecialCategory[] }) {
                           <span className="text-base">{subcategory.label}</span>
                           <ul key={`ddliulliul-${subcategory.id}`}>
                             {subcategory.Article.length === 0 ? (
-                              <li className="border-t-[1px] border-neutral">
+                              <li className="border-b-[1px] border-neutral">
                                 No Subarticles Yet
                               </li>
                             ) : (
@@ -94,7 +94,7 @@ function NavbarDropdown({ categories }: { categories: SpecialCategory[] }) {
                                 return (
                                   <li
                                     key={`ddliulliulli-${article.id}`}
-                                    className="border-t-[1px] border-neutral"
+                                    className="border-b-[1px] border-neutral"
                                     onTouchStart={() =>
                                       push(`/articles/${article.id}`)
                                     }

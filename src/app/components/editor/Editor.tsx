@@ -279,6 +279,8 @@ const EditorBlock = ({
           <ArticleDetails
             username={currentArticle.author.username}
             publishedDate={currentArticle.date}
+            categoryName={currentArticle.category?.label!}
+            subcategoryName={currentArticle.Subcategory?.label!}
           />
           <div className="w-full text-justify" id={holder} />
         </div>

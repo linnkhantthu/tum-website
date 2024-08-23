@@ -17,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="m-0 min-h-screen" suppressHydrationWarning={true}>
+      <body className="m-0 h-full" suppressHydrationWarning={true}>
         <NavigationBar>{children}</NavigationBar>
       </body>
     </html>
