@@ -5,7 +5,6 @@ import prisma from "@/db";
 import {
   fetchUserByResetPasswordToken,
   getUserByVerificationToken,
-  getUserByVerifyTokenAndVerified,
   updateVerifiedByVerifyToken,
 } from "@/lib/query/user/query";
 
@@ -31,7 +30,15 @@ export async function POST(request: NextRequest) {
       if (verifiedUser) {
         // Update session data
         if (session.user) {
-          session.user = verifiedUser as User;
+          session.user = {
+            id: verifiedUser.id,
+            email: verifiedUser.email,
+            username: verifiedUser.username,
+            lastName: verifiedUser.lastName,
+            role: verifiedUser.role,
+            verified: verifiedUser.verified,
+            sessionId: verifiedUser.sessionId!,
+          };
           await session.save();
         }
         message = Results.SUCCESS;
@@ -52,13 +59,3 @@ export async function POST(request: NextRequest) {
     { status: 200 }
   );
 }
-
-fetchUserByResetPasswordToken()
-  .then(async () => {
-    await prisma.$disconnect();
-  })
-  .catch(async (e) => {
-    console.error(e);
-    await prisma.$disconnect();
-    process.exit(1);
-  });

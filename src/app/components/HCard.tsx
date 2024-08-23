@@ -51,7 +51,7 @@ function HCard({
                   article.category?.label ||
                   "No Category"}
               </div>
-              <div className="badge badge-outline">
+              <div className="badge badge-outline text-xs sm:text-sm">
                 {new Date(article.date).toDateString()}
               </div>
             </div>

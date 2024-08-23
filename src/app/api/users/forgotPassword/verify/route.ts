@@ -1,7 +1,6 @@
 import { NextRequest } from "next/server";
 import { Results } from "@/lib/models";
 import { createResponse, getSession } from "@/lib/session";
-import prisma from "@/db";
 import { fetchUserByResetPasswordToken } from "@/lib/query/user/query";
 
 export async function POST(request: NextRequest) {
@@ -35,13 +34,3 @@ export async function POST(request: NextRequest) {
     status: 403,
   });
 }
-
-fetchUserByResetPasswordToken()
-  .then(async () => {
-    await prisma.$disconnect();
-  })
-  .catch(async (e) => {
-    console.error(e);
-    await prisma.$disconnect();
-    process.exit(1);
-  });

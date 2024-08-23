@@ -1,5 +1,6 @@
 import { SpecialCategory } from "@/lib/models";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 function NavbarDropdown({ categories }: { categories: SpecialCategory[] }) {
@@ -10,19 +11,20 @@ function NavbarDropdown({ categories }: { categories: SpecialCategory[] }) {
       element?.blur();
     }
   };
+  const { push } = useRouter();
   return (
-    <div className="dropdown dropdown-bottom lg:dropdown-left lg:dropdown-bottom p-0 m-0 w-full">
+    <div className="dropdown dropdown-bottom lg:dropdown-left lg:dropdown-bottom p-0 m-0">
       <div
         tabIndex={0}
         role="button"
-        className="btn w-[18rem] btn-ghost justify-start"
+        className="btn w-[18rem] lg:w-auto btn-ghost justify-start"
       >
         Categories
       </div>
       {/* Level 1 */}
       <ul
         id="ddul"
-        className="dropdown-content menu lg:menu-horizontal bg-base-200 rounded-box lg:min-w-max z-[1000]"
+        className="p-10 border border-base-300 dropdown-content menu lg:menu-horizontal bg-base-100 rounded-box lg:min-w-max z-[1000]"
       >
         {/* First Col */}
         {categories.length === 0 ? (
@@ -31,10 +33,12 @@ function NavbarDropdown({ categories }: { categories: SpecialCategory[] }) {
           categories.map((category) => {
             return (
               <li key={`ddli-${category.id}`}>
-                {category.label}
+                <span className="text-lg">{category.label}</span>
                 <ul key={`ddliul-${category.id}`}>
                   {category.Article.length === 0 ? (
-                    <li>No Articles Yet</li>
+                    <li className="border-b-[1px] border-neutral">
+                      No Articles Yet
+                    </li>
                   ) : (
                     category.Article.map((article) => {
                       if (article.Subcategory === null) {
@@ -47,7 +51,11 @@ function NavbarDropdown({ categories }: { categories: SpecialCategory[] }) {
                         )[0];
                         const title = header ? header.data.text : "Title";
                         return (
-                          <li key={`ddliulli-${article.id}`}>
+                          <li
+                            key={`ddliulli-${article.id}`}
+                            className="border-b-[1px] border-neutral"
+                            onTouchStart={() => push(`/articles/${article.id}`)}
+                          >
                             <Link
                               href={`/articles/${article.id}`}
                               onClick={OpenOrCloseDropdown}
@@ -65,10 +73,12 @@ function NavbarDropdown({ categories }: { categories: SpecialCategory[] }) {
                     category.subcategory.map((subcategory) => {
                       return (
                         <li key={`ddliulli-${subcategory.id}`}>
-                          {subcategory.label}
+                          <span className="text-base">{subcategory.label}</span>
                           <ul key={`ddliulliul-${subcategory.id}`}>
                             {subcategory.Article.length === 0 ? (
-                              <li>No Subarticles Yet</li>
+                              <li className="border-b-[1px] border-neutral">
+                                No Subarticles Yet
+                              </li>
                             ) : (
                               subcategory.Article.map((article) => {
                                 const blocks =
@@ -82,7 +92,13 @@ function NavbarDropdown({ categories }: { categories: SpecialCategory[] }) {
                                   ? header.data.text
                                   : "Title";
                                 return (
-                                  <li key={`ddliulliulli-${article.id}`}>
+                                  <li
+                                    key={`ddliulliulli-${article.id}`}
+                                    className="border-b-[1px] border-neutral"
+                                    onTouchStart={() =>
+                                      push(`/articles/${article.id}`)
+                                    }
+                                  >
                                     <Link
                                       href={`/articles/${article.id}`}
                                       onClick={OpenOrCloseDropdown}

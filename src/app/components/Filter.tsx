@@ -16,7 +16,7 @@ function Filter({
   return (
     <div className="flex flex-row justify-end items-center">
       <div>
-        <div className="dropdown dropdown-end">
+        <div className="dropdown sm:dropdown-end">
           <div tabIndex={0} role="button" className="btn btn-ghost btn-sm m-1">
             <FaFilter />
           </div>

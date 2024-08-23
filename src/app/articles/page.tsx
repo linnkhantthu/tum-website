@@ -92,7 +92,7 @@ function Articles() {
             </div>
             <div className="join">
               <button
-                className="join-item btn"
+                className="join-item btn-sm sm:btn"
                 onClick={() => {
                   fetchArticles(false, skip, currentPageNo);
                 }}
@@ -118,21 +118,16 @@ function Articles() {
                 </label>
                 <input
                   type="number"
-                  className=" input max-w-[5rem] text-right"
+                  className="input input-sm sm:input max-w-[2.5rem] sm:max-w-[5rem] text-right"
                   name="pageNumber"
                   id="pageNumber"
                   value={pageNo}
                   onChange={(e) => pageNoController(parseInt(e.target.value))}
                 />
-                <span>/{totalNoOfPages}</span>
+                <span className="text-sm sm:text-base">/{totalNoOfPages}</span>
               </form>
-              {/* <button className="join-item btn">
-                {currentPageNo === 0
-                  ? "..."
-                  : `Page ${currentPageNo}/${totalNoOfPages}`}
-              </button> */}
               <button
-                className="join-item btn"
+                className="join-item btn-sm sm:btn"
                 onClick={() => {
                   fetchArticles(true, skip, currentPageNo);
                 }}

@@ -47,11 +47,11 @@ model Article {
   date          DateTime     @default(now())
   content       Json?
   isPublished   Boolean      @default(false)
-  author        User         @relation(fields: [userId], references: [id])
+  author        User         @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId        Int
-  category      Category?    @relation(fields: [categoryId], references: [id])
+  category      Category?    @relation(fields: [categoryId], references: [id], onDelete: SetNull, onUpdate: Cascade)
   categoryId    String?
-  Subcategory   Subcategory? @relation(fields: [subcategoryId], references: [id])
+  Subcategory   Subcategory? @relation(fields: [subcategoryId], references: [id], onDelete: SetNull, onUpdate: Cascade)
   subcategoryId String?
 }
 
@@ -60,7 +60,7 @@ model Category {
   date        DateTime      @default(now())
   label       String
   isSpecial   Boolean       @default(false)
-  author      User          @relation(fields: [userId], references: [id])
+  author      User          @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId      Int
   Article     Article[]
   subcategory Subcategory[]
@@ -70,11 +70,25 @@ model Subcategory {
   id         String    @id @default(uuid())
   date       DateTime  @default(now())
   label      String
-  author     User      @relation(fields: [userId], references: [id])
+  author     User      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId     Int
   Article    Article[]
-  Category   Category? @relation(fields: [categoryId], references: [id])
+  Category   Category? @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   categoryId String?
+}
+
+model AdminGroup {
+  id    String   @id @default(uuid())
+  nrcNo String   @unique
+  email String   @unique
+  dob   DateTime
+}
+
+model StudentGroup {
+  id    String   @id @default(uuid())
+  nrcNo String   @unique
+  email String   @unique
+  dob   DateTime
 }
 
 enum UserRole {

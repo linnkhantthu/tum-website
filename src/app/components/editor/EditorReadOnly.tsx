@@ -8,7 +8,7 @@ import useUser from "@/lib/useUser";
 import { useRouter } from "next/navigation";
 import Loading from "../Loading";
 import DeleteDialog from "../DeleteDialog";
-import { User } from "@/lib/models";
+import { Article, User } from "@/lib/models";
 import ArticleDetails from "../ArticleDetails";
 
 //props
@@ -19,16 +19,10 @@ type Props = {
   articleId: string;
   currentAuthor: User;
   publishedDate: Date | undefined;
+  currentArticle: Article | undefined;
 };
 
-const EditorBlock = ({
-  data,
-  onChange,
-  holder,
-  articleId,
-  currentAuthor,
-  publishedDate,
-}: Props) => {
+const EditorBlock = ({ data, holder, currentArticle }: Props) => {
   //add a reference to editor
   const ref = useRef<EditorJS>();
   const { data: userData, isLoading, isError } = useUser();
@@ -67,7 +61,7 @@ const EditorBlock = ({
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ articleId: articleId }),
+      body: JSON.stringify({ articleId: currentArticle?.id }),
     });
     const { success, message }: { success: boolean; message: string } =
       await res.json();
@@ -84,11 +78,11 @@ const EditorBlock = ({
       ) : isError ? (
         "An Error occurred."
       ) : userData.user?.role === "ADMIN" &&
-        userData.user.id === currentAuthor.id ? (
-        <div className="flex flex-col w-full">
-          <div className="flex flex-row justify-end">
+        userData.user.id === currentArticle?.author.id ? (
+        <div className="flex flex-col h-full w-full">
+          <div className="lg:px-[7rem] xl:px-[14rem] 2xl:px-[20rem] px-0 flex flex-row justify-end m-3 w-full lg:w-auto">
             <button
-              onClick={() => push(`/editor/new/${articleId}`)}
+              onClick={() => push(`/editor/new/${currentArticle.id}`)}
               className="btn btn-primary mr-3"
             >
               Edit
@@ -104,8 +98,10 @@ const EditorBlock = ({
         ""
       )}
       <ArticleDetails
-        username={currentAuthor.username}
-        publishedDate={publishedDate!}
+        username={currentArticle?.author.username!}
+        publishedDate={currentArticle?.date!}
+        categoryName={currentArticle?.category?.label!}
+        subcategoryName={currentArticle?.Subcategory?.label!}
       />
       <div className="pointer-events-none text-justify" id={holder} />
     </div>

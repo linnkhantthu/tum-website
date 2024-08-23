@@ -3,7 +3,6 @@ import { Resend } from "resend";
 import nodemailer from "nodemailer";
 import { getSession } from "./session";
 import { getUserByUsername } from "./query/user/query";
-import { User } from "./models";
 
 export function generateToken(): string {
   return crypto.randomBytes(16).toString("hex");
@@ -66,6 +65,13 @@ export async function sendMail(
   return data.data;
 }
 
+/**
+ * Send Mail with Nodemailer
+ * @param email
+ * @param subject
+ * @param template
+ * @returns
+ */
 export async function sendMailWithNodemailer(
   email: string,
   subject: string,
@@ -74,17 +80,16 @@ export async function sendMailWithNodemailer(
   const ReactDOMServer = (await import("react-dom/server")).default;
   const transporter = nodemailer.createTransport({
     service: "gmail",
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false,
     auth: {
-      type: "OAuth2",
-      user: process.env.MAIL_USERNAME,
-      // pass: process.env.MAIL_PASSWORD,
-      clientId: process.env.OAUTH_CLIENTID,
-      clientSecret: process.env.OAUTH_CLIENT_SECRET,
-      refreshToken: process.env.OAUTH_REFRESH_TOKEN,
+      user: process.env.MAIL_ADDRESS,
+      pass: process.env.MAIL_PASSWORD,
     },
   });
   const info = await transporter.sendMail({
-    from: "todo@dimensions.com",
+    from: "linn@dimensions.com",
     to: email,
     subject: subject,
     html: ReactDOMServer.renderToString(template),

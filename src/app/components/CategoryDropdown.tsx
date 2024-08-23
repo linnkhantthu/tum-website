@@ -36,7 +36,11 @@ function CategoryDropdown({
   };
   return (
     <div className="dropdown dropdown-end bg-base-200 w-full">
-      <div tabIndex={0} role="button" className=" btn btn-ghost w-full">
+      <div
+        tabIndex={0}
+        role="button"
+        className=" btn btn-ghost w-full text-xs sm:text-base"
+      >
         {<Icon />} {selectedCategory?.label || "Select Category"}
         <FaAngleDown className="text-right" />
       </div>
@@ -68,7 +72,7 @@ function CategoryDropdown({
                         element?.blur();
                       }
                     }}
-                    className="flex flex-row items-center w-full"
+                    className="flex flex-row items-center w-full text-xs sm:text-base"
                   >
                     {category.label}
                     {selectedCategory?.id === category.id ? (

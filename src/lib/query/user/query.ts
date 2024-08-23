@@ -6,7 +6,7 @@ import {
   generateToken,
   getExpireDate,
   isEmail,
-  sendMail,
+  sendMailWithNodemailer,
 } from "@/lib/utils";
 
 /**
@@ -20,6 +20,15 @@ export async function getUserByEmail(email?: string) {
       where: {
         email: email,
       },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        lastName: true,
+        role: true,
+        sessionId: true,
+        verified: true,
+      },
     });
     if (data !== null) {
       return data;
@@ -28,6 +37,11 @@ export async function getUserByEmail(email?: string) {
   return undefined;
 }
 
+/**
+ * Fetch All User cols with Email or Username
+ * @param emailOrUsername
+ * @returns
+ */
 export async function getUserByEmailOrUsername(emailOrUsername?: string) {
   let data = null;
   if (emailOrUsername) {
@@ -63,6 +77,15 @@ export async function getUserByUsername(username?: string) {
       where: {
         username: username,
       },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        lastName: true,
+        role: true,
+        sessionId: true,
+        verified: true,
+      },
     });
     if (data !== null) {
       return data;
@@ -82,6 +105,16 @@ export async function insertResetPasswordTokenByEmail(email?: string) {
     const user = await prisma.user.update({
       where: {
         email: email,
+      },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        lastName: true,
+        role: true,
+        sessionId: true,
+        verified: true,
+        resetPasswordToken: true,
       },
       data: {
         resetPasswordToken: generateToken(),
@@ -111,6 +144,16 @@ export async function insertVerifyTokenByEmail(email?: string) {
         where: {
           email: email,
         },
+        select: {
+          id: true,
+          email: true,
+          username: true,
+          lastName: true,
+          role: true,
+          sessionId: true,
+          verified: true,
+          verifyToken: true,
+        },
         data: {
           verifyToken: generateToken(),
           verifyTokenExpire: getExpireDate(1440),
@@ -134,7 +177,7 @@ export async function insertVerifyTokenByEmail(email?: string) {
  * @param nrcNo
  * @param password
  * @param host
- * @returns user: User | undefined,  message: string
+ * @returns user: User + verifyToken | undefined,  message: string AND Send verification to the registered mail
  */
 export async function insertUser(
   email?: string,
@@ -146,7 +189,7 @@ export async function insertUser(
   password?: string,
   host?: string
 ) {
-  let registeredUser: User | undefined = undefined;
+  let registeredUser;
   let message: string = "Please fill in all the field.";
   const hashPassword = new HashPassword();
   if (
@@ -159,83 +202,103 @@ export async function insertUser(
     password &&
     host
   ) {
+    const fmtedDob = new Date(dob);
+    // Check if user is already registered with the email
     const isUserExistsWithEmail = await prisma.user.findFirst({
       where: {
         email: email,
       },
     });
+
+    // Check if user is already registered with the username
     const isUserExistsWithUsername = await prisma.user.findFirst({
       where: {
         username: username,
       },
     });
+
+    // Check if user is already registered with the NRCNo#
     const isUserExistsWithNrcNo = await prisma.user.findFirst({
       where: {
         nrcNo: nrcNo,
       },
     });
+    // Check
     if (
       isUserExistsWithEmail === null &&
       isUserExistsWithUsername === null &&
       isUserExistsWithNrcNo === null
     ) {
-      const encryptedPassword = hashPassword.encrypt(password);
-      const fmtedDob = new Date(dob);
-      try {
-        const user = await prisma.user.create({
-          data: {
-            email: email,
-            username: username,
-            firstName: firstName,
-            lastName: lastName,
-            dob: fmtedDob,
-            nrcNo: nrcNo,
-            password: encryptedPassword,
-            verifyToken: generateToken(),
-            verifyTokenExpire: getExpireDate(1440),
-          },
-        });
+      // Check if the user is wheather in the Admin or Student Group
+      const isUserAdmin = await prisma.adminGroup.findFirst({
+        where: { AND: [{ email: email }, { nrcNo: nrcNo }, { dob: fmtedDob }] },
+      });
 
-        if (user) {
-          registeredUser = user as User;
-          message = `Registered successfully as ${registeredUser.username}.`;
-          const sentEmailId = await sendMail(
-            user.email,
-            "TUM: Verify your email before using further features.",
-            EmailTemplate({
-              description: "to complete the verification",
-              lastName: user.lastName,
-              token: user.verifyToken!,
-              host: host!,
-              path: "/auth/users/verify/",
-              buttonValue: "Verify",
-            })
-          );
-          // const sentEmailId = await sendMailWithNodemailer(
-          //   user.email,
-          //   "Todo: Verify your email",
-          //   EmailTemplate({
-          //     description: "to complete the verification",
-          //     lastName: user.lastName!,
-          //     token: user.verifyToken!,
-          //     host: host!,
-          //     path: "/users/verify/",
-          //     buttonValue: "Verify",
-          //   })
-          // );
-          message = sentEmailId
-            ? message + ` And sent the verification link to ${user.email}.`
-            : message +
-              ` Failed to send the verification link to ${user.email}`;
-          // return sentEmailId ? (user as User) : undefined;
-        } else {
-          message = "Failed to register the user.";
+      const isUserStudent = await prisma.studentGroup.findFirst({
+        where: { AND: [{ email: email }, { nrcNo: nrcNo }, { dob: fmtedDob }] },
+      });
+
+      if (isUserAdmin !== null || isUserStudent !== null) {
+        // Encrypt Password
+        const encryptedPassword = hashPassword.encrypt(password);
+
+        try {
+          const user = await prisma.user.create({
+            data: {
+              email: email,
+              username: username,
+              firstName: firstName,
+              lastName: lastName,
+              dob: fmtedDob,
+              nrcNo: nrcNo,
+              role: isUserAdmin !== null ? "ADMIN" : "USER",
+              password: encryptedPassword,
+              // Generate Verification Token
+              verifyToken: generateToken(),
+              // Set Verification Expire Time
+              verifyTokenExpire: getExpireDate(1440),
+            },
+            select: {
+              id: true,
+              email: true,
+              username: true,
+              lastName: true,
+              role: true,
+              sessionId: true,
+              verified: true,
+              verifyToken: true,
+            },
+          });
+
+          if (user) {
+            registeredUser = user;
+            message = `Registered successfully as ${registeredUser.username}.`;
+            const sentEmailId = await sendMailWithNodemailer(
+              user.email,
+              "TUM: Verify your email before using further features.",
+              EmailTemplate({
+                description: "to complete the verification",
+                lastName: user.lastName!,
+                token: user.verifyToken!,
+                host: host!,
+                path: "/auth/users/verify/",
+                buttonValue: "Verify",
+              })
+            );
+            message = sentEmailId
+              ? message + ` And sent the verification link to ${user.email}.`
+              : message +
+                ` Failed to send the verification link to ${user.email}`;
+          } else {
+            message = "Failed to register the user.";
+          }
+        } catch (error) {
+          console.error("Error: ", error);
         }
-      } catch (error) {
-        console.error("Error: ", error);
+      } else {
+        message = "You need to register at the admin group first.";
       }
     } else {
-      // msg = `User already exist with ${username} or ${email}.`;
       message =
         isUserExistsWithEmail !== null
           ? Results.ACCOUNT_ALREADY_EXIST_WITH_EMAIL
@@ -317,6 +380,15 @@ export async function updateVerifiedByVerifyToken(verifyToken?: string) {
     (await getUserByVerifyTokenAndVerified(verifyToken, false))
   ) {
     const data = await prisma.user.update({
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        lastName: true,
+        role: true,
+        sessionId: true,
+        verified: true,
+      },
       where: {
         verifyToken: verifyToken,
         verifyTokenExpire: {

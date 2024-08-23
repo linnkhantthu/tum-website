@@ -25,8 +25,12 @@ function ArticleById({ params }: { params: { id: string } }) {
   const [isLoading, setIsLoading] = useState(true);
   const [message, setMessage] = useState("");
   const [publishedDate, setPublishedDate] = useState<Date>();
+  const [currentArticle, setCurrentArticle] = useState<Article>();
 
-  const fetchData = async () => {
+  /**
+   * Fetch Article
+   */
+  const fetchArticle = async () => {
     const res = await fetch(`/api/articles?id=${params.id}`, {
       method: "GET",
       headers: {
@@ -37,6 +41,7 @@ function ArticleById({ params }: { params: { id: string } }) {
       const { articles, message }: { articles: Article; message: string } =
         await res.json();
       if (articles) {
+        setCurrentArticle(articles);
         setData(articles.content === null ? data : articles.content);
         setCurrentAuthor(articles.author);
         setPublishedDate(articles.date);
@@ -50,16 +55,19 @@ function ArticleById({ params }: { params: { id: string } }) {
   };
 
   useEffect(() => {
-    fetchData();
+    fetchArticle();
   }, []);
   return isLoading ? (
-    <Loading label="Fetching data..." />
+    <div className="flex flex-col h-full justify-center">
+      <Loading label="Fetching article..." />
+    </div>
   ) : currentAuthor ? (
     <EditorBlock
       data={data}
       onChange={setData}
       holder="editorjs-container"
       articleId={params.id}
+      currentArticle={currentArticle}
       currentAuthor={currentAuthor!}
       publishedDate={publishedDate}
     />

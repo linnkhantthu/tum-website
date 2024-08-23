@@ -1,7 +1,6 @@
 import { NextRequest } from "next/server";
 import { Results } from "@/lib/models";
 import { createResponse, getSession } from "@/lib/session";
-import prisma from "@/db";
 import {
   getUserByResetPasswordToken,
   updatePasswordByResetPasswordToken,
@@ -44,7 +43,7 @@ export async function POST(request: NextRequest) {
 
       // If the update function succeed
       if (updatedUser) {
-        email = user.email;
+        email = updatedUser.email;
         message = Results.SUCCESS;
       }
     } else {
@@ -63,23 +62,3 @@ export async function POST(request: NextRequest) {
     status: 403,
   });
 }
-
-getUserByResetPasswordToken()
-  .then(async () => {
-    await prisma.$disconnect();
-  })
-  .catch(async (e) => {
-    console.error(e);
-    await prisma.$disconnect();
-    process.exit(1);
-  });
-
-updatePasswordByResetPasswordToken()
-  .then(async () => {
-    await prisma.$disconnect();
-  })
-  .catch(async (e) => {
-    console.error(e);
-    await prisma.$disconnect();
-    process.exit(1);
-  });

@@ -3,11 +3,8 @@ import { Messages, Results } from "@/lib/models";
 import { createResponse, getSession } from "@/lib/session";
 import prisma from "@/db";
 import EmailTemplate from "@/emails/EmailTemplate";
-import {
-  getUserByEmail,
-  insertVerifyTokenByEmail,
-} from "@/lib/query/user/query";
-import { isAuth, sendMail, sendMailWithNodemailer } from "@/lib/utils";
+import { insertVerifyTokenByEmail } from "@/lib/query/user/query";
+import { isAuth, sendMailWithNodemailer } from "@/lib/utils";
 
 // {email: string, message: Results}
 // { email: string }
@@ -27,30 +24,18 @@ export async function POST(request: NextRequest) {
     const { token } = await insertVerifyTokenByEmail(currentUser.email);
     if (token) {
       try {
-        const sentEmailId = await sendMail(
+        const sentEmailId = await sendMailWithNodemailer(
           currentUser.email,
           "TUM: Verify your email",
           EmailTemplate({
             description: "to complete verification",
-            host: request.headers.get("host")!,
             lastName: currentUser.lastName,
             token: token,
+            host: request.headers.get("host")!,
             path: "/users/auth/verify/",
             buttonValue: "Verify",
           })
         );
-        // const sentEmailId = await sendMailWithNodemailer(
-        //   currentUser.email,
-        //   "Todo: Verify your email",
-        //   EmailTemplate({
-        //     description: "to complete verification",
-        //     lastName: currentUser.lastName,
-        //     token: token,
-        //     host: request.headers.get("host")!,
-        //     path: "/users/verify/",
-        //     buttonValue: "Verify",
-        //   })
-        // );
 
         if (sentEmailId !== null) {
           isSuccess = true;
@@ -83,13 +68,3 @@ export async function POST(request: NextRequest) {
     }
   );
 }
-
-getUserByEmail()
-  .then(async () => {
-    await prisma.$disconnect();
-  })
-  .catch(async (e) => {
-    console.error(e);
-    await prisma.$disconnect();
-    process.exit(1);
-  });

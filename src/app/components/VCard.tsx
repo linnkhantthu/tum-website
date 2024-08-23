@@ -18,8 +18,9 @@ function VCard({
   articleId: string;
 }) {
   return (
-    <div className="card card-bordered bg-base-100 w-[100%] sm:w-[49%] shadow-xl h-96 mr-1 mb-1">
-      <figure className="min-h-[50%] max-h-[50%]">
+    <div className="card card-bordered bg-base-200 shadow-xl h-96 ring-1 ring-neutral">
+      {/* Image */}
+      <figure className="min-h-[50%] max-h-[50%] border-b-[0.5px] border-neutral">
         {image ? (
           <Image
             src={image.data.file.url}
@@ -31,8 +32,11 @@ function VCard({
           <Image src="/tum-logo.png" alt="image" width={500} height={500} />
         )}
       </figure>
-      <div className="card-body h-1/2 pt-3">
-        <h2 className="card-title overflow-ellipsis">
+
+      {/* Card Body */}
+      <div className="card-body min-h-[50%] max-h-[50%] pt-3">
+        {/* Card Title */}
+        <h2 className="card-title text-sm lg:text-base h-[30%] overflow-ellipsis">
           <Link
             href={`/articles/${articleId}`}
             className="link link-success link-hover"
@@ -42,12 +46,17 @@ function VCard({
           <div className="badge badge-secondary">NEW</div>
         </h2>
 
-        <div className="line-clamp-3 text-justify text-sm sm:text-base">
+        {/* Card Content */}
+        <div className="line-clamp-3 text-sm lg:text-base h-[55%] text-justify">
           {content.replaceAll("&nbsp;", "")}
         </div>
-        <div className="card-actions justify-end">
-          <div className="badge badge-outline">{authorName}</div>
-          <div className="badge badge-outline">{date}</div>
+
+        {/* Card Actions */}
+        <div className="card-actions h-[15%] justify-end">
+          <div className="badge badge-outline badge-sm lg:badge-md">
+            {authorName}
+          </div>
+          <div className="badge badge-outline badge-sm lg:badge-md">{date}</div>
         </div>
       </div>
     </div>

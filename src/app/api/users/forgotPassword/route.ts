@@ -7,7 +7,7 @@ import {
   getUserByEmail,
   insertResetPasswordTokenByEmail,
 } from "@/lib/query/user/query";
-import { isAuth, sendMail, sendMailWithNodemailer } from "@/lib/utils";
+import { isAuth, sendMailWithNodemailer } from "@/lib/utils";
 
 // {email: string, message: Results}
 // { email: string }
@@ -39,33 +39,20 @@ export async function POST(request: NextRequest) {
         if (token) {
           // Try to send the token as a form of react element with a Button
           try {
-            console.log("inside try");
-            const emailRes = await sendMail(
+            const sentEmailId = await sendMailWithNodemailer(
               user.email,
               "TUM: Reset your Password",
               EmailTemplate({
-                description: "to reset your password.",
-                host: request.headers.get("host")!,
+                description: "to reset the password",
                 lastName: user.lastName,
                 token: token,
+                host: request.headers.get("host")!,
                 path: "/users/auth/forgotPassword/verify/",
                 buttonValue: "Reset Password",
               })
             );
-            // const sentEmailId = await sendMailWithNodemailer(
-            //   user.email,
-            //   "Todo: Reset password",
-            //   EmailTemplate({
-            //     description: "to reset the password",
-            //     lastName: user.lastName,
-            //     token: token,
-            //     host: request.headers.get("host")!,
-            //     path: "/users/auth/forgotPassword/verify/",
-            //     buttonValue: "Reset Password",
-            //   })
-            // );
             // If the mail is successfully sent
-            if (emailRes !== null) {
+            if (sentEmailId) {
               isSuccess = true;
               message =
                 "We have sent an email to " + user.email + " successfully.";
@@ -74,6 +61,7 @@ export async function POST(request: NextRequest) {
               message = "Failed to send email, please try again";
             }
           } catch (error) {
+            console.error(error);
             message = Results.SERVER_ERROR;
           }
         }
@@ -107,22 +95,12 @@ export async function POST(request: NextRequest) {
   // If the user is loggedout
 }
 
-getUserByEmail()
-  .then(async () => {
-    await prisma.$disconnect();
-  })
-  .catch(async (e) => {
-    console.error(e);
-    await prisma.$disconnect();
-    process.exit(1);
-  });
-
-insertResetPasswordTokenByEmail()
-  .then(async () => {
-    await prisma.$disconnect();
-  })
-  .catch(async (e) => {
-    console.error(e);
-    await prisma.$disconnect();
-    process.exit(1);
-  });
+// getUserByEmail()
+//   .then(async () => {
+//     await prisma.$disconnect();
+//   })
+//   .catch(async (e) => {
+//     console.error(e);
+//     await prisma.$disconnect();
+//     process.exit(1);
+//   });
