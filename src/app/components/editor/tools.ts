@@ -97,8 +97,8 @@ export const EDITOR_TOOLS = {
     inlineToolbar: true,
     config: {
       endpoints: {
-        byFile: `http://${window.location.host}/api/articles/uploadImage`, // Your backend file uploader endpoint
-        byUrl: `http://${window.location.host}/api/articles/uploadImage`, // Your endpoint that provides uploading by Url
+        byFile: `${window.location.origin}/api/articles/uploadImage`, // Your backend file uploader endpoint
+        byUrl: `${window.location.origin}/api/articles/uploadImage`, // Your endpoint that provides uploading by Url
       },
     },
   },
@@ -154,7 +154,7 @@ export const EDITOR_TOOLS = {
   attaches: {
     class: CustomAttachesTool,
     config: {
-      endpoint: `http://${window.location.host}/api/articles/uploadFile`,
+      endpoint: `${window.location.origin}/api/articles/uploadFile`,
     },
   },
   paragraph: {
