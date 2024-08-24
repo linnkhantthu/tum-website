@@ -15,7 +15,7 @@ function DeleteDialog({ uploader }: { uploader: () => Promise<void> }) {
           <h3 className="font-bold text-lg">
             Are you sure that you want to delete this article?
           </h3>
-          <p className="">
+          <div>
             <form method="dialog" className="flex flex-row w-full justify-end">
               <button className="btn btn-success btn-sm mr-2">Cancel</button>
               <button
@@ -27,7 +27,7 @@ function DeleteDialog({ uploader }: { uploader: () => Promise<void> }) {
                 Delete
               </button>
             </form>
-          </p>
+          </div>
         </div>
       </dialog>
     </div>

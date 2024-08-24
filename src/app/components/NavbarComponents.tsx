@@ -6,6 +6,7 @@ import useUser from "@/lib/useUser";
 import ThemeController from "./ThemeController";
 import NavbarDropdown from "./NavbarDropdown";
 import { Category, SpecialCategory } from "@/lib/models";
+import Link from "next/link";
 
 function NavbarComponents({
   isMenuHorizontal,
@@ -65,7 +66,9 @@ function NavbarComponents({
       </li>
 
       <li>
-        <a href="/articles">Articles</a>
+        <Link className="btn btn-ghost" href="/articles">
+          Articles
+        </Link>
       </li>
       {isLoading ? (
         <Loading />
@@ -77,29 +80,35 @@ function NavbarComponents({
         <>
           {data.user?.role === "ADMIN" ? (
             <li>
-              <a href="/editor/new">Editor</a>
+              <Link className="btn btn-ghost" href="/editor/new">
+                Editor
+              </Link>
             </li>
           ) : (
             ""
           )}
+          <li className="flex flex-row items-end">
+            <span>
+              Theme
+              <ThemeController
+                themeController={themeController}
+                themeId={themeId}
+              />
+            </span>
+          </li>
           <li>
-            <a href="/users/auth/logout">Logout</a>
+            <Link className="btn btn-error" href="/users/auth/logout">
+              Logout
+            </Link>
           </li>
         </>
       ) : (
         <li>
-          <a href="/users/auth/">Login/Register</a>
+          <Link className="btn btn-ghost" href="/users/auth/">
+            Login/Register
+          </Link>
         </li>
       )}
-      <li className="flex flex-row items-end">
-        <span>
-          Theme
-          <ThemeController
-            themeController={themeController}
-            themeId={themeId}
-          />
-        </span>
-      </li>
     </ul>
   );
 }
