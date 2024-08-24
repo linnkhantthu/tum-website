@@ -3,6 +3,7 @@ import { Resend } from "resend";
 import nodemailer from "nodemailer";
 import { getSession } from "./session";
 import { getUserByUsername } from "./query/user/query";
+import { Auth, signInWithEmailAndPassword, signOut } from "firebase/auth";
 
 export function generateToken(): string {
   return crypto.randomBytes(16).toString("hex");
@@ -126,4 +127,28 @@ export function isEmail(email: string) {
     .match(
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     );
+}
+
+export async function signInFirebase(auth: Auth) {
+  try {
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      process.env.MAIL_ADDRESS!,
+      process.env.USER_PASSWORD!
+    );
+    return userCredential.user.uid;
+  } catch (error) {
+    console.error(error);
+    return undefined;
+  }
+}
+
+export async function signOutFirebase(auth: Auth) {
+  try {
+    await signOut(auth);
+    return true;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
 }
