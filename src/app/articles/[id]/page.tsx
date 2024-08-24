@@ -1,79 +1,57 @@
-"use client";
+import ArticlePage from "@/app/components/ArticlePage";
+import { Article } from "@/lib/models";
+import { Metadata, ResolvingMetadata } from "next";
+import { headers } from "next/headers";
 
-import Loading from "@/app/components/Loading";
-import { Article, User } from "@/lib/models";
-//index.tsx
-import { OutputData } from "@editorjs/editorjs";
-import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
-
-// important that we use dynamic loading here
-// editorjs should only be rendered on the client side.
-const EditorBlock = dynamic(
-  () => import("@/app/components/editor/EditorReadOnly"),
-  {
-    ssr: false,
+// Generate Metadata
+export async function generateMetadata(
+  { params }: { params: { id: string } },
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  // read route params
+  const id = params.id;
+  let article: Article | undefined;
+  let imageUrl: string | undefined;
+  let title: string | undefined;
+  const headerList = headers();
+  const protocol = headerList.get("x-forwarded-proto");
+  const host = headerList.get("host");
+  // fetch data
+  const res = await fetch(`${protocol}://${host}/api/articles?id=${id}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (res.ok) {
+    const { articles, message }: { articles: Article; message: string } =
+      await res.json();
+    if (articles) {
+      article = articles;
+      const blocks =
+        article.content === null ? undefined : article.content.blocks;
+      imageUrl = blocks?.filter((value) => value.type === "image")[0].data.file
+        .url;
+      const header = blocks?.filter((value) => value.type === "header")[0];
+      title = header ? header.data.text : "Title";
+    }
+  } else {
+    const { message } = await res.json();
+    console.log(message);
   }
-);
 
-import React from "react";
+  // optionally access and extend (rather than replace) parent metadata
+  const previousImages = (await parent).openGraph?.images || [];
+  return {
+    title: title,
+    openGraph: {
+      images: [imageUrl!, ...previousImages],
+    },
+  };
+}
 
 function ArticleById({ params }: { params: { id: string } }) {
-  //state to hold output data. we'll use this for rendering later
-  const [data, setData] = useState<OutputData>();
-  const [currentAuthor, setCurrentAuthor] = useState<User>();
-  const [isLoading, setIsLoading] = useState(true);
-  const [message, setMessage] = useState("");
-  const [publishedDate, setPublishedDate] = useState<Date>();
-  const [currentArticle, setCurrentArticle] = useState<Article>();
-
-  /**
-   * Fetch Article
-   */
-  const fetchArticle = async () => {
-    const res = await fetch(`/api/articles?id=${params.id}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    if (res.ok) {
-      const { articles, message }: { articles: Article; message: string } =
-        await res.json();
-      if (articles) {
-        setCurrentArticle(articles);
-        setData(articles.content === null ? data : articles.content);
-        setCurrentAuthor(articles.author);
-        setPublishedDate(articles.date);
-      }
-      setMessage(message);
-    } else {
-      const { message } = await res.json();
-      setMessage(message);
-    }
-    setIsLoading(false);
-  };
-
-  useEffect(() => {
-    fetchArticle();
-  }, []);
-  return isLoading ? (
-    <div className="flex flex-col h-full justify-center">
-      <Loading label="Fetching article..." />
-    </div>
-  ) : currentAuthor ? (
-    <EditorBlock
-      data={data}
-      onChange={setData}
-      holder="editorjs-container"
-      articleId={params.id}
-      currentArticle={currentArticle}
-      currentAuthor={currentAuthor!}
-      publishedDate={publishedDate}
-    />
-  ) : (
-    <div className="text-center mt-3">{message}</div>
-  );
+  return <ArticlePage id={params.id} />;
 }
 
 export default ArticleById;
