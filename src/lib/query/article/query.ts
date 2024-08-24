@@ -138,9 +138,16 @@ export async function getArticleById(
   let article;
   let message;
   let count = 1;
-  if (isLoggedIn && isVerified) {
-    article = await prisma.article.findFirst({
-      where: { AND: { id: id } },
+  if (id === "latest") {
+    article = await prisma.article.findMany({
+      take: 1,
+      where: {
+        isPublished: true,
+        type: isLoggedIn && isVerified ? undefined : "PUBLIC",
+      },
+      orderBy: {
+        date: "desc",
+      },
       select: {
         id: true,
         date: true,
@@ -201,77 +208,142 @@ export async function getArticleById(
         },
       },
     });
-    message =
-      article === null
-        ? "You need to be logged in and verified to read this article."
-        : "Fetched article successfully.";
   } else {
-    article = await prisma.article.findFirst({
-      where: { AND: { id: id, type: "PUBLIC" } },
-      select: {
-        id: true,
-        date: true,
-        content: true,
-        isPublished: true,
-        type: true,
-        Subcategory: {
-          select: {
-            id: true,
-            date: true,
-            label: true,
-            author: {
-              select: {
-                id: true,
-                email: true,
-                username: true,
-                lastName: true,
-                role: true,
-                sessionId: true,
-                verified: true,
+    if (isLoggedIn && isVerified) {
+      article = await prisma.article.findFirst({
+        where: { AND: { id: id } },
+        select: {
+          id: true,
+          date: true,
+          content: true,
+          isPublished: true,
+          type: true,
+          Subcategory: {
+            select: {
+              id: true,
+              date: true,
+              label: true,
+              author: {
+                select: {
+                  id: true,
+                  email: true,
+                  username: true,
+                  lastName: true,
+                  role: true,
+                  sessionId: true,
+                  verified: true,
+                },
               },
+              userId: true,
+              categoryId: true,
             },
-            userId: true,
-            categoryId: true,
           },
-        },
-        category: {
-          select: {
-            id: true,
-            date: true,
-            label: true,
-            isSpecial: true,
-            author: {
-              select: {
-                id: true,
-                email: true,
-                username: true,
-                lastName: true,
-                role: true,
-                sessionId: true,
-                verified: true,
+          category: {
+            select: {
+              id: true,
+              date: true,
+              label: true,
+              isSpecial: true,
+              author: {
+                select: {
+                  id: true,
+                  email: true,
+                  username: true,
+                  lastName: true,
+                  role: true,
+                  sessionId: true,
+                  verified: true,
+                },
               },
+              userId: true,
+              subcategory: true,
             },
-            userId: true,
-            subcategory: true,
+          },
+          author: {
+            select: {
+              id: true,
+              email: true,
+              username: true,
+              lastName: true,
+              role: true,
+              sessionId: true,
+              verified: true,
+            },
           },
         },
-        author: {
-          select: {
-            id: true,
-            email: true,
-            username: true,
-            lastName: true,
-            role: true,
-            sessionId: true,
-            verified: true,
+      });
+      message =
+        article === null
+          ? "You need to be logged in and verified to read this article."
+          : "Fetched article successfully.";
+    } else {
+      article = await prisma.article.findFirst({
+        where: { AND: { id: id, type: "PUBLIC" } },
+        select: {
+          id: true,
+          date: true,
+          content: true,
+          isPublished: true,
+          type: true,
+          Subcategory: {
+            select: {
+              id: true,
+              date: true,
+              label: true,
+              author: {
+                select: {
+                  id: true,
+                  email: true,
+                  username: true,
+                  lastName: true,
+                  role: true,
+                  sessionId: true,
+                  verified: true,
+                },
+              },
+              userId: true,
+              categoryId: true,
+            },
+          },
+          category: {
+            select: {
+              id: true,
+              date: true,
+              label: true,
+              isSpecial: true,
+              author: {
+                select: {
+                  id: true,
+                  email: true,
+                  username: true,
+                  lastName: true,
+                  role: true,
+                  sessionId: true,
+                  verified: true,
+                },
+              },
+              userId: true,
+              subcategory: true,
+            },
+          },
+          author: {
+            select: {
+              id: true,
+              email: true,
+              username: true,
+              lastName: true,
+              role: true,
+              sessionId: true,
+              verified: true,
+            },
           },
         },
-      },
-    });
-    message =
-      article === null
-        ? "You need to be a member to read this article."
-        : "Fetched article successfully.";
+      });
+      message =
+        article === null
+          ? "You need to be a member to read this article."
+          : "Fetched article successfully.";
+    }
   }
 
   return { article, message, count };
