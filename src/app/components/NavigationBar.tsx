@@ -142,7 +142,7 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
               href={`/articles/${latestArticle?.id}`}
               className="pl-2 line-clamp-1 link"
             >
-              {title}-{content}
+              {title}: {content}
             </Link>
             <span
               className="absolute right-1 cursor-pointer"

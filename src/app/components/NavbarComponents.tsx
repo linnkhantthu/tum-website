@@ -6,6 +6,8 @@ import useUser from "@/lib/useUser";
 import ThemeController from "./ThemeController";
 import NavbarDropdown from "./NavbarDropdown";
 import { Category, SpecialCategory } from "@/lib/models";
+import { MdCategory, MdList, MdNewspaper } from "react-icons/md";
+import Link from "next/link";
 
 function NavbarComponents({
   isMenuHorizontal,
@@ -46,6 +48,13 @@ function NavbarComponents({
     }
   };
 
+  const closeDrawer = () => {
+    const checkbox = document.getElementById("my-drawer-3")!;
+    checkbox.checked = false;
+    const menus = document.getElementsByName("menu")!;
+    menus.forEach((menu) => (menu.open = false));
+  };
+
   useEffect(() => {
     fetchSpecialCategories();
   }, []);
@@ -60,9 +69,79 @@ function NavbarComponents({
     >
       {/* Sidebar content here */}
 
-      <li>
+      {/* <li>
         <NavbarDropdown categories={categories} />
-      </li>
+      </li> */}
+      {categories.map((category) => (
+        <li key={`parentli-${category.id}`} className=" z-30">
+          <details name="menu">
+            <summary>
+              <MdCategory />
+              {category.label}
+            </summary>
+            <ul className="bg-base-200 xl:w-[20rem]">
+              {category.Article.map((article) => {
+                const blocks =
+                  article.content === null ? undefined : article.content.blocks;
+                const header = blocks?.filter(
+                  (value) => value.type === "header"
+                )[0];
+                const title = header ? header.data.text : "Title";
+                return (
+                  <li
+                    key={`articleli-${article.id}`}
+                    className="border-b-[0.1px] border-neutral w-full"
+                  >
+                    <Link
+                      href={`/articles/${article.id}`}
+                      onClick={() => closeDrawer()}
+                    >
+                      <MdNewspaper />
+                      {title}
+                    </Link>
+                  </li>
+                );
+              })}
+              {category.subcategory.map((subcategory) => (
+                <li key={`subcategoryli-${subcategory.id}`}>
+                  <details>
+                    <summary>
+                      <MdCategory />
+                      {subcategory.label}
+                    </summary>
+                    <ul>
+                      {subcategory.Article.map((article) => {
+                        const blocks =
+                          article.content === null
+                            ? undefined
+                            : article.content.blocks;
+                        const header = blocks?.filter(
+                          (value) => value.type === "header"
+                        )[0];
+                        const title = header ? header.data.text : "Title";
+                        return (
+                          <li
+                            key={`articleli-${article.id}`}
+                            className=" border-b-[0.1px] border-neutral"
+                          >
+                            <Link
+                              href={`/articles/${article.id}`}
+                              onClick={() => closeDrawer()}
+                            >
+                              <MdNewspaper />
+                              {title}
+                            </Link>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </details>
+                </li>
+              ))}
+            </ul>
+          </details>
+        </li>
+      ))}
 
       <li>
         <a href="/articles">Articles</a>
