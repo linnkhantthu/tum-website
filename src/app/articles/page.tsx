@@ -70,7 +70,7 @@ function Articles() {
   }, [isPublished]);
   return (
     <>
-      <main className="h-[1300px]">
+      <main>
         <div className=" flex flex-col">
           <div className="flex flex-row items-center w-full justify-end">
             {/* Filter */}

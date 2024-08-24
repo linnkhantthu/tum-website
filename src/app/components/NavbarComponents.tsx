@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import Loading from "./Loading";
 import useUser from "@/lib/useUser";
 import ThemeController from "./ThemeController";
-import NavbarDropdown from "./NavbarDropdown";
 import { Category, SpecialCategory } from "@/lib/models";
 import { MdCategory, MdList, MdNewspaper } from "react-icons/md";
 import Link from "next/link";
@@ -50,8 +49,10 @@ function NavbarComponents({
 
   const closeDrawer = () => {
     const checkbox = document.getElementById("my-drawer-3")!;
+    // @ts-ignore
     checkbox.checked = false;
     const menus = document.getElementsByName("menu")!;
+    // @ts-ignore
     menus.forEach((menu) => (menu.open = false));
   };
 
@@ -79,8 +80,16 @@ function NavbarComponents({
               <MdCategory />
               {category.label}
             </summary>
-            <ul className="bg-base-200 xl:w-[20rem]">
-              {category.Article.map((article) => {
+            <ul
+              className="bg-base-200 xl:w-[20rem]"
+              onMouseLeave={(e) =>
+                // @ts-ignore
+                (e.currentTarget.parentElement!.open = !isMenuHorizontal)
+              }
+            >
+              {category.Article.filter(
+                (article) => article.Subcategory === null
+              ).map((article) => {
                 const blocks =
                   article.content === null ? undefined : article.content.blocks;
                 const header = blocks?.filter(
@@ -97,7 +106,7 @@ function NavbarComponents({
                       onClick={() => closeDrawer()}
                     >
                       <MdNewspaper />
-                      {title}
+                      {title.replaceAll("&nbsp;", "")}
                     </Link>
                   </li>
                 );
@@ -109,7 +118,13 @@ function NavbarComponents({
                       <MdCategory />
                       {subcategory.label}
                     </summary>
-                    <ul>
+                    <ul
+                      onMouseLeave={(e) =>
+                        // @ts-ignore
+                        (e.currentTarget.parentElement!.open =
+                          !isMenuHorizontal)
+                      }
+                    >
                       {subcategory.Article.map((article) => {
                         const blocks =
                           article.content === null
@@ -129,7 +144,7 @@ function NavbarComponents({
                               onClick={() => closeDrawer()}
                             >
                               <MdNewspaper />
-                              {title}
+                              {title.replaceAll("&nbsp;", "")}
                             </Link>
                           </li>
                         );

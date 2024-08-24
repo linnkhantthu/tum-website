@@ -50,9 +50,13 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
         const paragraph = blocks.filter(
           (value) => value.type === "paragraph"
         )[0];
+        let _title: string = header.data.text;
+        _title = _title.replaceAll("&nbsp;", "");
 
-        setTitle(header ? header.data.text : "Title");
-        setContent(paragraph ? paragraph.data.text : "Content");
+        let _paragraph: string = paragraph.data.text;
+        _paragraph = _paragraph.replaceAll("&nbsp;", "");
+        setTitle(header ? _title : "Title");
+        setContent(paragraph ? _paragraph : "Content");
       }
     } else {
       const { message } = await res.json();
@@ -104,7 +108,6 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
       themeController_1!.checked = localTheme === "dark" ? true : false;
       // @ts-ignore
       themeController_2!.checked = localTheme === "dark" ? true : false;
-      // console.log("isCheck: ", isCheck.checked);
     }
   }, [isLoading]);
 
@@ -140,7 +143,7 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
             <MdInfoOutline />
             <Link
               href={`/articles/${latestArticle?.id}`}
-              className="pl-2 line-clamp-1 link"
+              className="pl-2 line-clamp-1 link w-[95%]"
             >
               {title}: {content}
             </Link>
@@ -232,7 +235,7 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
           </div>
         </body>
       </html>
-      <footer className="footer bg-base-300 text-base-content p-10 mt-3">
+      <footer className="footer bg-base-300 text-base-content p-10 mt-3 bottom-0">
         <nav>
           <h6 className="footer-title">Services</h6>
           <a className="link link-hover">Branding</a>
