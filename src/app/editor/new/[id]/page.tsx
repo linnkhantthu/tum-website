@@ -403,39 +403,38 @@ function EditorPage({ params }: { params: { id: string } }) {
       <Loading label="Fetching data..." />
     ) : (
       <>
-        <main className="flex flex-row justify-center">
-          <EditorBlock
-            data={data}
-            onChange={setData}
-            currentArticle={currentArticle!}
-            setCurrentArticle={setCurrentArticle}
-            holder="editorjs-container"
-            toasts={toasts}
-            setToasts={setToasts}
-            categories={categories}
-            setCategories={setCategories}
-            subcategories={subcategories!}
-            setSubcategories={setSubcategories}
-            newCategory={newCategory}
-            newCategorycontroller={newCategoryController}
-            newCategoryError={newCategoryError}
-            newCategoryErrorController={newCategoryErrorController}
-            handleCategorySubmit={handleCategorySubmit}
-            newSubcategory={newSubcategory}
-            newSubcategorycontroller={newSubcategoryController}
-            newSubcategoryError={newSubcategoryError}
-            newSubcategoryErrorController={newSubcategoryErrorController}
-            handlesubcategorySubmit={handleSubcategorySubmit}
-            selectedCategory={selectedCategory}
-            setSelectedCategory={setSelectedCategory}
-            selectedSubcategory={selectedSubcategory}
-            setSelectedSubcategory={setSelectedSubcategory}
-            deleteCategory={deleteCategory}
-            deleteSubcategory={deleteSubcategory}
-            isSpecial={isSpecial}
-            isSpecialController={isSpecialController}
-          />
-        </main>
+        <EditorBlock
+          data={data}
+          onChange={setData}
+          currentArticle={currentArticle!}
+          setCurrentArticle={setCurrentArticle}
+          holder="editorjs-container"
+          toasts={toasts}
+          setToasts={setToasts}
+          categories={categories}
+          setCategories={setCategories}
+          subcategories={subcategories!}
+          setSubcategories={setSubcategories}
+          newCategory={newCategory}
+          newCategorycontroller={newCategoryController}
+          newCategoryError={newCategoryError}
+          newCategoryErrorController={newCategoryErrorController}
+          handleCategorySubmit={handleCategorySubmit}
+          newSubcategory={newSubcategory}
+          newSubcategorycontroller={newSubcategoryController}
+          newSubcategoryError={newSubcategoryError}
+          newSubcategoryErrorController={newSubcategoryErrorController}
+          handlesubcategorySubmit={handleSubcategorySubmit}
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+          selectedSubcategory={selectedSubcategory}
+          setSelectedSubcategory={setSelectedSubcategory}
+          deleteCategory={deleteCategory}
+          deleteSubcategory={deleteSubcategory}
+          isSpecial={isSpecial}
+          isSpecialController={isSpecialController}
+        />
+        {/* Toasts */}
         <div className="toast toast-start z-10">
           {toasts?.map((value) => {
             return (

@@ -10,6 +10,12 @@ import Loading from "../Loading";
 import DeleteDialog from "../DeleteDialog";
 import { Article, User } from "@/lib/models";
 import ArticleDetails from "../ArticleDetails";
+import {
+  MdDelete,
+  MdDeleteForever,
+  MdDeleteOutline,
+  MdEdit,
+} from "react-icons/md";
 
 //props
 type Props = {
@@ -79,16 +85,19 @@ const EditorBlock = ({ data, holder, currentArticle }: Props) => {
         "An Error occurred."
       ) : userData.user?.role === "ADMIN" &&
         userData.user.id === currentArticle?.author.id ? (
-        <div className="flex flex-col h-full w-full">
-          <div className="lg:px-[7rem] xl:px-[14rem] 2xl:px-[20rem] px-0 flex flex-row justify-end m-3 w-full lg:w-auto">
+        // Actions
+        <div className="flex flex-col gap-2">
+          <div className="flex flex-row gap-2 justify-end w-full">
             <button
               onClick={() => push(`/editor/new/${currentArticle.id}`)}
-              className="btn btn-primary mr-3"
+              className="btn btn-primary"
             >
               Edit
+              <MdEdit />
             </button>
             <button onClick={callDialog} className="btn btn-error">
               Delete
+              <MdDelete />
             </button>
           </div>
 
