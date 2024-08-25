@@ -30,7 +30,7 @@ export async function generateMetadata(
       article = articles;
       const blocks =
         article.content === null ? undefined : article.content.blocks;
-      imageUrl = blocks?.filter((value) => value.type === "image")[0].data.file
+      imageUrl = blocks?.filter((value) => value.type === "image")[0]?.data.file
         .url;
       const header = blocks?.filter((value) => value.type === "header")[0];
       title = header ? header.data.text : "Title";

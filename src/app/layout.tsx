@@ -15,11 +15,5 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en">
-      <body className="m-0 h-full" suppressHydrationWarning={true}>
-        <NavigationBar>{children}</NavigationBar>
-      </body>
-    </html>
-  );
+  return <NavigationBar>{children}</NavigationBar>;
 }

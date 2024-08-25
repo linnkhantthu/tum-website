@@ -12,12 +12,14 @@ function Toast({
   onDelete: (toastId: string) => boolean;
   toastId: string;
 }) {
+  const [count, setCount] = useState(0);
   useEffect(() => {
     // Toast Element Class List
     const elementClassList = document.getElementById(toastId)?.classList;
 
     // First time out to set opacity 0
-    setTimeout(() => {
+
+    if (count === 100) {
       const isThereFullOpacity = elementClassList?.contains("opacity-100");
       if (!isThereFullOpacity) {
         // Set Opacity after 5s
@@ -32,44 +34,61 @@ function Toast({
           }
         }, 5000);
       }
-    }, 5000);
-  }, []);
+    } else {
+      setTimeout(() => setCount(count + 1), 50);
+    }
+  }, [count]);
 
   return (
-    <div
-      onMouseEnter={() => {
-        const elementClassList = document.getElementById(toastId)?.classList;
-        const isThereOpacity = elementClassList?.contains("opacity-0");
-        if (isThereOpacity) {
-          elementClassList?.remove("opacity-0");
-        } else {
-          elementClassList?.add("opacity-100");
-        }
-      }}
-      id={toastId}
-      className={`ease-in-out duration-[5000ms] flex flex-row rounded items-center alert ${flashMessage.category} max-w-[100%] min-w-[100%] sm:max-w-[22rem] sm:min-w-[22rem] py-1`}
-    >
-      <span className="flex flex-row items-center w-full">
-        {/* Icon */}
-        <span className="min-w-[20px] mr-3 text-lg ">
-          <FaInfoCircle />
-        </span>
-        {/* Info */}
-        <span className="sm:text-base text-sm line-clamp-2 text-left text-wrap sm:min-w-[250px]">
-          {flashMessage.message}
-        </span>
-      </span>
-      {/* Action */}
-      <span
-        onClick={() => {
-          onDelete(flashMessage.id);
+    <div className="flex flex-col">
+      <div
+        onMouseEnter={() => {
+          const elementClassList = document.getElementById(toastId)?.classList;
+          const isThereOpacity = elementClassList?.contains("opacity-0");
+          if (isThereOpacity) {
+            elementClassList?.remove("opacity-0");
+          } else {
+            elementClassList?.add("opacity-100");
+          }
         }}
-        className=" bg-base-100 btn btn-circle btn-xs btn-outline btn-error"
+        id={toastId}
+        className={`h-14 ease-in-out duration-[5000ms] flex flex-row rounded items-center alert ${flashMessage.category} max-w-[90%] min-w-[90%] sm:max-w-[22rem] sm:min-w-[22rem] py-1`}
       >
-        <span>
-          <FaXmark />
+        <span className="flex flex-row items-center w-full">
+          {/* Icon */}
+          <span className="min-w-[20px] mr-3 text-lg ">
+            <FaInfoCircle />
+          </span>
+
+          {/* Info */}
+          <span className="sm:text-base text-sm line-clamp-2 text-left text-wrap sm:min-w-[250px]">
+            {flashMessage.message}
+          </span>
         </span>
-      </span>
+
+        {/* Action */}
+        <span
+          onClick={() => {
+            onDelete(flashMessage.id);
+          }}
+          className=" bg-base-100 btn btn-circle btn-xs btn-outline btn-error"
+        >
+          <span>
+            <FaXmark />
+          </span>
+        </span>
+      </div>
+      {/* <progress
+        value={"50"}
+        max={"100"}
+        className="progress progress-info rounded-none absolute max-w-[84%] min-w-[84%] sm:max-w-[22rem] sm:min-w-[22rem] py-1"
+      ></progress> */}
+      <progress
+        hidden={count === 100}
+        className="progress progress-warning max-w-[84%] min-w-[84%] sm:max-w-[22rem] sm:min-w-[22rem] rounded-none absolute"
+        value={count}
+        max="100"
+      ></progress>
     </div>
   );
 }
