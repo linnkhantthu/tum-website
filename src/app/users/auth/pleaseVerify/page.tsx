@@ -5,7 +5,6 @@ import React, { useState } from "react";
 import Loading from "../../../components/Loading";
 import { redirect } from "next/navigation";
 import { FlashMessage, responseModel } from "@/lib/models";
-import FlashMsg from "@/app/components/FlashMsg";
 import Toast from "@/app/components/Toast";
 import { makeid, toastOnDelete } from "@/lib/utils-fe";
 

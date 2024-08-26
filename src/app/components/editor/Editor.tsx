@@ -12,17 +12,17 @@ import React, {
 } from "react";
 import EditorJS, { OutputData } from "@editorjs/editorjs";
 import { EDITOR_TOOLS } from "./tools";
-import PublishDialog from "./PublishDialog";
+import PublishDialog from "../dialogs/PublishDialog";
 import { Article, Category, FlashMessage, Subcategory } from "@/lib/models";
 import { ArticleType } from "@prisma/client";
 import ArticleDetails from "../ArticleDetails";
 import useUser from "@/lib/useUser";
-import CategoryDialog from "./CategoryDialog";
-import SubcategoryDialog from "./SubcategoryDialog";
-import CategoryDropdown from "../CategoryDropdown";
+import CategoryDialog from "../dialogs/CategoryDialog";
+import SubcategoryDialog from "../dialogs/SubcategoryDialog";
+import CategoryDropdown from "./CategoryDropdown";
 import { IconBaseProps } from "react-icons";
 import { MdCategory, MdOutlineCategory } from "react-icons/md";
-import SubcategoryDropdown from "../SubcategoryDropdown";
+import SubcategoryDropdown from "./SubcategoryDropdown";
 //props
 type Props = {
   // Editor

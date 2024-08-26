@@ -1,13 +1,12 @@
 "use client";
 
 //./components/Editor
-import React, { memo, useEffect, useRef } from "react";
+import React, { memo, useEffect, useRef, useState } from "react";
 import EditorJS, { OutputData } from "@editorjs/editorjs";
 import { EDITOR_TOOLS } from "./tools";
 import useUser from "@/lib/useUser";
 import { useRouter } from "next/navigation";
 import Loading from "../Loading";
-import DeleteDialog from "../DeleteDialog";
 import { Article, User } from "@/lib/models";
 import ArticleDetails from "../ArticleDetails";
 import {
@@ -16,6 +15,7 @@ import {
   MdDeleteOutline,
   MdEdit,
 } from "react-icons/md";
+import DeleteDialog from "../dialogs/DeleteDialog";
 
 //props
 type Props = {
@@ -32,6 +32,7 @@ const EditorBlock = ({ data, holder, currentArticle }: Props) => {
   //add a reference to editor
   const ref = useRef<EditorJS>();
   const { data: userData, isLoading, isError } = useUser();
+  const [isDeleting, setIsDeleting] = useState(false);
   const { push } = useRouter();
 
   //initialize editorjs
@@ -56,12 +57,14 @@ const EditorBlock = ({ data, holder, currentArticle }: Props) => {
     };
   }, []);
 
-  const callDialog = () => {
+  // Open Delet Dialog
+  const openDeleteDialog = () => {
     // @ts-ignore
-    document.getElementById("my_modal_3")?.showModal();
+    document.getElementById("deleteDialog")?.showModal();
   };
 
   const deleteArticle = async () => {
+    setIsDeleting(true);
     const res = await fetch("/api/articles/", {
       method: "DELETE",
       headers: {
@@ -76,6 +79,7 @@ const EditorBlock = ({ data, holder, currentArticle }: Props) => {
     } else {
       alert(message);
     }
+    setIsDeleting(false);
   };
   return (
     <div className="flex flex-col">
@@ -95,13 +99,12 @@ const EditorBlock = ({ data, holder, currentArticle }: Props) => {
               Edit
               <MdEdit />
             </button>
-            <button onClick={callDialog} className="btn btn-error">
+            <button onClick={openDeleteDialog} className="btn btn-error">
               Delete
               <MdDelete />
             </button>
           </div>
-
-          <DeleteDialog uploader={deleteArticle} />
+          <DeleteDialog uploader={deleteArticle} isDeleting={isDeleting} />
         </div>
       ) : (
         ""

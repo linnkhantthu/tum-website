@@ -1,11 +1,11 @@
 import { FlashMessage, responseModel } from "@/lib/models";
 import React, { FormEvent, useState } from "react";
-import Submit from "./forms/Submit";
-import Toast from "./Toast";
+import Submit from "./Submit";
+import Toast from "../Toast";
 import { makeid, toastOnDelete } from "@/lib/utils-fe";
-import Input from "./forms/Input";
+import Input from "./Input";
 import { MdEmail } from "react-icons/md";
-import Btn from "./forms/Btn";
+import Btn from "./Btn";
 import { emailValidator } from "@/lib/validators";
 
 function ForgotPasswordForm({}) {

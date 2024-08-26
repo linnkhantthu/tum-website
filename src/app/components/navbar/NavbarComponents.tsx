@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Loading from "./Loading";
+import Loading from "../Loading";
 import useUser from "@/lib/useUser";
-import ThemeController from "./ThemeController";
+import ThemeController from "../ThemeController";
 import { Category, SpecialCategory } from "@/lib/models";
 import { MdCategory, MdList, MdNewspaper } from "react-icons/md";
 import Link from "next/link";

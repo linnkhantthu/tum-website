@@ -1,12 +1,11 @@
 "use client";
 
-import FlashMsg from "@/app/components/FlashMsg";
 import LoginForm from "@/app/components/forms/Login";
 import RegisterForm from "@/app/components/forms/Register";
 import Toast from "@/app/components/Toast";
 import { FlashMessage } from "@/lib/models";
 import { toastOnDelete } from "@/lib/utils-fe";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 function AuthPage() {
   const [isRegisterForm, setIsRegisterForm] = useState(false);

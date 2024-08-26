@@ -4,7 +4,7 @@ import useUser from "@/lib/useUser";
 import { redirect } from "next/navigation";
 import React, { FormEvent, useState } from "react";
 import Loading from "../../../components/Loading";
-import ForgotPasswordForm from "@/app/components/ForgotPasswordForm";
+import ForgotPasswordForm from "@/app/components/forms/ForgotPasswordForm";
 import { makeid } from "@/lib/utils-fe";
 
 function ForgotPassword() {

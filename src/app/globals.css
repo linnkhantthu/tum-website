@@ -21,4 +21,8 @@
   h6{
     @apply text-sm;
   }
+  
+}
+.codex-editor--narrow{
+  width: 100%;
 }
