@@ -23,6 +23,7 @@ import CategoryDropdown from "./CategoryDropdown";
 import { IconBaseProps } from "react-icons";
 import { MdCategory, MdOutlineCategory } from "react-icons/md";
 import SubcategoryDropdown from "./SubcategoryDropdown";
+import Loading from "../Loading";
 //props
 type Props = {
   // Editor
@@ -103,17 +104,15 @@ const EditorBlock = ({
   deleteCategory,
   deleteSubcategory,
 }: Props) => {
-  const [currentArticleId, setCurrentArticleId] = useState<string>(
-    currentArticle.id!
-  );
   const [isSaveBtnDisabled, setIsSaveBtnDisabled] = useState(false);
   const [isPublishBtnDisabled, setIsPublishBtnDisabled] = useState(
     currentArticle.isPublished
   );
   const [saveBtnStatus, setSaveBtnStatus] = useState("Save");
-  const [publishBtnStatus, setPublishBtnStatus] = useState("Publish");
+  const [publishBtnStatus, setPublishBtnStatus] = useState("Save & Publish");
 
   useEffect(() => {
+    console.log("Called");
     setSaveBtnStatus("Save");
     setIsSaveBtnDisabled(false);
   }, [data, selectedCategory, selectedSubcategory]);
@@ -123,7 +122,7 @@ const EditorBlock = ({
    */
   const articleUploader = async (isSave: boolean) => {
     // Setting Status
-    setSaveBtnStatus(isSave ? "Saving..." : "Save");
+    setSaveBtnStatus(isSave ? "Saving" : "Save");
     setPublishBtnStatus(!isSave ? "Publishing" : "Publish");
 
     // Send and fetch data
@@ -135,7 +134,7 @@ const EditorBlock = ({
       body: JSON.stringify({
         data: data,
         isPublished: !isSave,
-        articleId: currentArticleId,
+        articleId: currentArticle.id,
         articleType: currentArticle.type,
         selectedCategory: selectedCategory,
         selectedSubcategory: selectedSubcategory,
@@ -146,11 +145,11 @@ const EditorBlock = ({
         await res.json();
 
       // onChange(article.content);
-      setCurrentArticle(article);
+      // setCurrentArticle(article);
       // Set Status
-      setSaveBtnStatus(isSave ? "Saved" : "Save");
-      setIsSaveBtnDisabled(isSave);
-      setPublishBtnStatus(article.isPublished ? "Published" : "Publish");
+      setSaveBtnStatus("Saved");
+      setIsSaveBtnDisabled(true);
+      setPublishBtnStatus(article.isPublished ? "Published" : "Save & Publish");
       setIsPublishBtnDisabled(article.isPublished);
       return true;
     }
@@ -262,7 +261,13 @@ const EditorBlock = ({
                 className="btn btn-primary mr-3"
                 disabled={isSaveBtnDisabled}
               >
-                {saveBtnStatus}
+                {saveBtnStatus === "Saving" ? (
+                  <>
+                    Saving <Loading />
+                  </>
+                ) : (
+                  saveBtnStatus
+                )}
               </button>
               <button
                 type="button"
@@ -270,7 +275,13 @@ const EditorBlock = ({
                 className="btn btn-success"
                 disabled={isPublishBtnDisabled}
               >
-                {publishBtnStatus}
+                {publishBtnStatus === "Publishing" ? (
+                  <>
+                    Publishing <Loading />
+                  </>
+                ) : (
+                  publishBtnStatus
+                )}
               </button>
             </div>
           </div>

@@ -52,6 +52,7 @@ function EditorPage({ params }: { params: { id: string } }) {
       await res.json();
     if (articles) {
       setCurrentArticle(articles);
+      setData(articles.content);
       setSubcategories(articles.category?.subcategory!);
       setSelectedCategory(articles.category);
       setSelectedSubcategory(articles.Subcategory);
@@ -269,7 +270,9 @@ function EditorPage({ params }: { params: { id: string } }) {
     });
   }, []);
 
-  useEffect(() => setData(currentArticle?.content!), [currentArticle]);
+  // useEffect(() => {
+  //   setData(currentArticle?.content!);
+  // }, [currentArticle]);
 
   const deleteCategory = async (categoryId: string) => {
     try {
