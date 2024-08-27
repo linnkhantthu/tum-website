@@ -77,7 +77,9 @@ function Toast({
         {/* Action */}
         <span
           onClick={() => {
-            onDelete(flashMessage.id);
+            if (timer === 0) {
+              onDelete(flashMessage.id);
+            }
           }}
           className=" bg-base-100 btn btn-circle btn-xs btn-outline btn-error"
         >
