@@ -12,7 +12,7 @@ export const getSession = (req: Request, res: Response) => {
     cookieName: process.env.COOKIE_NAME!,
     cookieOptions: {
       secure: process.env.NODE_ENV === "production" ? true : false,
-      maxAge: undefined,
+      maxAge: 86400,
     },
   });
   return session;
