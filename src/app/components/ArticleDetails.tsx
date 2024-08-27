@@ -14,7 +14,7 @@ function ArticleDetails({
 }) {
   return (
     <div className="flex flex-row xl:justify-end">
-      <div className="xl:absolute border-l-[8px] xl:border-r-[8px] xl:border-l-[0px] border-success p-1 bg-neutral">
+      <div className="xl:absolute border-l-[8px] xl:border-r-[8px] xl:border-l-[0px] border-success p-1 bg-neutral text-neutral-content">
         <div className="flex flex-row items-center">
           <MdPerson className="mx-1" />
           {username}
