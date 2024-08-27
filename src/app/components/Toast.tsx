@@ -13,6 +13,7 @@ function Toast({
   toastId: string;
 }) {
   const [count, setCount] = useState(0);
+  const [timer, setTimer] = useState(5);
   useEffect(() => {
     // Toast Element Class List
     const elementClassList = document.getElementById(toastId)?.classList;
@@ -23,19 +24,26 @@ function Toast({
       const isThereFullOpacity = elementClassList?.contains("opacity-100");
       if (!isThereFullOpacity) {
         // Set Opacity after 5s
-        elementClassList?.add("opacity-0");
-
-        // Second time out for deleting toast
         setTimeout(() => {
-          // Is there opacity class
-          const isThereOpacity = elementClassList?.contains("opacity-0");
-          if (isThereOpacity) {
-            onDelete(toastId);
-          }
-        }, 5000);
+          elementClassList?.add("opacity-0");
+          // Second time out for deleting toast
+          setTimeout(() => {
+            // Is there opacity class
+            const isThereOpacity = elementClassList?.contains("opacity-0");
+            if (isThereOpacity) {
+              onDelete(toastId);
+            }
+          }, 3000);
+        }, 3000);
       }
     } else {
-      setTimeout(() => setCount(count + 1), 50);
+      setTimeout(() => {
+        const newCount = count + 0.5;
+        setCount(newCount);
+        if (newCount % 20 === 0) {
+          setTimer(timer - 1);
+        }
+      }, 25);
     }
   }, [count]);
 
@@ -73,22 +81,15 @@ function Toast({
           }}
           className=" bg-base-100 btn btn-circle btn-xs btn-outline btn-error"
         >
-          <span>
-            <FaXmark />
-          </span>
+          {count === 100 ? (
+            <span>
+              <FaXmark />
+            </span>
+          ) : (
+            timer
+          )}
         </span>
       </div>
-      {/* <progress
-        value={"50"}
-        max={"100"}
-        className="progress progress-info rounded-none absolute max-w-[84%] min-w-[84%] sm:max-w-[22rem] sm:min-w-[22rem] py-1"
-      ></progress> */}
-      <progress
-        hidden={count === 100}
-        className="progress progress-warning max-w-[84%] min-w-[84%] sm:max-w-[22rem] sm:min-w-[22rem] rounded-none absolute"
-        value={count}
-        max="100"
-      ></progress>
     </div>
   );
 }
