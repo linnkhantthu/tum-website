@@ -130,8 +130,6 @@ export function isEmail(email: string) {
 }
 
 export async function signInFirebase(auth: Auth) {
-  console.log(process.env.MAIL_ADDRESS);
-  console.log(process.env.USER_PASSWORD);
   try {
     const userCredential = await signInWithEmailAndPassword(
       auth,

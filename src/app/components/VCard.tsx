@@ -9,6 +9,7 @@ function VCard({
   authorName,
   date,
   articleId,
+  isSkeleton,
 }: {
   image: any;
   title: string;
@@ -16,12 +17,20 @@ function VCard({
   authorName: string;
   date: string;
   articleId: string;
+  isSkeleton: boolean;
 }) {
   return (
-    <div className="card card-bordered bg-base-200 shadow-xl h-96 ring-1 ring-neutral">
+    <div
+      className={
+        `card card-bordered bg-base-200 shadow-xl h-96 ring-1 ring-neutral ` +
+        (isSkeleton ? `` : ``)
+      }
+    >
       {/* Image */}
       <figure className="min-h-[50%] max-h-[50%] border-b-[0.5px] border-neutral">
-        {image ? (
+        {isSkeleton ? (
+          <div className="skeleton w-[500px] h-[500px]"></div>
+        ) : image ? (
           <Image
             src={image.data.file.url}
             alt={image.data.caption}
@@ -36,27 +45,58 @@ function VCard({
       {/* Card Body */}
       <div className="card-body min-h-[50%] max-h-[50%] pt-3">
         {/* Card Title */}
-        <h2 className="card-title text-sm lg:text-base h-[30%] overflow-ellipsis">
+        <h2
+          className={`card-title text-sm lg:text-base h-[30%] overflow-ellipsis `}
+        >
           <Link
             href={`/articles/${articleId}`}
-            className="link link-success link-hover"
+            className={
+              isSkeleton
+                ? `skeleton w-full h-3`
+                : `link link-success link-hover`
+            }
           >
             {title}
           </Link>
-          <div className="badge badge-secondary">NEW</div>
+          <div
+            className={
+              isSkeleton ? `skeleton w-[20%] h-3` : `badge badge-secondary`
+            }
+          >
+            {isSkeleton ? "" : "NEW"}
+          </div>
         </h2>
 
         {/* Card Content */}
-        <div className="line-clamp-3 text-sm lg:text-base h-[55%] text-justify">
+        <div
+          className={
+            `line-clamp-3 text-sm lg:text-base h-[55%] text-justify ` +
+            (isSkeleton ? `skeleton` : ``)
+          }
+        >
           {content.replaceAll("&nbsp;", "")}
         </div>
 
         {/* Card Actions */}
         <div className="card-actions h-[15%] justify-end">
-          <div className="badge badge-outline badge-sm lg:badge-md">
+          <div
+            className={
+              isSkeleton
+                ? "badge w-[20%] skeleton"
+                : "badge badge-outline badge-sm lg:badge-md"
+            }
+          >
             {authorName}
           </div>
-          <div className="badge badge-outline badge-sm lg:badge-md">{date}</div>
+          <div
+            className={
+              isSkeleton
+                ? "badge w-[20%] skeleton"
+                : "badge badge-outline badge-sm lg:badge-md"
+            }
+          >
+            {date}
+          </div>
         </div>
       </div>
     </div>

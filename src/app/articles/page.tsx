@@ -20,6 +20,12 @@ function Articles() {
   const [currentPageNo, setCurrentPageNo] = useState(0);
   const [pageNo, pageNoController] = useState(1);
 
+  /**
+   * Fetch Articles
+   * @param isNext
+   * @param skip
+   * @param currentPageNo
+   */
   const fetchArticles = async (
     isNext: boolean,
     skip: number,
@@ -65,9 +71,11 @@ function Articles() {
     setIsLoading(false);
   };
 
+  // Ftech in inside useEffect
   useEffect(() => {
     fetchArticles(true, skip, currentPageNo);
   }, [isPublished]);
+
   return (
     <>
       <main>

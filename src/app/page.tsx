@@ -3,13 +3,13 @@
 import { useEffect, useState } from "react";
 import VCard from "./components/VCard";
 import { Article } from "@/lib/models";
-import Loading from "./components/Loading";
 import Showcase from "./components/Showcase";
 
 export default function Home() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-
+  const skeletonCount = [0, 0, 0, 0];
+  console.log(skeletonCount.length);
   useEffect(() => {
     // Fetch Articles
     fetch(`/api/articles?isPublished=${true}&skip=${0}&take=-10`, {
@@ -24,19 +24,32 @@ export default function Home() {
           if (articles) {
             setArticles([...articles]);
           }
+          setIsLoading(false);
         }
       );
-    setIsLoading(false);
   }, []);
 
   return (
     <main className="flex flex-col h-full items-center">
+      {/* Articles */}
+
       {/* Show Case */}
       <Showcase />
-      {/* Articles */}
+
       {isLoading ? (
-        <div className="flex flex-col w-full justify-center">
-          <Loading label="Fetching articles..." />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-3 h-min">
+          {skeletonCount.map((_, ind) => (
+            <VCard
+              key={`skeleton-${ind}`}
+              image={undefined}
+              title={""}
+              content={""}
+              authorName={""}
+              date={""}
+              articleId={""}
+              isSkeleton={true}
+            />
+          ))}
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-3 h-min">
@@ -68,6 +81,7 @@ export default function Home() {
                   authorName={article.author.username}
                   date={date.toDateString()}
                   articleId={article.id!}
+                  isSkeleton={false}
                 />
               );
             })
