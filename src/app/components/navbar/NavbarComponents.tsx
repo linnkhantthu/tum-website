@@ -119,11 +119,11 @@ function NavbarComponents({
                       {subcategory.label}
                     </summary>
                     <ul
-                      onMouseLeave={(e) =>
-                        // @ts-ignore
-                        (e.currentTarget.parentElement!.open =
-                          !isMenuHorizontal)
-                      }
+                    // onMouseLeave={(e) =>
+                    //   // @ts-ignore
+                    //   (e.currentTarget.parentElement!.open =
+                    //     !isMenuHorizontal)
+                    // }
                     >
                       {subcategory.Article.map((article) => {
                         const blocks =
