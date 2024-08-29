@@ -9,7 +9,6 @@ export default function Home() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const skeletonCount = [0, 0, 0, 0];
-  console.log(skeletonCount.length);
   useEffect(() => {
     // Fetch Articles
     fetch(`/api/articles?isPublished=${true}&skip=${0}&take=-10`, {

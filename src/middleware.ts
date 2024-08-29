@@ -10,7 +10,7 @@ export const middleware = async (req: NextRequest) => {
 
   if (user) {
     return user.verified
-      ? NextResponse.redirect(new URL("/", req.url))
+      ? res
       : NextResponse.redirect(new URL("/users/auth/pleaseVerify", req.url));
   }
   return res;
@@ -18,5 +18,5 @@ export const middleware = async (req: NextRequest) => {
 
 export const config = {
   // matcher: ["/", "/purchase/:path*"],
-  matcher: ["/users/auth/"],
+  matcher: ["/users/auth/", "/", "/articles/:path*", "/edidtor/:path*"],
 };
