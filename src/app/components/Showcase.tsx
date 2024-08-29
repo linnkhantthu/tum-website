@@ -1,5 +1,5 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
-import Loading from "./Loading";
+"use client";
+import React, { useEffect, useState } from "react";
 
 function Showcase() {
   const [currentImage, setCurrentImage] = useState<string>();
