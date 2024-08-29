@@ -30,6 +30,7 @@ export async function GET(request: NextRequest) {
         urlList.push(url);
       })
     );
+    console.log("List: ", urlList);
     const isSignedOut = await signOutFirebase(auth);
     return createResponse(
       response,
