@@ -10,10 +10,11 @@ function Showcase() {
 
   const fetchShowcaseImages = async () => {
     const res = await fetch("/api/showcase/", {
-      method: "GET",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify({}),
     });
     if (res.ok) {
       const { urlList, message }: { urlList: string[]; message: string } =
@@ -32,6 +33,7 @@ function Showcase() {
   useEffect(() => {
     fetchShowcaseImages();
   }, []);
+
   useEffect(() => {
     if (images) {
       setCurrentImage(images[index]);

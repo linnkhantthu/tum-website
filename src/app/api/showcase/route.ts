@@ -1,16 +1,11 @@
 import { createResponse } from "@/lib/session";
-import {
-  generateToken,
-  isAuth,
-  signInFirebase,
-  signOutFirebase,
-} from "@/lib/utils";
+import { signInFirebase, signOutFirebase } from "@/lib/utils";
 import { NextRequest } from "next/server";
 import { getDownloadURL, listAll, ref, uploadBytes } from "firebase/storage";
 import { app, storage } from "@/lib/firebase";
 import { getAuth } from "firebase/auth";
 
-export async function GET(request: NextRequest) {
+export async function POST(request: NextRequest) {
   // Create response
   const response = new Response();
   let urlList: string[] = [];
@@ -30,7 +25,6 @@ export async function GET(request: NextRequest) {
         urlList.push(url);
       })
     );
-    console.log("List: ", urlList);
     const isSignedOut = await signOutFirebase(auth);
     return createResponse(
       response,
