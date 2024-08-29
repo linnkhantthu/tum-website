@@ -48,7 +48,7 @@ function Showcase() {
           <div className="carousel w-full">
             <div className="carousel-item relative w-full h-64">
               <div className="flex flex-row w-full items-center justify-center">
-                <img src={currentImage} className=" image-full" />
+                <img src={currentImage} className="image-full h-64" />
               </div>
               <div className="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
                 <a
