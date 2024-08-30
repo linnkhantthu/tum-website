@@ -3,6 +3,7 @@ import {
   getAllCategories,
   getSpecialCategoriesAndArticles,
   insertCategoryByUserId,
+  updateCategoryByUserId,
 } from "@/lib/query/Category/query";
 import { createResponse } from "@/lib/session";
 import { isAuth } from "@/lib/utils";
@@ -93,6 +94,48 @@ export async function DELETE(request: NextRequest) {
       JSON.stringify({
         success: false,
         message: "Access to the requested resource is forbidden.",
+      }),
+      {
+        status: 403,
+      }
+    );
+  }
+}
+
+export async function PUT(request: NextRequest) {
+  // Create response
+  const response = new Response();
+  // Create session
+  const { currentUser } = await isAuth(request, response);
+  if (currentUser?.role === "ADMIN" && currentUser.verified) {
+    const {
+      categoryId,
+      categoryName,
+      isSpecial,
+    }: { categoryId: string; categoryName: string; isSpecial: boolean } =
+      await request.json();
+    // Query
+    const { category, message } = await updateCategoryByUserId(
+      categoryId,
+      currentUser.id,
+      categoryName,
+      isSpecial
+    );
+    return createResponse(
+      response,
+      JSON.stringify({
+        category: category,
+        message: message,
+      }),
+      {
+        status: 200,
+      }
+    );
+  } else {
+    return createResponse(
+      response,
+      JSON.stringify({
+        message: "Forbidden Request.",
       }),
       {
         status: 403,

@@ -24,16 +24,15 @@ function Toast({
       const isThereFullOpacity = elementClassList?.contains("opacity-100");
       if (!isThereFullOpacity) {
         // Set Opacity after 5s
+
+        elementClassList?.add("opacity-0");
+        // Second time out for deleting toast
         setTimeout(() => {
-          elementClassList?.add("opacity-0");
-          // Second time out for deleting toast
-          setTimeout(() => {
-            // Is there opacity class
-            const isThereOpacity = elementClassList?.contains("opacity-0");
-            if (isThereOpacity) {
-              onDelete(toastId);
-            }
-          }, 3000);
+          // Is there opacity class
+          const isThereOpacity = elementClassList?.contains("opacity-0");
+          if (isThereOpacity) {
+            onDelete(toastId);
+          }
         }, 3000);
       }
     } else {

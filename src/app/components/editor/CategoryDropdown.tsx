@@ -4,7 +4,7 @@ import { Category, Subcategory } from "@/lib/models";
 import { IconType } from "react-icons";
 import { FaAngleDown } from "react-icons/fa";
 import { FaXmark } from "react-icons/fa6";
-import { MdCheck } from "react-icons/md";
+import { MdCheck, MdEdit, MdNewLabel } from "react-icons/md";
 
 function CategoryDropdown({
   Icon,
@@ -14,6 +14,8 @@ function CategoryDropdown({
   categories,
   setSelectedSubcategory,
   deleteCategory,
+  isSpecialController,
+  controller,
 }: {
   Icon: IconType;
   selectedCategory: Category | undefined;
@@ -26,13 +28,25 @@ function CategoryDropdown({
     React.SetStateAction<Subcategory | undefined>
   >;
   deleteCategory: (categoryId: string) => Promise<void>;
+  isSpecialController: React.Dispatch<React.SetStateAction<boolean>>;
+  controller: React.Dispatch<React.SetStateAction<string>>;
 }) {
   /**
    * Call Category Dialog
    */
-  const openCategoryDialog = async () => {
-    // @ts-ignore
-    document.getElementById("category_dialog")?.showModal();
+  const openCategoryDialog = async (isUpdate: boolean) => {
+    if (isUpdate) {
+      // Set Category Field
+      controller(selectedCategory?.label || "");
+      isSpecialController(selectedCategory?.isSpecial || false);
+      // @ts-ignore
+      document.getElementById("update_category_dialog")?.showModal();
+    } else {
+      controller("");
+      isSpecialController(false);
+      // @ts-ignore
+      document.getElementById("category_dialog")?.showModal();
+    }
   };
   return (
     <div className="dropdown dropdown-end bg-base-200 w-full">
@@ -83,11 +97,19 @@ function CategoryDropdown({
                       ""
                     )}
                   </div>
-                  <div
-                    className="text-error hover:text-secondary"
-                    onClick={() => deleteCategory(category.id)}
-                  >
-                    <FaXmark />
+                  <div className=" gap-1 flex flex-row text-error hover:text-secondary">
+                    <span
+                      className="btn btn-xs btn-info"
+                      onClick={() => openCategoryDialog(true)}
+                    >
+                      <MdEdit />
+                    </span>
+                    <span
+                      className="btn btn-xs btn-error"
+                      onClick={() => deleteCategory(category.id)}
+                    >
+                      <FaXmark />
+                    </span>
                   </div>
                 </div>
               </li>
@@ -96,9 +118,11 @@ function CategoryDropdown({
           <li
             className=" border-t-2 border-base-300"
             key={`category-new`}
-            onClick={openCategoryDialog}
+            onClick={() => openCategoryDialog(false)}
           >
-            <span>Add New</span>
+            <span>
+              <MdNewLabel /> Add New
+            </span>
           </li>
         </ul>
       </div>

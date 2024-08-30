@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import VCard from "./components/VCard";
 import { Article } from "@/lib/models";
 import Showcase from "./components/Showcase";
+import { FaX } from "react-icons/fa6";
 
 export default function Home() {
   const [articles, setArticles] = useState<Article[]>([]);
@@ -50,41 +51,42 @@ export default function Home() {
             />
           ))}
         </div>
+      ) : articles.length === 0 ? (
+        <div className="flex flex-col items-center h-[50%] justify-center">
+          <span>
+            <FaX className="text-error" />
+          </span>
+          <span>No articles yet</span>
+        </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-3 h-min">
-          {articles.length === 0 ? (
-            <div className="grid grid-cols-1">No articles yet</div>
-          ) : (
-            articles.map((article) => {
-              const blocks =
-                article.content === null ? undefined : article.content.blocks;
-              const image = blocks?.filter(
-                (value) => value.type === "image"
-              )[0];
-              const header = blocks?.filter(
-                (value) => value.type === "header"
-              )[0];
-              const paragraph = blocks?.filter(
-                (value) => value.type === "paragraph"
-              )[0];
+          {articles.map((article) => {
+            const blocks =
+              article.content === null ? undefined : article.content.blocks;
+            const image = blocks?.filter((value) => value.type === "image")[0];
+            const header = blocks?.filter(
+              (value) => value.type === "header"
+            )[0];
+            const paragraph = blocks?.filter(
+              (value) => value.type === "paragraph"
+            )[0];
 
-              const title = header ? header.data.text : "Title";
-              const content = paragraph ? paragraph.data.text : "Content";
-              const date = new Date(article.date);
-              return (
-                <VCard
-                  key={`article-${article.id}`}
-                  image={image}
-                  title={title}
-                  content={content}
-                  authorName={article.author.username}
-                  date={date.toDateString()}
-                  articleId={article.id!}
-                  isSkeleton={false}
-                />
-              );
-            })
-          )}
+            const title = header ? header.data.text : "Title";
+            const content = paragraph ? paragraph.data.text : "Content";
+            const date = new Date(article.date);
+            return (
+              <VCard
+                key={`article-${article.id}`}
+                image={image}
+                title={title}
+                content={content}
+                authorName={article.author.username}
+                date={date.toDateString()}
+                articleId={article.id!}
+                isSkeleton={false}
+              />
+            );
+          })}
         </div>
       )}
     </main>

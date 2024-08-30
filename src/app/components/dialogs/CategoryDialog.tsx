@@ -10,30 +10,45 @@ function CategoryDialog({
   handleSubmit,
   isSpecial,
   isSpecialController,
+  isUpdate,
 }: {
   value: string;
   controller: React.Dispatch<React.SetStateAction<string>>;
   error: string | undefined;
   errorController: React.Dispatch<React.SetStateAction<string | undefined>>;
-  handleSubmit: (e: FormEvent) => Promise<void>;
+  handleSubmit: (e: FormEvent, isUpdate?: boolean) => Promise<void>;
   isSpecial: boolean;
   isSpecialController: Dispatch<SetStateAction<boolean>>;
+  isUpdate: boolean;
 }) {
   return (
     <div>
       {/* You can open the modal using document.getElementById('ID').showModal() method */}
-      <dialog id="category_dialog" className="modal">
-        <div className="modal-box">
+      {/* Dialog */}
+      <dialog
+        id={isUpdate ? "update_category_dialog" : "category_dialog"}
+        className="modal"
+      >
+        <div className="modal-box w-[50%]">
+          {/* Btn - close the dialog */}
           <form method="dialog">
             {/* if there is a button in form, it will close the modal */}
-            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+            <button className="btn btn-sm btn-circle absolute right-2 top-2">
               ✕
             </button>
           </form>
-          <h3 className="font-bold text-lg">Add New Category</h3>
 
+          {/* Dialog Title */}
+          <h3 className="font-bold text-lg">
+            {isUpdate ? "Update Category: " : "Add New Category"}
+          </h3>
+
+          {/* Dialog Form */}
           <div>
-            <form onSubmit={handleSubmit} className="grid grid-cols-2">
+            <form
+              onSubmit={(e) => handleSubmit(e, isUpdate)}
+              className="grid grid-cols-1 gap-1"
+            >
               <Input
                 label={"Category Name"}
                 type={"text"}
@@ -45,26 +60,36 @@ function CategoryDialog({
                 errorController={errorController}
               />
 
-              <div className="p-1">
-                <div className=" w-full flex flex-row justify-center items-center mt-10">
-                  <input
-                    type="checkbox"
-                    className="checkbox checkbox-info"
-                    name="isSpecial_checkbox"
-                    id="isSpecial_checkbox"
-                    onChange={(e) => isSpecialController(e.target.checked)}
-                    checked={isSpecial}
-                  />
-                  <label
-                    htmlFor="isSpecial_checkbox"
-                    className=" label label-text"
-                  >
-                    Show on Navigation Bar?
-                  </label>
-                </div>
+              <div className="flex flex-row items-center">
+                <input
+                  type="checkbox"
+                  className="checkbox checkbox-info"
+                  name="isSpecial_checkbox"
+                  id="isSpecial_checkbox"
+                  onChange={(e) => isSpecialController(e.target.checked)}
+                  checked={isSpecial}
+                />
+                <label
+                  htmlFor="isSpecial_checkbox"
+                  className=" label label-text"
+                >
+                  Show on navigation bar?
+                </label>
               </div>
               <div className="mt-2">
-                <span className="btn btn-error mr-2">Cancel</span>
+                <span
+                  className="btn btn-error mr-2"
+                  onClick={() =>
+                    document
+                      .getElementById(
+                        isUpdate ? "update_category_dialog" : "category_dialog"
+                      )
+                      // @ts-ignore
+                      ?.close()
+                  }
+                >
+                  Cancel
+                </span>
                 <button className="btn btn-success">Submit</button>
               </div>
             </form>

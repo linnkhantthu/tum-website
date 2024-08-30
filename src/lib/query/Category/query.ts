@@ -143,3 +143,64 @@ export async function deleteCategoryById(categoryId: string) {
   }
   return { category, message };
 }
+
+export async function updateCategoryByUserId(
+  categoryId: string,
+  userId: number,
+  label: string,
+  isSpecial: boolean
+) {
+  let message = "Category is already existed";
+  let category;
+  // Check if the update category label is existing
+  const existingCategory = await prisma.category.findFirst({
+    where: { label: label },
+  });
+  if (existingCategory === null || existingCategory.id === categoryId) {
+    try {
+      category = await prisma.category.update({
+        where: { id: categoryId },
+        data: {
+          label: label,
+          isSpecial: isSpecial,
+        },
+        include: {
+          subcategory: {
+            select: {
+              id: true,
+              label: true,
+              date: true,
+              userId: true,
+              author: {
+                select: {
+                  id: true,
+                  email: true,
+                  username: true,
+                  lastName: true,
+                  role: true,
+                  sessionId: true,
+                  verified: true,
+                },
+              },
+            },
+          },
+          author: {
+            select: {
+              id: true,
+              email: true,
+              username: true,
+              lastName: true,
+              role: true,
+              sessionId: true,
+              verified: true,
+            },
+          },
+        },
+      });
+      message = "Updated category successfully.";
+    } catch (error) {
+      message = "Internal server error.";
+    }
+  }
+  return { category, message };
+}

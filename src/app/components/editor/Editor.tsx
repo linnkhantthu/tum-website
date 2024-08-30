@@ -16,11 +16,9 @@ import PublishDialog from "../dialogs/PublishDialog";
 import { Article, Category, FlashMessage, Subcategory } from "@/lib/models";
 import { ArticleType } from "@prisma/client";
 import ArticleDetails from "../ArticleDetails";
-import useUser from "@/lib/useUser";
 import CategoryDialog from "../dialogs/CategoryDialog";
 import SubcategoryDialog from "../dialogs/SubcategoryDialog";
 import CategoryDropdown from "./CategoryDropdown";
-import { IconBaseProps } from "react-icons";
 import { MdCategory, MdOutlineCategory } from "react-icons/md";
 import SubcategoryDropdown from "./SubcategoryDropdown";
 import Loading from "../Loading";
@@ -64,7 +62,7 @@ type Props = {
   isSpecialController: Dispatch<SetStateAction<boolean>>;
 
   // Handlers
-  handleCategorySubmit: (e: FormEvent) => Promise<void>;
+  handleCategorySubmit: (e: FormEvent, isUpdate?: boolean) => Promise<void>;
   handlesubcategorySubmit: (e: FormEvent) => Promise<void>;
 
   // States for Categories and Subcategories
@@ -208,6 +206,8 @@ const EditorBlock = ({
                 categories={categories}
                 setSubcategories={setSubcategories}
                 deleteCategory={deleteCategory}
+                isSpecialController={isSpecialController}
+                controller={newCategorycontroller}
               />
             </div>
             {/* Dropdown for Category */}
@@ -254,6 +254,8 @@ const EditorBlock = ({
                 </option>
               </select>
             </div>
+
+            {/* Actions */}
             <div className="grid grid-cols-2">
               <button
                 type="button"
@@ -286,6 +288,7 @@ const EditorBlock = ({
             </div>
           </div>
         </div>
+        {/* Article Details and the Editor */}
         <div>
           <ArticleDetails
             username={currentArticle.author.username}
@@ -293,9 +296,14 @@ const EditorBlock = ({
             categoryName={currentArticle.category?.label!}
             subcategoryName={currentArticle.Subcategory?.label!}
           />
-          <div className="w-full text-justify" id={holder} />
+          {/* Editor */}
+          <div className="w-full text-justify border-spacing-1" id={holder} />
         </div>
+
+        {/* Publish Dialog */}
         <PublishDialog uploader={articleUploader} />
+
+        {/* New Category Dialog */}
         <CategoryDialog
           value={newCategory}
           controller={newCategorycontroller}
@@ -304,7 +312,21 @@ const EditorBlock = ({
           handleSubmit={handleCategorySubmit}
           isSpecial={isSpecial}
           isSpecialController={isSpecialController}
+          isUpdate={false}
         />
+
+        {/* Update Cateogry dialog */}
+        <CategoryDialog
+          value={newCategory}
+          controller={newCategorycontroller}
+          error={newCategoryError}
+          errorController={newCategoryErrorController}
+          handleSubmit={handleCategorySubmit}
+          isSpecial={isSpecial}
+          isSpecialController={isSpecialController}
+          isUpdate={true}
+        />
+
         <SubcategoryDialog
           value={newSubcategory}
           controller={newSubcategorycontroller}

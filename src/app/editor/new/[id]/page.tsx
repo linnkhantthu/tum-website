@@ -84,14 +84,20 @@ function EditorPage({ params }: { params: { id: string } }) {
   const closeCategoryDialog = async () => {
     // @ts-ignore
     document.getElementById("category_dialog")?.close();
+    // @ts-ignore
+    document.getElementById("update_category_dialog")?.close();
   };
   // Submit Data
-  const handleCategorySubmit = async (e: FormEvent) => {
+  const handleCategorySubmit = async (
+    e: FormEvent,
+    isUpdate: boolean = false
+  ) => {
     e.preventDefault();
     const res = await fetch("/api/articles/categories", {
-      method: "POST",
+      method: isUpdate ? "PUT" : "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        categoryId: isUpdate ? selectedCategory?.id : undefined,
         categoryName: newCategory,
         isSpecial: isSpecial,
       }),
@@ -100,7 +106,18 @@ function EditorPage({ params }: { params: { id: string } }) {
       const { category, message }: { category: Category; message: string } =
         await res.json();
       if (category) {
-        setCategories((categories) => [...categories, category]);
+        if (isUpdate) {
+          // Upddate the object
+          setCategories(
+            categories.map((_category) =>
+              _category.id === category.id ? category : _category
+            )
+          );
+          setSelectedCategory(category);
+        } else {
+          // Add new object
+          setCategories((categories) => [...categories, category]);
+        }
         setToasts((toasts) => [
           {
             id: makeid(10),
@@ -143,6 +160,7 @@ function EditorPage({ params }: { params: { id: string } }) {
       }
     }
     newCategoryController("");
+    isSpecialController(false);
     closeCategoryDialog();
   };
   /**
@@ -274,6 +292,11 @@ function EditorPage({ params }: { params: { id: string } }) {
   //   setData(currentArticle?.content!);
   // }, [currentArticle]);
 
+  /**
+   * Delete Category
+   * @param categoryId
+   * @returns
+   */
   const deleteCategory = async (categoryId: string) => {
     try {
       const res = await fetch("/api/articles/categories", {
@@ -339,6 +362,12 @@ function EditorPage({ params }: { params: { id: string } }) {
       return;
     }
   };
+
+  /**
+   * Delete Subcategory
+   * @param subcategoryId
+   * @returns
+   */
   const deleteSubcategory = async (subcategoryId: string) => {
     try {
       const res = await fetch("/api/articles/categories/subcategories", {
@@ -437,6 +466,7 @@ function EditorPage({ params }: { params: { id: string } }) {
           isSpecial={isSpecial}
           isSpecialController={isSpecialController}
         />
+
         {/* Toasts */}
         <div className="toast toast-start z-10">
           {toasts?.map((value) => {
@@ -454,7 +484,10 @@ function EditorPage({ params }: { params: { id: string } }) {
     )
   ) : (
     <div>
-      You need to login to access this feature.<a href="/users/auth">Login?</a>
+      You need to login to access this feature.
+      <a href="/users/auth" className="link link-info">
+        Login?
+      </a>
     </div>
   );
 }

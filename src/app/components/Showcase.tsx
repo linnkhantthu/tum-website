@@ -8,6 +8,9 @@ function Showcase() {
   const [maxIndex, setMaxIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
+  /**
+   * Fetch Images for showcase
+   */
   const fetchShowcaseImages = async () => {
     const res = await fetch("/api/showcase/", {
       method: "POST",
