@@ -45,3 +45,31 @@ export async function deleteSubcategoryById(subcategoryId: string) {
   console.log(message);
   return { subcategory, message };
 }
+
+export async function updateSubcategoryByUserId(
+  subcategoryId: string,
+  newLabel: string,
+  newCategoryId: string
+) {
+  let message = "Subcategory is already existed";
+  let subcategory;
+  // Check if the category is existing
+  const existingSubcategory = await prisma.subcategory.findFirst({
+    where: { AND: { label: newLabel, categoryId: newCategoryId } },
+  });
+  if (existingSubcategory === null) {
+    try {
+      subcategory = await prisma.subcategory.update({
+        where: { id: subcategoryId },
+        data: {
+          label: newLabel,
+          categoryId: newCategoryId,
+        },
+      });
+      message = "Created subcategory successfully.";
+    } catch (error) {
+      message = "Internal server error.";
+    }
+  }
+  return { subcategory, message };
+}

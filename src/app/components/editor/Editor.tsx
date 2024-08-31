@@ -79,6 +79,19 @@ type Props = {
   ) => Promise<void>;
   selectedToUpdateCategory: Category | undefined;
   setSelectedToUpdateCategory: Dispatch<SetStateAction<Category | undefined>>;
+
+  handleUpdateSubcategorySubmit: (
+    e: FormEvent,
+    subcategoryId: string
+  ) => Promise<void>;
+  selectedToUpdateSubcategory: Subcategory | undefined;
+  setSelectedToUpdateSubcategory: Dispatch<
+    SetStateAction<Subcategory | undefined>
+  >;
+  selectedNewCategory: Category | undefined;
+  setSelectedNewCategory: React.Dispatch<
+    React.SetStateAction<Category | undefined>
+  >;
 };
 
 const EditorBlock = ({
@@ -111,6 +124,11 @@ const EditorBlock = ({
   handleUpdateCategorySubmit,
   selectedToUpdateCategory,
   setSelectedToUpdateCategory,
+  handleUpdateSubcategorySubmit,
+  selectedToUpdateSubcategory,
+  setSelectedToUpdateSubcategory,
+  selectedNewCategory,
+  setSelectedNewCategory,
 }: Props) => {
   const [isSaveBtnDisabled, setIsSaveBtnDisabled] = useState(false);
   const [isPublishBtnDisabled, setIsPublishBtnDisabled] = useState(
@@ -231,6 +249,10 @@ const EditorBlock = ({
                 subcategories={subcategories}
                 deleteSubcategory={deleteSubcategory}
                 selectedCategory={selectedCategory}
+                controller={newSubcategorycontroller}
+                setSelectedToUpdateSubcategory={setSelectedToUpdateSubcategory}
+                selectedNewCategory={selectedNewCategory}
+                setSelectedNewCategory={setSelectedNewCategory}
               />
             </div>
 
@@ -349,6 +371,26 @@ const EditorBlock = ({
           errorController={newSubcategoryErrorController}
           handleSubmit={handlesubcategorySubmit}
           selectedCategory={selectedCategory}
+          isUpdate={false}
+          handleUpdateSubcategorySubmit={handleUpdateSubcategorySubmit}
+          selectedToUpdateSubcategory={selectedToUpdateSubcategory}
+          selectedNewCategory={selectedNewCategory}
+          setSelectedNewCategory={setSelectedNewCategory}
+        />
+
+        <SubcategoryDialog
+          value={newSubcategory}
+          controller={newSubcategorycontroller}
+          error={newSubcategoryError}
+          errorController={newSubcategoryErrorController}
+          handleSubmit={handlesubcategorySubmit}
+          selectedCategory={selectedCategory}
+          isUpdate={true}
+          handleUpdateSubcategorySubmit={handleUpdateSubcategorySubmit}
+          selectedToUpdateSubcategory={selectedToUpdateSubcategory}
+          categories={categories}
+          selectedNewCategory={selectedNewCategory}
+          setSelectedNewCategory={setSelectedNewCategory}
         />
       </div>
     </>

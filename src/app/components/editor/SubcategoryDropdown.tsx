@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import { IconType } from "react-icons";
 import { FaAngleDown } from "react-icons/fa";
 import { FaXmark } from "react-icons/fa6";
-import { MdCheck, MdDelete } from "react-icons/md";
+import { MdCheck, MdDelete, MdEdit } from "react-icons/md";
 
 function SubcategoryDropdown({
   Icon,
@@ -15,6 +15,10 @@ function SubcategoryDropdown({
   subcategories,
   deleteSubcategory,
   selectedCategory,
+  controller,
+  setSelectedToUpdateSubcategory,
+  selectedNewCategory,
+  setSelectedNewCategory,
 }: {
   Icon: IconType;
   selectedSubcategory: Subcategory | undefined;
@@ -25,13 +29,26 @@ function SubcategoryDropdown({
   subcategories: Subcategory[];
   deleteSubcategory: (subcategoryId: string) => Promise<void>;
   selectedCategory: Category | undefined;
+  controller: React.Dispatch<React.SetStateAction<string>>;
+  setSelectedToUpdateSubcategory: React.Dispatch<
+    React.SetStateAction<Subcategory | undefined>
+  >;
+  selectedNewCategory: Category | undefined;
+  setSelectedNewCategory: React.Dispatch<
+    React.SetStateAction<Category | undefined>
+  >;
 }) {
   /**
    * Call Subcategory Dialog
    */
-  const openSubcategoryDialog = async () => {
-    // @ts-ignore
-    document.getElementById("subcategory_dialog")?.showModal();
+  const openSubcategoryDialog = async (isUpdate: boolean) => {
+    if (isUpdate) {
+      // @ts-ignore
+      document.getElementById("update_subcategory_dialog")?.showModal();
+    } else {
+      // @ts-ignore
+      document.getElementById("subcategory_dialog")?.showModal();
+    }
   };
   return (
     <div className="dropdown dropdown-end bg-base-200 w-full">
@@ -80,11 +97,24 @@ function SubcategoryDropdown({
                       ""
                     )}
                   </div>
-                  <div
-                    className="text-error hover:text-secondary"
-                    onClick={() => deleteSubcategory(subcategory.id)}
-                  >
-                    <FaXmark />
+                  <div className=" gap-1 flex flex-row text-error hover:text-secondary">
+                    <span
+                      className="btn btn-xs btn-info"
+                      onClick={() => {
+                        controller(subcategory.label);
+                        setSelectedToUpdateSubcategory(subcategory);
+                        setSelectedNewCategory(selectedCategory);
+                        openSubcategoryDialog(true);
+                      }}
+                    >
+                      <MdEdit />
+                    </span>
+                    <span
+                      className="btn btn-xs btn-error"
+                      onClick={() => deleteSubcategory(subcategory.id)}
+                    >
+                      <FaXmark />
+                    </span>
                   </div>
                 </div>
               </li>
@@ -94,7 +124,7 @@ function SubcategoryDropdown({
             <li
               className=" border-t-2 border-base-300"
               key={`subcategory-new`}
-              onClick={openSubcategoryDialog}
+              onClick={() => openSubcategoryDialog(false)}
             >
               <span>Add New</span>
             </li>

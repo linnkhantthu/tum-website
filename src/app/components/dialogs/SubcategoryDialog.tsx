@@ -1,7 +1,8 @@
-import React, { FormEvent } from "react";
+import React, { FormEvent, useState } from "react";
 import Input from "../forms/Input";
 import { MdCategory } from "react-icons/md";
-import { Category } from "@/lib/models";
+import { Category, Subcategory } from "@/lib/models";
+import CategoryDropdownForUpdate from "../editor/CategoryDropdownForUpdate";
 
 function SubcategoryDialog({
   value,
@@ -10,6 +11,12 @@ function SubcategoryDialog({
   errorController,
   handleSubmit,
   selectedCategory,
+  isUpdate,
+  handleUpdateSubcategorySubmit,
+  selectedToUpdateSubcategory,
+  categories,
+  selectedNewCategory,
+  setSelectedNewCategory,
 }: {
   value: string;
   controller: React.Dispatch<React.SetStateAction<string>>;
@@ -17,25 +24,57 @@ function SubcategoryDialog({
   errorController: React.Dispatch<React.SetStateAction<string | undefined>>;
   handleSubmit: (e: FormEvent) => Promise<void>;
   selectedCategory: Category | undefined;
+  isUpdate: boolean;
+  handleUpdateSubcategorySubmit: (
+    e: FormEvent,
+    subcategoryId: string
+  ) => Promise<void>;
+  selectedToUpdateSubcategory: Subcategory | undefined;
+  categories?: Category[];
+  selectedNewCategory: Category | undefined;
+  setSelectedNewCategory: React.Dispatch<
+    React.SetStateAction<Category | undefined>
+  >;
 }) {
   return (
     <div>
       {/* You can open the modal using document.getElementById('ID').showModal() method */}
-      <dialog id="subcategory_dialog" className="modal">
+      <dialog
+        id={isUpdate ? "update_subcategory_dialog" : "subcategory_dialog"}
+        className="modal"
+      >
         <div className="modal-box">
           <form method="dialog">
             {/* if there is a button in form, it will close the modal */}
-            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+            <button className="btn btn-sm btn-circle absolute right-2 top-2">
               ✕
             </button>
           </form>
-          <h3 className="font-bold text-lg">
-            Add Subcategory under: {selectedCategory?.label}?
-          </h3>
+          {isUpdate ? (
+            <CategoryDropdownForUpdate
+              Icon={MdCategory}
+              selectedCategory={selectedNewCategory}
+              setSelectedCategory={setSelectedNewCategory}
+              categories={categories}
+            />
+          ) : (
+            <h3 className="font-bold text-lg">
+              Add Subcategory under: {selectedCategory?.label}?
+            </h3>
+          )}
 
           <div>
             <form
-              onSubmit={handleSubmit}
+              onSubmit={
+                isUpdate
+                  ? (e) => {
+                      handleUpdateSubcategorySubmit(
+                        e,
+                        selectedToUpdateSubcategory?.id!
+                      );
+                    }
+                  : handleSubmit
+              }
               className="grid grid-flow-row grid-cols-1"
             >
               <Input

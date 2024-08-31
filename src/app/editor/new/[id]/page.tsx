@@ -9,7 +9,7 @@ import { makeid, toastOnDelete } from "@/lib/utils-fe";
 //index.tsx
 import { OutputData } from "@editorjs/editorjs";
 import dynamic from "next/dynamic";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, SetStateAction, useEffect, useState } from "react";
 
 // important that we use dynamic loading here
 // editorjs should only be rendered on the client side.
@@ -39,6 +39,9 @@ function EditorPage({ params }: { params: { id: string } }) {
 
   const [selectedToUpdateCategory, setSelectedToUpdateCategory] =
     useState<Category>();
+  const [selectedToUpdateSubcategory, setSelectedToUpdateSubcategory] =
+    useState<Subcategory>();
+  const [selectedNewCategory, setSelectedNewCategory] = useState<Category>();
 
   /**
    * Fetch existing data
@@ -174,7 +177,7 @@ function EditorPage({ params }: { params: { id: string } }) {
       const { category, message }: { category: Category; message: string } =
         await res.json();
       if (category) {
-        // Upddate the object
+        // Update the object
         setCategories(
           categories.map((_category) =>
             _category.id === category.id ? category : _category
@@ -232,6 +235,8 @@ function EditorPage({ params }: { params: { id: string } }) {
   const closeSubcategoryDialog = async () => {
     // @ts-ignore
     document.getElementById("subcategory_dialog")?.close();
+    // @ts-ignore
+    document.getElementById("update_subcategory_dialog")?.close();
   };
 
   // Submit Data
@@ -252,12 +257,19 @@ function EditorPage({ params }: { params: { id: string } }) {
           message,
         }: { subcategory: Subcategory; message: string } = await res.json();
         if (subcategory) {
-          const indexToUpdate = categories.findIndex(
-            (category) => category.id === subcategory.categoryId
+          setCategories(
+            categories.map((category) => {
+              if (category.id === subcategory.categoryId) {
+                const updatedSubcategory = [...category.subcategory];
+                updatedSubcategory.push(subcategory);
+                return {
+                  ...category,
+                  subcategory: updatedSubcategory,
+                };
+              }
+              return category;
+            })
           );
-          const updatedCategories = [...categories];
-          updatedCategories[indexToUpdate]?.subcategory.push(subcategory);
-          setCategories((updatedCategories) => [...updatedCategories]);
           setSubcategories((subcategories) => [...subcategories, subcategory]);
           setToasts((toasts) => [
             {
@@ -312,6 +324,139 @@ function EditorPage({ params }: { params: { id: string } }) {
       ]);
     }
     closeSubcategoryDialog();
+  };
+
+  // Handle Subcategory update submit
+  const handleUpdateSubcategorySubmit = async (
+    e: FormEvent,
+    subcategoryId: string
+  ) => {
+    e.preventDefault();
+    if (selectedCategory) {
+      const res = await fetch("/api/articles/categories/subcategories", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          subcategoryId: subcategoryId,
+          newLabel: newSubcategory,
+          newCategoryId: selectedNewCategory?.id,
+        }),
+      });
+      if (res.ok) {
+        const {
+          subcategory,
+          message,
+        }: { subcategory: Subcategory; message: string } = await res.json();
+        if (subcategory) {
+          if (
+            subcategory.categoryId !== selectedToUpdateSubcategory?.categoryId
+          ) {
+            setCategories(
+              categories.map((category) => {
+                // Add category
+                if (category.id === subcategory.categoryId) {
+                  const updatedSubcategory = [...category.subcategory];
+                  updatedSubcategory.push(subcategory);
+                  return { ...category, subcategory: updatedSubcategory };
+                }
+
+                //Delete from prv category
+                if (selectedToUpdateSubcategory?.categoryId === category.id) {
+                  const updatedSubcategory = [...category.subcategory].filter(
+                    (_subcategory) =>
+                      _subcategory.id !== selectedToUpdateSubcategory.id
+                  );
+
+                  return { ...category, subcategory: updatedSubcategory };
+                }
+                return category;
+              })
+            );
+            setSubcategories(
+              subcategories.filter(
+                (_subcategory) => _subcategory.id !== subcategory.id
+              )
+            );
+          } else {
+            setCategories(
+              categories.map((category) => {
+                if (category.id === subcategory.categoryId) {
+                  const updatedSubcategories = category.subcategory.map(
+                    (_subcategory) => {
+                      if (_subcategory.id === subcategory.id) {
+                        return subcategory;
+                      }
+                      return _subcategory;
+                    }
+                  );
+                  return { ...category, subcategory: updatedSubcategories };
+                }
+                return category;
+              })
+            );
+            setSubcategories(
+              subcategories.map((_subcategory) => {
+                if (_subcategory.id === subcategory.id) {
+                  return subcategory;
+                }
+                return _subcategory;
+              })
+            );
+          }
+          setToasts((toasts) => [
+            {
+              id: makeid(10),
+              message: message,
+              category: "alert-success",
+            },
+            ...toasts,
+          ]);
+        } else {
+          setToasts((toasts) => [
+            {
+              id: makeid(10),
+              message: message,
+              category: "alert-error",
+            },
+            ...toasts,
+          ]);
+        }
+      } else {
+        try {
+          const { message } = await res.json();
+          setToasts((toasts) => [
+            {
+              id: makeid(10),
+              message: message,
+              category: "alert-error",
+            },
+            ...toasts,
+          ]);
+        } catch (error) {
+          setToasts((toasts) => [
+            {
+              id: makeid(10),
+              //@ts-ignore
+              message: error.message,
+              category: "alert-success",
+            },
+            ...toasts,
+          ]);
+        }
+      }
+      newCategoryController("");
+    } else {
+      setToasts((toasts) => [
+        {
+          id: makeid(10),
+          message: "Please select a Category to add its subcategory.",
+          category: "alert-info",
+        },
+        ...toasts,
+      ]);
+    }
+    closeSubcategoryDialog();
+    newSubcategoryController("");
   };
 
   /**
@@ -446,6 +591,17 @@ function EditorPage({ params }: { params: { id: string } }) {
         }: { subcategory: Subcategory | undefined; message: string } =
           await res.json();
         if (deletedSubcategory) {
+          setCategories(
+            categories.map((category) => {
+              if (deletedSubcategory.categoryId === category.id) {
+                const updatedSubcategories = [...category.subcategory].filter(
+                  (subcategory) => subcategory.id !== deletedSubcategory.id
+                );
+                return { ...category, subcategory: updatedSubcategories };
+              }
+              return category;
+            })
+          );
           // Delete Category from Categories
           setSubcategories((subcategories) => [
             ...subcategories.filter(
@@ -531,6 +687,11 @@ function EditorPage({ params }: { params: { id: string } }) {
           handleUpdateCategorySubmit={handleUpdateCategorySubmit}
           selectedToUpdateCategory={selectedToUpdateCategory}
           setSelectedToUpdateCategory={setSelectedToUpdateCategory}
+          handleUpdateSubcategorySubmit={handleUpdateSubcategorySubmit}
+          selectedToUpdateSubcategory={selectedToUpdateSubcategory}
+          setSelectedToUpdateSubcategory={setSelectedToUpdateSubcategory}
+          selectedNewCategory={selectedNewCategory}
+          setSelectedNewCategory={setSelectedNewCategory}
         />
 
         {/* Toasts */}
