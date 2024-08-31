@@ -1,6 +1,7 @@
 "use client";
 
 import { Category, Subcategory } from "@/lib/models";
+import { Dispatch, SetStateAction } from "react";
 import { IconType } from "react-icons";
 import { FaAngleDown } from "react-icons/fa";
 import { FaXmark } from "react-icons/fa6";
@@ -16,6 +17,7 @@ function CategoryDropdown({
   deleteCategory,
   isSpecialController,
   controller,
+  setSelectedToUpdateCategory,
 }: {
   Icon: IconType;
   selectedCategory: Category | undefined;
@@ -30,15 +32,13 @@ function CategoryDropdown({
   deleteCategory: (categoryId: string) => Promise<void>;
   isSpecialController: React.Dispatch<React.SetStateAction<boolean>>;
   controller: React.Dispatch<React.SetStateAction<string>>;
+  setSelectedToUpdateCategory: Dispatch<SetStateAction<Category | undefined>>;
 }) {
   /**
    * Call Category Dialog
    */
   const openCategoryDialog = async (isUpdate: boolean) => {
     if (isUpdate) {
-      // Set Category Field
-      controller(selectedCategory?.label || "");
-      isSpecialController(selectedCategory?.isSpecial || false);
       // @ts-ignore
       document.getElementById("update_category_dialog")?.showModal();
     } else {
@@ -100,7 +100,12 @@ function CategoryDropdown({
                   <div className=" gap-1 flex flex-row text-error hover:text-secondary">
                     <span
                       className="btn btn-xs btn-info"
-                      onClick={() => openCategoryDialog(true)}
+                      onClick={() => {
+                        controller(category.label);
+                        isSpecialController(category.isSpecial);
+                        setSelectedToUpdateCategory(category);
+                        openCategoryDialog(true);
+                      }}
                     >
                       <MdEdit />
                     </span>

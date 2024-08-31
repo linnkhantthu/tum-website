@@ -37,6 +37,9 @@ function EditorPage({ params }: { params: { id: string } }) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
 
+  const [selectedToUpdateCategory, setSelectedToUpdateCategory] =
+    useState<Category>();
+
   /**
    * Fetch existing data
    */
@@ -88,16 +91,12 @@ function EditorPage({ params }: { params: { id: string } }) {
     document.getElementById("update_category_dialog")?.close();
   };
   // Submit Data
-  const handleCategorySubmit = async (
-    e: FormEvent,
-    isUpdate: boolean = false
-  ) => {
+  const handleCategorySubmit = async (e: FormEvent) => {
     e.preventDefault();
     const res = await fetch("/api/articles/categories", {
-      method: isUpdate ? "PUT" : "POST",
+      method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        categoryId: isUpdate ? selectedCategory?.id : undefined,
         categoryName: newCategory,
         isSpecial: isSpecial,
       }),
@@ -106,18 +105,82 @@ function EditorPage({ params }: { params: { id: string } }) {
       const { category, message }: { category: Category; message: string } =
         await res.json();
       if (category) {
-        if (isUpdate) {
-          // Upddate the object
-          setCategories(
-            categories.map((_category) =>
-              _category.id === category.id ? category : _category
-            )
-          );
-          setSelectedCategory(category);
-        } else {
-          // Add new object
-          setCategories((categories) => [...categories, category]);
-        }
+        // Add new object
+        setCategories((categories) => [...categories, category]);
+
+        setToasts((toasts) => [
+          {
+            id: makeid(10),
+            message: message,
+            category: "alert-success",
+          },
+          ...toasts,
+        ]);
+      } else {
+        setToasts((toasts) => [
+          {
+            id: makeid(10),
+            message: message,
+            category: "alert-error",
+          },
+          ...toasts,
+        ]);
+      }
+    } else {
+      try {
+        const { message } = await res.json();
+        setToasts((toasts) => [
+          {
+            id: makeid(10),
+            message: message,
+            category: "alert-error",
+          },
+          ...toasts,
+        ]);
+      } catch (error) {
+        setToasts((toasts) => [
+          {
+            id: makeid(10),
+            //@ts-ignore
+            message: error.message,
+            category: "alert-success",
+          },
+          ...toasts,
+        ]);
+      }
+    }
+    newCategoryController("");
+    isSpecialController(false);
+    closeCategoryDialog();
+  };
+
+  // Update Category
+  const handleUpdateCategorySubmit = async (
+    e: FormEvent,
+    categoryId: string
+  ) => {
+    e.preventDefault();
+    const res = await fetch("/api/articles/categories", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        categoryId: categoryId,
+        // Form Data
+        categoryName: newCategory,
+        isSpecial: isSpecial,
+      }),
+    });
+    if (res.ok) {
+      const { category, message }: { category: Category; message: string } =
+        await res.json();
+      if (category) {
+        // Upddate the object
+        setCategories(
+          categories.map((_category) =>
+            _category.id === category.id ? category : _category
+          )
+        );
+        // setSelectedCategory(category);
         setToasts((toasts) => [
           {
             id: makeid(10),
@@ -465,6 +528,9 @@ function EditorPage({ params }: { params: { id: string } }) {
           deleteSubcategory={deleteSubcategory}
           isSpecial={isSpecial}
           isSpecialController={isSpecialController}
+          handleUpdateCategorySubmit={handleUpdateCategorySubmit}
+          selectedToUpdateCategory={selectedToUpdateCategory}
+          setSelectedToUpdateCategory={setSelectedToUpdateCategory}
         />
 
         {/* Toasts */}

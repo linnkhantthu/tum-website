@@ -62,7 +62,7 @@ type Props = {
   isSpecialController: Dispatch<SetStateAction<boolean>>;
 
   // Handlers
-  handleCategorySubmit: (e: FormEvent, isUpdate?: boolean) => Promise<void>;
+  handleCategorySubmit: (e: FormEvent) => Promise<void>;
   handlesubcategorySubmit: (e: FormEvent) => Promise<void>;
 
   // States for Categories and Subcategories
@@ -72,6 +72,13 @@ type Props = {
   setSelectedSubcategory: Dispatch<SetStateAction<Subcategory | undefined>>;
   deleteCategory: (categoryId: string) => Promise<void>;
   deleteSubcategory: (subcategoryId: string) => Promise<void>;
+
+  handleUpdateCategorySubmit: (
+    e: FormEvent,
+    categoryId: string
+  ) => Promise<void>;
+  selectedToUpdateCategory: Category | undefined;
+  setSelectedToUpdateCategory: Dispatch<SetStateAction<Category | undefined>>;
 };
 
 const EditorBlock = ({
@@ -101,6 +108,9 @@ const EditorBlock = ({
   setSelectedSubcategory,
   deleteCategory,
   deleteSubcategory,
+  handleUpdateCategorySubmit,
+  selectedToUpdateCategory,
+  setSelectedToUpdateCategory,
 }: Props) => {
   const [isSaveBtnDisabled, setIsSaveBtnDisabled] = useState(false);
   const [isPublishBtnDisabled, setIsPublishBtnDisabled] = useState(
@@ -208,6 +218,7 @@ const EditorBlock = ({
                 deleteCategory={deleteCategory}
                 isSpecialController={isSpecialController}
                 controller={newCategorycontroller}
+                setSelectedToUpdateCategory={setSelectedToUpdateCategory}
               />
             </div>
             {/* Dropdown for Category */}
@@ -313,6 +324,8 @@ const EditorBlock = ({
           isSpecial={isSpecial}
           isSpecialController={isSpecialController}
           isUpdate={false}
+          handleUpdateCategorySubmit={handleUpdateCategorySubmit}
+          selectedToUpdateCategory={selectedToUpdateCategory}
         />
 
         {/* Update Cateogry dialog */}
@@ -325,6 +338,8 @@ const EditorBlock = ({
           isSpecial={isSpecial}
           isSpecialController={isSpecialController}
           isUpdate={true}
+          handleUpdateCategorySubmit={handleUpdateCategorySubmit}
+          selectedToUpdateCategory={selectedToUpdateCategory}
         />
 
         <SubcategoryDialog

@@ -1,6 +1,7 @@
 import React, { Dispatch, FormEvent, SetStateAction } from "react";
 import Input from "../forms/Input";
 import { MdCategory } from "react-icons/md";
+import { Category } from "@/lib/models";
 
 function CategoryDialog({
   value,
@@ -11,15 +12,22 @@ function CategoryDialog({
   isSpecial,
   isSpecialController,
   isUpdate,
+  handleUpdateCategorySubmit,
+  selectedToUpdateCategory,
 }: {
   value: string;
   controller: React.Dispatch<React.SetStateAction<string>>;
   error: string | undefined;
   errorController: React.Dispatch<React.SetStateAction<string | undefined>>;
-  handleSubmit: (e: FormEvent, isUpdate?: boolean) => Promise<void>;
+  handleSubmit: (e: FormEvent) => Promise<void>;
   isSpecial: boolean;
   isSpecialController: Dispatch<SetStateAction<boolean>>;
   isUpdate: boolean;
+  handleUpdateCategorySubmit: (
+    e: FormEvent,
+    categoryId: string
+  ) => Promise<void>;
+  selectedToUpdateCategory: Category | undefined;
 }) {
   return (
     <div>
@@ -46,7 +54,11 @@ function CategoryDialog({
           {/* Dialog Form */}
           <div>
             <form
-              onSubmit={(e) => handleSubmit(e, isUpdate)}
+              onSubmit={(e) =>
+                isUpdate
+                  ? handleUpdateCategorySubmit(e, selectedToUpdateCategory?.id!)
+                  : handleSubmit(e)
+              }
               className="grid grid-cols-1 gap-1"
             >
               <Input
