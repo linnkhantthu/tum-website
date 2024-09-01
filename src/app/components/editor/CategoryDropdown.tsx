@@ -49,14 +49,22 @@ function CategoryDropdown({
     }
   };
   return (
-    <div className="dropdown dropdown-end bg-base-200 w-full">
+    <div
+      className="dropdown dropdown-end bg-base-200 w-full tooltip"
+      data-tip={selectedCategory?.label}
+    >
       <div
         tabIndex={0}
         role="button"
         className=" btn btn-ghost w-full text-xs sm:text-base"
       >
-        {<Icon />} {selectedCategory?.label || "Select Category"}
-        <FaAngleDown className="text-right" />
+        <span className="gap-[1px] flex flex-row items-center w-full">
+          <span className="w-[10%]">{<Icon />}</span>
+          <span className="line-clamp-1 w-[80%]">
+            {selectedCategory?.label || "Select Category"}
+          </span>
+          <FaAngleDown className="text-end w-[10%]" />
+        </span>
       </div>
       <div>
         <ul

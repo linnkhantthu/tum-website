@@ -43,10 +43,10 @@ function SubcategoryDialog({
         id={isUpdate ? "update_subcategory_dialog" : "subcategory_dialog"}
         className="modal"
       >
-        <div className="modal-box">
+        <div className="modal-box w-[50%]">
           <form method="dialog">
             {/* if there is a button in form, it will close the modal */}
-            <button className="btn btn-sm btn-circle absolute right-2 top-2">
+            <button className="btn btn-sm btn-circle absolute right-2 top-2 z-20">
               ✕
             </button>
           </form>
@@ -88,7 +88,21 @@ function SubcategoryDialog({
                 errorController={errorController}
               />
               <div className="mt-2">
-                <span className="btn btn-error mr-2">Cancel</span>
+                <span
+                  className="btn btn-error mr-2"
+                  onClick={() =>
+                    document
+                      .getElementById(
+                        isUpdate
+                          ? "update_subcategory_dialog"
+                          : "subcategory_dialog"
+                      )
+                      // @ts-ignore
+                      ?.close()
+                  }
+                >
+                  Cancel
+                </span>
                 <button className="btn btn-success">Submit</button>
               </div>
             </form>

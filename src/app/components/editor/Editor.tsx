@@ -222,10 +222,10 @@ const EditorBlock = ({
   return (
     <>
       <div className="flex flex-col h-full w-full">
-        <div className="lg:px-[7rem] xl:px-[14rem] 2xl:px-[20rem] px-0 flex flex-row justify-center lg:justify-start m-3 w-full lg:w-auto">
+        <div className="lg:px-[7rem] xl:px-[14rem] 2xl:px-[18rem] flex flex-row justify-center lg:justify-start w-full lg:w-auto">
           <div className=" grid-cols-2 grid lg:grid-cols-2 items-center w-full">
             {/* Dropdown for Category */}
-            <div className="pr-1 bg-base-200 border border-base-300">
+            <div className="bg-base-200 border border-base-300">
               <CategoryDropdown
                 Icon={MdCategory}
                 selectedCategory={selectedCategory}
@@ -240,7 +240,7 @@ const EditorBlock = ({
               />
             </div>
             {/* Dropdown for Category */}
-            <div className="pr-1 bg-base-200 border border-base-300">
+            <div className="bg-base-200 border border-base-300">
               <SubcategoryDropdown
                 Icon={MdOutlineCategory}
                 selectedSubcategory={selectedSubcategory}

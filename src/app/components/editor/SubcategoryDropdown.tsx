@@ -46,19 +46,28 @@ function SubcategoryDropdown({
       // @ts-ignore
       document.getElementById("update_subcategory_dialog")?.showModal();
     } else {
+      controller("");
       // @ts-ignore
       document.getElementById("subcategory_dialog")?.showModal();
     }
   };
   return (
-    <div className="dropdown dropdown-end bg-base-200 w-full">
+    <div
+      className="dropdown dropdown-end bg-base-200 w-full tooltip"
+      data-tip={selectedSubcategory?.label}
+    >
       <div
         tabIndex={0}
         role="button"
         className=" btn btn-ghost w-full text-xs sm:text-base"
       >
-        {<Icon />} {selectedSubcategory?.label || "Select Subcategory"}
-        <FaAngleDown className="text-right" />
+        <span className=" gap-[1px] flex flex-row items-center w-full">
+          <span className="w-[10%]">{<Icon />}</span>
+          <span className="line-clamp-1 w-[80%]">
+            {selectedSubcategory?.label || "Select Subcategory"}
+          </span>
+          <FaAngleDown className="text-end w-[10%]" />
+        </span>
       </div>
       <div>
         <ul
@@ -71,8 +80,8 @@ function SubcategoryDropdown({
                 key={`category_li_${subcategory.id}`}
                 className={
                   selectedSubcategory?.id === subcategory.id
-                    ? "bg-base-100 cursor-pointer p-1 w-full"
-                    : "cursor-pointer p-1 w-full"
+                    ? "bg-base-100 cursor-pointer w-full"
+                    : "cursor-pointer w-full"
                 }
               >
                 <div className="flex flex-row w-full h-full ">
