@@ -430,71 +430,6 @@ export async function getArticles(
     ]);
     articles = fetchedArticles;
     count = fetchedCount;
-    // article = await prisma.article.findMany({
-    //   skip: skip,
-    //   take: take,
-    //   where: {
-    //     isPublished: isPublished,
-    //   },
-    //   select: {
-    //     id: true,
-    //     date: true,
-    //     content: true,
-    //     isPublished: true,
-    //     type: true,
-    //     Subcategory: {
-    //       select: {
-    //         id: true,
-    //         date: true,
-    //         label: true,
-    //         author: {
-    //           select: {
-    //             id: true,
-    //             email: true,
-    //             username: true,
-    //             lastName: true,
-    //             role: true,
-    //             sessionId: true,
-    //             verified: true,
-    //           },
-    //         },
-    //         userId: true,
-    //         categoryId: true,
-    //       },
-    //     },
-    //     category: {
-    //       select: {
-    //         id: true,
-    //         date: true,
-    //         label: true,
-    //         author: {
-    //           select: {
-    //             id: true,
-    //             email: true,
-    //             username: true,
-    //             lastName: true,
-    //             role: true,
-    //             sessionId: true,
-    //             verified: true,
-    //           },
-    //         },
-    //         userId: true,
-    //         subcategory: true,
-    //       },
-    //     },
-    //     author: {
-    //       select: {
-    //         id: true,
-    //         email: true,
-    //         username: true,
-    //         lastName: true,
-    //         role: true,
-    //         sessionId: true,
-    //         verified: true,
-    //       },
-    //     },
-    //   },
-    // });
     message =
       articles.length === 0
         ? "No articles for public and non-verified users yet."
@@ -571,72 +506,6 @@ export async function getArticles(
     ]);
     articles = fetchedArticles;
     count = fetchedCount;
-    // article = await prisma.article.findMany({
-    //   skip: skip,
-    //   take: take,
-    //   where: {
-    //     isPublished: true,
-    //     type: "PUBLIC",
-    //   },
-    //   select: {
-    //     id: true,
-    //     date: true,
-    //     content: true,
-    //     isPublished: true,
-    //     type: true,
-    //     Subcategory: {
-    //       select: {
-    //         id: true,
-    //         date: true,
-    //         label: true,
-    //         author: {
-    //           select: {
-    //             id: true,
-    //             email: true,
-    //             username: true,
-    //             lastName: true,
-    //             role: true,
-    //             sessionId: true,
-    //             verified: true,
-    //           },
-    //         },
-    //         userId: true,
-    //         categoryId: true,
-    //       },
-    //     },
-    //     category: {
-    //       select: {
-    //         id: true,
-    //         date: true,
-    //         label: true,
-    //         author: {
-    //           select: {
-    //             id: true,
-    //             email: true,
-    //             username: true,
-    //             lastName: true,
-    //             role: true,
-    //             sessionId: true,
-    //             verified: true,
-    //           },
-    //         },
-    //         userId: true,
-    //         subcategory: true,
-    //       },
-    //     },
-    //     author: {
-    //       select: {
-    //         id: true,
-    //         email: true,
-    //         username: true,
-    //         lastName: true,
-    //         role: true,
-    //         sessionId: true,
-    //         verified: true,
-    //       },
-    //     },
-    //   },
-    // });
     message =
       articles.length === 0
         ? "Articles are not yet publicly published."
@@ -644,4 +513,56 @@ export async function getArticles(
   }
 
   return { article: articles, message, count };
+}
+
+export async function searchArticlesByTitle(
+  title: string,
+  isUserLoggedAndVerified: boolean
+) {
+  let articles;
+  let message = "Fetched articles successfully.";
+  if (isUserLoggedAndVerified) {
+    articles = await prisma.article.findMany({
+      where: {
+        isPublished: true,
+        OR: [
+          {
+            content: {
+              path: ["blocks", "0", "data", "text"],
+              string_contains: title,
+            },
+          },
+          {
+            content: {
+              path: ["blocks", "1", "data", "text"],
+              string_contains: title,
+            },
+          },
+        ],
+      },
+    });
+  } else {
+    articles = await prisma.article.findMany({
+      where: {
+        isPublished: true,
+        type: "PUBLIC",
+        OR: [
+          {
+            content: {
+              path: ["blocks", "0", "data", "text"],
+              string_contains: title,
+            },
+          },
+          {
+            content: {
+              path: ["blocks", "1", "data", "text"],
+              string_contains: title,
+            },
+          },
+        ],
+      },
+    });
+  }
+  console.log(articles);
+  return { articles, message };
 }

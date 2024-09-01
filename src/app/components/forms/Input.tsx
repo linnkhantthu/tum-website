@@ -11,8 +11,9 @@ function Input({
   error,
   errorController,
   validator,
+  placeholder,
 }: {
-  label: string;
+  label?: string;
   type: string;
   id: string;
   Icon?: IconType;
@@ -21,12 +22,17 @@ function Input({
   error?: string;
   errorController?: React.Dispatch<React.SetStateAction<string | undefined>>;
   validator?: any;
+  placeholder?: string;
 }) {
   return (
     <div className="p-1">
-      <label htmlFor={id} className=" label label-text">
-        {label}
-      </label>
+      {label ? (
+        <label htmlFor={id} className=" label label-text">
+          {label}
+        </label>
+      ) : (
+        ""
+      )}
       <i className="absolute mt-4 ml-3">{Icon ? <Icon /> : ""}</i>
       <input
         type={type}
@@ -37,6 +43,7 @@ function Input({
           controller(e.target.value);
         }}
         className="input input-info w-full px-10"
+        placeholder={placeholder}
         required
       />
       {error ? (

@@ -9,9 +9,10 @@ import Toast from "../Toast";
 import { Article, FlashMessage } from "@/lib/models";
 import { makeid, toastOnDelete } from "@/lib/utils-fe";
 import { useRouter } from "next/navigation";
-import { MdInfoOutline } from "react-icons/md";
+import { MdInfoOutline, MdNewspaper, MdSearch } from "react-icons/md";
 import { FaXmark } from "react-icons/fa6";
 import Link from "next/link";
+import Input from "../forms/Input";
 
 function NavigationBar({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<string>();
@@ -21,6 +22,10 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
   const [latestArticle, setLatestArticle] = useState<Article>();
   const [title, setTitle] = useState<string>();
   const [content, setContent] = useState<string>();
+  const [search, searchController] = useState("");
+  const [searchTimeoutId, setSearchTimeoutId] = useState<NodeJS.Timeout>();
+  const [isSearchResultsLoading, setIsSearchResultsLoading] = useState(false);
+  const [searchedArticles, setSearchedArticles] = useState<Article[]>();
   const { push } = useRouter();
 
   /**
@@ -33,6 +38,9 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
     localStorage.setItem("theme", e.target.checked ? "dark" : "light");
   };
 
+  /**
+   * Fetch Articles
+   */
   const fetchLatestArticle = async () => {
     const res = await fetch("/api/articles?id=latest", {
       method: "GET",
@@ -66,6 +74,50 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
       ]);
     }
   };
+
+  const searchArticles = async () => {
+    try {
+      const res = await fetch("/api/articles/searchArticles", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application-json",
+        },
+        body: JSON.stringify({ title: search }),
+      });
+      const { articles, message } = await res.json();
+      if (res.ok) {
+        if (articles) {
+          setSearchedArticles(articles);
+        }
+      } else {
+        setToasts([
+          { id: makeid(10), message: message, category: "alert-error" },
+          ...toasts,
+        ]);
+      }
+    } catch (error) {
+      setToasts([
+        // @ts-ignore
+        { id: makeid(10), message: error.message, category: "alert-error" },
+        ...toasts,
+      ]);
+    }
+    setIsSearchResultsLoading(false);
+  };
+  useEffect(() => {
+    setIsSearchResultsLoading(true);
+    clearTimeout(searchTimeoutId);
+    if (search !== "") {
+      setSearchTimeoutId(
+        setTimeout(() => {
+          searchArticles();
+        }, 3000)
+      );
+    } else {
+      setSearchedArticles(undefined);
+      setIsSearchResultsLoading(false);
+    }
+  }, [search]);
 
   // Initiate Theme and topbar data
   useEffect(() => {
@@ -206,7 +258,8 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
                     </svg>
                   </label>
                 </div>
-                <div className="mx-2 flex-1 px-2">
+                {/* Logo */}
+                <div className=" flex flex-row w-full mx-2 px-2">
                   <Image
                     src="/tum-logo.png"
                     alt="tum-logo"
@@ -215,6 +268,54 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
                     className="cursor-pointer"
                     onClick={() => push("/")}
                   />
+                  <div className=" w-full">
+                    <form className="form-control float-end dropdown dropdown-bottom">
+                      <div tabIndex={0}>
+                        <Input
+                          type={"text"}
+                          id={"search"}
+                          Icon={MdSearch}
+                          value={search}
+                          controller={searchController}
+                          placeholder="Search Articles"
+                        />
+                      </div>
+                      <ul
+                        tabIndex={0}
+                        className="dropdown-content menu bg-base-200 rounded-box z-[1] w-full shadow"
+                      >
+                        <span>
+                          Results for: {search} ({searchedArticles?.length || 0}
+                          )
+                        </span>
+                        {isSearchResultsLoading ? (
+                          <Loading />
+                        ) : (
+                          searchedArticles?.map((article) => (
+                            <li
+                              key={`searchArticle-${article.id}`}
+                              className="border-b-[0.1px] border-neutral"
+                            >
+                              <Link
+                                href={`/articles/${article.id}`}
+                                onClick={() => {
+                                  const element = document.activeElement;
+                                  // @ts-ignore
+                                  element?.blur();
+                                  searchController("");
+                                }}
+                              >
+                                <MdNewspaper />
+                                {article.content.blocks.filter(
+                                  (block) => block.type === "header"
+                                )[0].data.text || "No Title"}
+                              </Link>
+                            </li>
+                          ))
+                        )}
+                      </ul>
+                    </form>
+                  </div>
                 </div>
                 <div className="hidden flex-none lg:block">
                   <NavbarComponents
