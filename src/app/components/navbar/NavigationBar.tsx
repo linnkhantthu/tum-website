@@ -282,7 +282,7 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
                       </div>
                       <ul
                         tabIndex={0}
-                        className="dropdown-content menu bg-base-200 rounded-box z-[1] w-full shadow"
+                        className="dropdown-content menu bg-base-200 rounded-box z-[10] w-full shadow"
                       >
                         <span>
                           Results for: {search} ({searchedArticles?.length || 0}

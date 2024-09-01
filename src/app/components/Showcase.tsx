@@ -48,7 +48,7 @@ function Showcase() {
         <div className="skeleton h-64 w-full"></div>
       ) : (
         <>
-          <div className="carousel w-full">
+          <div className="carousel w-full border rounded border-neutral">
             <div className="carousel-item relative w-full h-64">
               <div className="flex flex-row w-full items-center justify-center">
                 <img src={currentImage} className="image-full h-64" />
