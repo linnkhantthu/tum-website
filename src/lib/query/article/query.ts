@@ -521,6 +521,7 @@ export async function searchArticlesByTitle(
 ) {
   let articles;
   let message = "Fetched articles successfully.";
+  const Title = title[0].toUpperCase() + title.slice(1);
   if (isUserLoggedAndVerified) {
     articles = await prisma.article.findMany({
       where: {
@@ -529,13 +530,49 @@ export async function searchArticlesByTitle(
           {
             content: {
               path: ["blocks", "0", "data", "text"],
-              string_contains: title,
+              string_contains: `${title}`,
             },
           },
           {
             content: {
               path: ["blocks", "1", "data", "text"],
-              string_contains: title,
+              string_contains: `${title}`,
+            },
+          },
+          {
+            content: {
+              path: ["blocks", "2", "data", "text"],
+              string_contains: `${title}`,
+            },
+          },
+          {
+            content: {
+              path: ["blocks", "3", "data", "text"],
+              string_contains: `${title}`,
+            },
+          },
+          {
+            content: {
+              path: ["blocks", "0", "data", "text"],
+              string_contains: `${Title}`,
+            },
+          },
+          {
+            content: {
+              path: ["blocks", "1", "data", "text"],
+              string_contains: `${Title}`,
+            },
+          },
+          {
+            content: {
+              path: ["blocks", "2", "data", "text"],
+              string_contains: `${Title}`,
+            },
+          },
+          {
+            content: {
+              path: ["blocks", "3", "data", "text"],
+              string_contains: `${Title}`,
             },
           },
         ],
@@ -550,13 +587,49 @@ export async function searchArticlesByTitle(
           {
             content: {
               path: ["blocks", "0", "data", "text"],
-              string_contains: title,
+              string_contains: `${title}`,
             },
           },
           {
             content: {
               path: ["blocks", "1", "data", "text"],
-              string_contains: title,
+              string_contains: `${title}`,
+            },
+          },
+          {
+            content: {
+              path: ["blocks", "2", "data", "text"],
+              string_contains: `${title}`,
+            },
+          },
+          {
+            content: {
+              path: ["blocks", "3", "data", "text"],
+              string_contains: `${title}`,
+            },
+          },
+          {
+            content: {
+              path: ["blocks", "0", "data", "text"],
+              string_contains: `${Title}`,
+            },
+          },
+          {
+            content: {
+              path: ["blocks", "1", "data", "text"],
+              string_contains: `${Title}`,
+            },
+          },
+          {
+            content: {
+              path: ["blocks", "2", "data", "text"],
+              string_contains: `${Title}`,
+            },
+          },
+          {
+            content: {
+              path: ["blocks", "3", "data", "text"],
+              string_contains: `${Title}`,
             },
           },
         ],

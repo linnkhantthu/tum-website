@@ -1,10 +1,5 @@
-import {
-  updateArticleById,
-  insertArticleByUsername,
-  searchArticlesByTitle,
-} from "@/lib/query/article/query";
+import { searchArticlesByTitle } from "@/lib/query/article/query";
 import { isAuth } from "@/lib/utils";
-import { ArticleType, Category, Subcategory } from "@prisma/client";
 import { createResponse } from "iron-session";
 import { NextRequest } from "next/server";
 
