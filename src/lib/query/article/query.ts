@@ -1,7 +1,7 @@
 import prisma from "@/db";
 import { storage } from "@/lib/firebase";
 import { Article, Category, Subcategory } from "@/lib/models";
-import { ArticleType } from "@prisma/client";
+import { ArticleType, Prisma } from "@prisma/client";
 import { deleteObject, ref } from "firebase/storage";
 
 /**
@@ -515,127 +515,149 @@ export async function getArticles(
   return { article: articles, message, count };
 }
 
+// export async function searchArticlesByTitle(
+//   title: string,
+//   isUserLoggedAndVerified: boolean
+// ) {
+//   let articles;
+//   let message = "Fetched articles successfully.";
+//   const Title = title[0].toUpperCase() + title.slice(1);
+//   if (isUserLoggedAndVerified) {
+//     articles = await prisma.article.findMany({
+//       where: {
+//         isPublished: true,
+//         OR: [
+//           {
+//             content: {
+//               path: ["blocks", "0", "data", "text"],
+//               string_contains: `${title}`,
+//             },
+//           },
+//           {
+//             content: {
+//               path: ["blocks", "1", "data", "text"],
+//               string_contains: `${title}`,
+//             },
+//           },
+//           {
+//             content: {
+//               path: ["blocks", "2", "data", "text"],
+//               string_contains: `${title}`,
+//             },
+//           },
+//           {
+//             content: {
+//               path: ["blocks", "3", "data", "text"],
+//               string_contains: `${title}`,
+//             },
+//           },
+//           {
+//             content: {
+//               path: ["blocks", "0", "data", "text"],
+//               string_contains: `${Title}`,
+//             },
+//           },
+//           {
+//             content: {
+//               path: ["blocks", "1", "data", "text"],
+//               string_contains: `${Title}`,
+//             },
+//           },
+//           {
+//             content: {
+//               path: ["blocks", "2", "data", "text"],
+//               string_contains: `${Title}`,
+//             },
+//           },
+//           {
+//             content: {
+//               path: ["blocks", "3", "data", "text"],
+//               string_contains: `${Title}`,
+//             },
+//           },
+//         ],
+//       },
+//     });
+//   } else {
+//     articles = await prisma.article.findMany({
+//       where: {
+//         isPublished: true,
+//         type: "PUBLIC",
+//         OR: [
+//           {
+//             content: {
+//               path: ["blocks", "0", "data", "text"],
+//               string_contains: `${title}`,
+//             },
+//           },
+//           {
+//             content: {
+//               path: ["blocks", "1", "data", "text"],
+//               string_contains: `${title}`,
+//             },
+//           },
+//           {
+//             content: {
+//               path: ["blocks", "2", "data", "text"],
+//               string_contains: `${title}`,
+//             },
+//           },
+//           {
+//             content: {
+//               path: ["blocks", "3", "data", "text"],
+//               string_contains: `${title}`,
+//             },
+//           },
+//           {
+//             content: {
+//               path: ["blocks", "0", "data", "text"],
+//               string_contains: `${Title}`,
+//             },
+//           },
+//           {
+//             content: {
+//               path: ["blocks", "1", "data", "text"],
+//               string_contains: `${Title}`,
+//             },
+//           },
+//           {
+//             content: {
+//               path: ["blocks", "2", "data", "text"],
+//               string_contains: `${Title}`,
+//             },
+//           },
+//           {
+//             content: {
+//               path: ["blocks", "3", "data", "text"],
+//               string_contains: `${Title}`,
+//             },
+//           },
+//         ],
+//       },
+//     });
+//   }
+//   console.log(articles);
+//   return { articles, message };
+// }
 export async function searchArticlesByTitle(
   title: string,
   isUserLoggedAndVerified: boolean
 ) {
   let articles;
   let message = "Fetched articles successfully.";
-  const Title = title[0].toUpperCase() + title.slice(1);
-  if (isUserLoggedAndVerified) {
-    articles = await prisma.article.findMany({
-      where: {
-        isPublished: true,
-        OR: [
-          {
-            content: {
-              path: ["blocks", "0", "data", "text"],
-              string_contains: `${title}`,
-            },
-          },
-          {
-            content: {
-              path: ["blocks", "1", "data", "text"],
-              string_contains: `${title}`,
-            },
-          },
-          {
-            content: {
-              path: ["blocks", "2", "data", "text"],
-              string_contains: `${title}`,
-            },
-          },
-          {
-            content: {
-              path: ["blocks", "3", "data", "text"],
-              string_contains: `${title}`,
-            },
-          },
-          {
-            content: {
-              path: ["blocks", "0", "data", "text"],
-              string_contains: `${Title}`,
-            },
-          },
-          {
-            content: {
-              path: ["blocks", "1", "data", "text"],
-              string_contains: `${Title}`,
-            },
-          },
-          {
-            content: {
-              path: ["blocks", "2", "data", "text"],
-              string_contains: `${Title}`,
-            },
-          },
-          {
-            content: {
-              path: ["blocks", "3", "data", "text"],
-              string_contains: `${Title}`,
-            },
-          },
-        ],
-      },
-    });
-  } else {
-    articles = await prisma.article.findMany({
-      where: {
-        isPublished: true,
-        type: "PUBLIC",
-        OR: [
-          {
-            content: {
-              path: ["blocks", "0", "data", "text"],
-              string_contains: `${title}`,
-            },
-          },
-          {
-            content: {
-              path: ["blocks", "1", "data", "text"],
-              string_contains: `${title}`,
-            },
-          },
-          {
-            content: {
-              path: ["blocks", "2", "data", "text"],
-              string_contains: `${title}`,
-            },
-          },
-          {
-            content: {
-              path: ["blocks", "3", "data", "text"],
-              string_contains: `${title}`,
-            },
-          },
-          {
-            content: {
-              path: ["blocks", "0", "data", "text"],
-              string_contains: `${Title}`,
-            },
-          },
-          {
-            content: {
-              path: ["blocks", "1", "data", "text"],
-              string_contains: `${Title}`,
-            },
-          },
-          {
-            content: {
-              path: ["blocks", "2", "data", "text"],
-              string_contains: `${Title}`,
-            },
-          },
-          {
-            content: {
-              path: ["blocks", "3", "data", "text"],
-              string_contains: `${Title}`,
-            },
-          },
-        ],
-      },
-    });
-  }
-  console.log(articles);
+  // const Title = title[0].toUpperCase() + title.slice(1);
+  // if (isUserLoggedAndVerified) {
+
+  // } else {
+  // } content->'blocks'->'data'->>'text'
+  articles = await prisma.$queryRawUnsafe(
+    `SELECT * FROM "Article"
+    WHERE EXISTS (
+    SELECT 1
+    FROM jsonb_array_elements(content->'blocks') AS block
+    WHERE (block->'data'->>'text') ILIKE '%${title}%'
+);`
+  );
+  console.log("Result: ", articles);
   return { articles, message };
 }
