@@ -645,19 +645,30 @@ export async function searchArticlesByTitle(
 ) {
   let articles;
   let message = "Fetched articles successfully.";
-  // const Title = title[0].toUpperCase() + title.slice(1);
-  // if (isUserLoggedAndVerified) {
-
-  // } else {
-  // } content->'blocks'->'data'->>'text'
+  //   SELECT * FROM "Article"
+  //     WHERE EXISTS (
+  //     SELECT 1
+  //     FROM jsonb_array_elements(content->'blocks') AS block
+  //     WHERE (block->'data'->>'text') ILIKE '%${title}%'
+  // );
+  let _title = title.replaceAll(" ", "&");
+  _title = _title.endsWith("&")
+    ? _title.substring(0, _title.length - 1)
+    : _title;
   articles = await prisma.$queryRawUnsafe(
-    `SELECT * FROM "Article"
-    WHERE EXISTS (
-    SELECT 1
-    FROM jsonb_array_elements(content->'blocks') AS block
-    WHERE (block->'data'->>'text') ILIKE '%${title}%'
-);`
+    `
+SELECT * FROM "Article"
+WHERE EXISTS (
+SELECT 1
+FROM jsonb_array_elements(content->'blocks') AS block
+WHERE 
+to_tsvector(block->'data'->>'text') @@ to_tsquery('${_title}')  -- Full-text search
+OR block->'data'->>'text' ILIKE '%${title}%'  -- ILIKE for partial matching
+OR word_similarity(block->'data'->>'text', '${title}') > 0.4  -- Word similarity for fuzzy matching
+)
+ORDER BY word_similarity((SELECT block->'data'->>'text' FROM jsonb_array_elements(content->'blocks') AS block LIMIT 1), '${title}') DESC;
+`
   );
-  console.log("Result: ", articles);
+  // console.log("Result: ", articles);
   return { articles, message };
 }

@@ -16,18 +16,25 @@ function HCard({
 }) {
   return (
     <div className="flex flex-row justify-center items-center w-full">
-      <div className="card card-side card-bordered bg-base-100 shadow-xl mt-3 w-full">
+      <div className="card card-side card-bordered bg-base-100 shadow-xl w-full h-[13rem]">
         <div className="flex flex-col min-w-[33%] max-w-[33%] justify-center border border-y-0 border-l-0 border-base-300 sm:min-w-[20%] sm:max-w-[20%]">
           <figure>
             {image ? (
               <Image
+                className="mask mask-squircle"
                 src={image.data.file.url}
                 alt={image.data.caption}
-                width={500}
-                height={500}
+                width={150}
+                height={150}
               />
             ) : (
-              <Image src="/tum-logo.png" alt="image" width={500} height={500} />
+              <Image
+                className="mask mask-square"
+                src="/tum-logo.png"
+                alt="image"
+                width={150}
+                height={150}
+              />
             )}
           </figure>
         </div>

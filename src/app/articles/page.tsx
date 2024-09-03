@@ -149,7 +149,7 @@ function Articles() {
           {isLoading ? (
             <Loading label="Fetching articles..." />
           ) : (
-            <div>
+            <div className="gap-2 flex flex-col h-full">
               {articles.length === 0 ? (
                 <div className="flex flex-row justify-center items-center w-full mt-10">
                   No Articles yet.

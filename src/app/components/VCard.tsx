@@ -32,13 +32,20 @@ function VCard({
           <div className="skeleton w-[500px] h-[500px]"></div>
         ) : image ? (
           <Image
+            className="mask mask-squircle"
             src={image.data.file.url}
             alt={image.data.caption}
-            width={500}
-            height={500}
+            width={150}
+            height={150}
           />
         ) : (
-          <Image src="/tum-logo.png" alt="image" width={500} height={500} />
+          <Image
+            className="mask mask-squircle"
+            src="/tum-logo.png"
+            alt="image"
+            width={150}
+            height={150}
+          />
         )}
       </figure>
 
