@@ -657,17 +657,25 @@ export async function searchArticlesByTitle(
     : _title;
   articles = await prisma.$queryRawUnsafe(
     `
-SELECT * FROM "Article"
+SELECT *
+FROM "Article"
 WHERE EXISTS (
 SELECT 1
 FROM jsonb_array_elements(content->'blocks') AS block
 WHERE 
-to_tsvector(block->'data'->>'text') @@ to_tsquery('${_title}')  -- Full-text search
-OR block->'data'->>'text' ILIKE '%${title}%'  -- ILIKE for partial matching
-OR word_similarity(block->'data'->>'text', '${title}') > 0.4  -- Word similarity for fuzzy matching
+-- Full-text search: prioritize exact phrase matches
+to_tsvector('english', block->'data'->>'text') @@ to_tsquery('${_title}')
+        
+-- Partial matching: find similar terms or phrases
+OR block->'data'->>'text' ILIKE '%${title}%'
+        
+-- Fuzzy matching: handle spelling errors and non-exact matches
+OR similarity(block->'data'->>'text', '${title}') > 0.3
 )
-ORDER BY word_similarity((SELECT block->'data'->>'text' FROM jsonb_array_elements(content->'blocks') AS block LIMIT 1), '${title}') DESC;
-`
+ORDER BY 
+-- Prioritize exact matches and then fuzzy matches
+ts_rank(to_tsvector('english', content->>'blocks'), to_tsquery('quick & brown & fox')) DESC,
+similarity((SELECT block->'data'->>'text' FROM jsonb_array_elements(content->'blocks') AS block LIMIT 1), '${title}') DESC;`
   );
   // console.log("Result: ", articles);
   return { articles, message };
