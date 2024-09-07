@@ -9,7 +9,13 @@ import Toast from "../Toast";
 import { Article, FlashMessage } from "@/lib/models";
 import { makeid, toastOnDelete } from "@/lib/utils-fe";
 import { useRouter } from "next/navigation";
-import { MdInfoOutline, MdNewspaper, MdSearch } from "react-icons/md";
+import {
+  MdInfoOutline,
+  MdMail,
+  MdNewspaper,
+  MdPhone,
+  MdSearch,
+} from "react-icons/md";
 import { FaXmark } from "react-icons/fa6";
 import Link from "next/link";
 import Input from "../forms/Input";
@@ -360,21 +366,24 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
           </div>
           <footer className="footer bg-base-300 text-base-content p-10 mt-3 bottom-0">
             <nav>
-              <h6 className="footer-title">Services</h6>
-              <a className="link link-hover">Branding</a>
-              <a className="link link-hover">Design</a>
-              <a className="link link-hover">Marketing</a>
-              <a className="link link-hover">Advertisement</a>
+              <h6 className="footer-title">Contact Us</h6>
+              <a
+                className="text-success flex flex-row items-center gap-1"
+                href="tel:+95988484172"
+              >
+                <MdPhone />
+                +95988484172
+              </a>
+              <a
+                className="text-success flex flex-row items-center gap-1"
+                href="mailto:studentaffairtum2024@gmail.com"
+              >
+                <MdMail />
+                studentaffairtum2024@gmail.com
+              </a>
             </nav>
             <nav>
-              <h6 className="footer-title">Company</h6>
-              <a className="link link-hover">About us</a>
-              <a className="link link-hover">Contact</a>
-              <a className="link link-hover">Jobs</a>
-              <a className="link link-hover">Press kit</a>
-            </nav>
-            <nav>
-              <h6 className="footer-title">Social</h6>
+              <h6 className="footer-title">Admissions</h6>
               <div className="grid grid-flow-col gap-4">
                 <a>
                   <svg
