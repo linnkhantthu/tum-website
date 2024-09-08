@@ -383,7 +383,7 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
               </a>
             </nav>
             <nav>
-              <h6 className="footer-title">Admissions</h6>
+              <h6 className="footer-title">Social Links</h6>
               <div className="grid grid-flow-col gap-4">
                 <a>
                   <svg

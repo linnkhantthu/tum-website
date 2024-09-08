@@ -66,7 +66,7 @@ export async function updateSubcategoryByUserId(
           categoryId: newCategoryId,
         },
       });
-      message = "Created subcategory successfully.";
+      message = "Updated subcategory successfully.";
     } catch (error) {
       message = "Internal server error.";
     }

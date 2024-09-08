@@ -37,7 +37,7 @@ function CategoryDialog({
         id={isUpdate ? "update_category_dialog" : "category_dialog"}
         className="modal"
       >
-        <div className="modal-box w-[50%]">
+        <div className="modal-box w-[80%]">
           {/* Btn - close the dialog */}
           <form method="dialog">
             {/* if there is a button in form, it will close the modal */}

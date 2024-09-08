@@ -43,7 +43,7 @@ function SubcategoryDialog({
         id={isUpdate ? "update_subcategory_dialog" : "subcategory_dialog"}
         className="modal"
       >
-        <div className="modal-box w-[50%]">
+        <div className="modal-box w-[80%]">
           <form method="dialog">
             {/* if there is a button in form, it will close the modal */}
             <button className="btn btn-sm btn-circle absolute right-2 top-2 z-20">
