@@ -30,6 +30,7 @@ export type Article = {
   type: ArticleType;
   isPublished: boolean;
   date: Date;
+  slug?: string;
   content: OutputData;
   author: User;
   category: Category | undefined;

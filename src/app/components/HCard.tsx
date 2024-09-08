@@ -7,11 +7,13 @@ function HCard({
   image,
   title,
   content,
+  slug,
   article,
 }: {
   image: any;
   title: string;
   content: string;
+  slug: string;
   article: Article;
 }) {
   return (
@@ -40,7 +42,7 @@ function HCard({
         </div>
         <div className="card-body min-w-[67%] max-w-[67%] sm:min-w-[80%] sm:max-w-[80%] pr-3">
           <Link
-            href={`/articles/${article.id}`}
+            href={`/articles/${article.id}/${slug}`}
             className="link link-success link-hover"
           >
             <h2 className="card-title text-sm sm:text-lg">{title}</h2>

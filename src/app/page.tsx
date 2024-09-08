@@ -48,6 +48,7 @@ export default function Home() {
               date={""}
               articleId={""}
               isSkeleton={true}
+              slug={""}
             />
           ))}
         </div>
@@ -84,6 +85,7 @@ export default function Home() {
                 date={date.toDateString()}
                 articleId={article.id!}
                 isSkeleton={false}
+                slug={article.slug!}
               />
             );
           })}

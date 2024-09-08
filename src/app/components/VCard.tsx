@@ -5,6 +5,7 @@ import React from "react";
 function VCard({
   image,
   title,
+  slug,
   content,
   authorName,
   date,
@@ -13,6 +14,7 @@ function VCard({
 }: {
   image: any;
   title: string;
+  slug: string;
   content: string;
   authorName: string;
   date: string;
@@ -56,7 +58,7 @@ function VCard({
           className={`card-title text-sm lg:text-base h-[30%] overflow-ellipsis `}
         >
           <Link
-            href={`/articles/${articleId}`}
+            href={`/articles/${articleId}/${slug}`}
             className={
               isSkeleton
                 ? `skeleton w-full h-3`

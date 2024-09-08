@@ -5,7 +5,7 @@ import { headers } from "next/headers";
 
 // Generate Metadata
 export async function generateMetadata(
-  { params }: { params: { id: string } },
+  { params }: { params: { id: string; slug: string } },
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   // read route params
@@ -26,7 +26,7 @@ export async function generateMetadata(
   if (res.ok) {
     const { articles, message }: { articles: Article; message: string } =
       await res.json();
-    if (articles) {
+    if (articles && articles.slug === params.slug) {
       article = articles;
       const blocks =
         article.content === null ? undefined : article.content.blocks;
@@ -34,24 +34,26 @@ export async function generateMetadata(
         .url;
       const header = blocks?.filter((value) => value.type === "header")[0];
       title = header ? header.data.text : "Title";
+      // optionally access and extend (rather than replace) parent metadata
+      const previousImages = (await parent).openGraph?.images || [];
+      return {
+        title: `TUM: ${title}`,
+        openGraph: {
+          images: [imageUrl!, ...previousImages],
+        },
+      };
     }
   } else {
     const { message } = await res.json();
     console.log(message);
   }
-
-  // optionally access and extend (rather than replace) parent metadata
-  const previousImages = (await parent).openGraph?.images || [];
   return {
-    title: `TUM: ${title}`,
-    openGraph: {
-      images: [imageUrl!, ...previousImages],
-    },
+    title: `TUM: 404 not found.`,
   };
 }
 
-function ArticleById({ params }: { params: { id: string } }) {
-  return <ArticlePage id={params.id} />;
+function ArticleById({ params }: { params: { id: string; slug: string } }) {
+  return <ArticlePage id={params.id} slug={params.slug} />;
 }
 
 export default ArticleById;

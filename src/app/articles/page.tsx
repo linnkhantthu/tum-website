@@ -183,6 +183,7 @@ function Articles() {
                       title={title}
                       content={content}
                       article={article}
+                      slug={article.slug!}
                     />
                   );
                 })
