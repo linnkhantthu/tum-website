@@ -55,11 +55,13 @@ function Articles() {
           await res.json();
 
         if (articles) {
+          const _currentPageNo = isNext ? currentPageNo + 1 : currentPageNo - 1;
           setSkip(currentSkip);
-          setCurrentPageNo(isNext ? currentPageNo + 1 : currentPageNo - 1);
+          setCurrentPageNo(_currentPageNo);
           setTotalNoOfPages(Math.ceil(count / 10));
           setIsLoading(false);
           setArticles(articles);
+          pageNoController(_currentPageNo);
         } else {
           console.error(message);
         }
