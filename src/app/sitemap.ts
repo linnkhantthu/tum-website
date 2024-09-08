@@ -12,7 +12,9 @@ export default async function sitemap({
 }): Promise<MetadataRoute.Sitemap> {
   // Google's limit is 50,000 URLs per sitemap
   const res = await fetch(
-    `http://localhost:3000/api/articles?isPublished=${true}&skip=${0}&take=50000`,
+    `${
+      process.env.BASE_URL
+    }/api/articles?isPublished=${true}&skip=${0}&take=50000`,
     {
       method: "GET",
       headers: {
@@ -23,7 +25,7 @@ export default async function sitemap({
   const { articles, message }: { articles: Article[]; message: string } =
     await res.json();
   return articles.map((article) => ({
-    url: `http://localhost:3000/product/${article.id}`,
-    lastModified: article.date,
+    url: `${process.env.BASE_URL}/articles/${article.id}/${article.slug}`,
+    lastModified: new Date(),
   }));
 }
