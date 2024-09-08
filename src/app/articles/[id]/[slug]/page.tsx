@@ -33,12 +33,19 @@ export async function generateMetadata(
       imageUrl = blocks?.filter((value) => value.type === "image")[0]?.data.file
         .url;
       const header = blocks?.filter((value) => value.type === "header")[0];
+      const paragraph = blocks?.filter(
+        (value) => value.type === "paragraph"
+      )[0];
       title = header ? header.data.text : "Title";
       // optionally access and extend (rather than replace) parent metadata
       const previousImages = (await parent).openGraph?.images || [];
       return {
         title: `TUM: ${title}`,
+        description: `${paragraph?.data.text || "Learn at TUM."}`,
         openGraph: {
+          title: `TUM: ${title}`,
+          description: `${paragraph?.data.text || "Learn at TUM."}`,
+          url: `${protocol}://${host}/articles/${article.id}/${article.slug}`,
           images: [imageUrl!, ...previousImages],
         },
       };
