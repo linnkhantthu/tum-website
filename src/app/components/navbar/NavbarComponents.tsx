@@ -102,7 +102,7 @@ function NavbarComponents({
                     className="border-b-[0.1px] border-neutral w-full"
                   >
                     <Link
-                      href={`/articles/${article.id}`}
+                      href={`/articles/${article.id}/${article.slug}`}
                       onClick={() => closeDrawer()}
                     >
                       <MdNewspaper />
@@ -140,7 +140,7 @@ function NavbarComponents({
                             className=" border-b-[0.1px] border-neutral"
                           >
                             <Link
-                              href={`/articles/${article.id}`}
+                              href={`/articles/${article.id}/${article.slug}`}
                               onClick={() => closeDrawer()}
                             >
                               <MdNewspaper />

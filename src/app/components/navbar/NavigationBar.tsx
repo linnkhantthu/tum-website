@@ -307,7 +307,7 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
                               className="border-b-[0.1px] border-neutral"
                             >
                               <Link
-                                href={`/articles/${article.id}`}
+                                href={`/articles/${article.id}/${article.slug}`}
                                 onClick={() => {
                                   const element = document.activeElement;
                                   // @ts-ignore
@@ -316,9 +316,10 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
                                 }}
                               >
                                 <MdNewspaper />
-                                {article.content.blocks.filter(
-                                  (block) => block.type === "header"
-                                )[0].data.text || "No Title"}
+                                {article.content.blocks
+                                  .filter((block) => block.type === "header")[0]
+                                  .data.text.replaceAll("&nbsp;", "") ||
+                                  "No Title"}
                               </Link>
                             </li>
                           ))

@@ -1,7 +1,8 @@
 import prisma from "@/db";
 import { storage } from "@/lib/firebase";
 import { Article, Category, Subcategory } from "@/lib/models";
-import { ArticleType, Prisma } from "@prisma/client";
+import { OutputData } from "@editorjs/editorjs";
+import { ArticleType } from "@prisma/client";
 import { deleteObject, ref } from "firebase/storage";
 
 /**
@@ -63,6 +64,9 @@ export async function updateArticleById(
 ) {
   let article;
   let message;
+  const _data: OutputData = data as OutputData;
+  const header = _data.blocks?.filter((value) => value.type === "header")[0];
+  const slug: string | undefined = header ? header.data.text : undefined;
   try {
     article = await prisma.article.update({
       select: {
@@ -71,6 +75,7 @@ export async function updateArticleById(
         content: true,
         isPublished: true,
         type: true,
+        slug: true,
         category: true,
         Subcategory: true,
         author: {
@@ -90,6 +95,7 @@ export async function updateArticleById(
         content: data,
         isPublished: isPublished,
         type: articleType,
+        slug: slug?.replaceAll(" ", "-"),
         categoryId: selectedCategory?.id,
         subcategoryId: selectedSubcategory?.id || null,
       },
@@ -154,6 +160,7 @@ export async function getArticleById(
         content: true,
         isPublished: true,
         type: true,
+        slug: true,
         Subcategory: {
           select: {
             id: true,
@@ -217,6 +224,7 @@ export async function getArticleById(
           date: true,
           content: true,
           isPublished: true,
+          slug: true,
           type: true,
           Subcategory: {
             select: {
@@ -283,6 +291,7 @@ export async function getArticleById(
           id: true,
           date: true,
           content: true,
+          slug: true,
           isPublished: true,
           type: true,
           Subcategory: {
@@ -372,6 +381,7 @@ export async function getArticles(
           date: true,
           content: true,
           isPublished: true,
+          slug: true,
           type: true,
           Subcategory: {
             select: {
@@ -448,6 +458,7 @@ export async function getArticles(
           date: true,
           content: true,
           isPublished: true,
+          slug: true,
           type: true,
           Subcategory: {
             select: {
@@ -515,130 +526,6 @@ export async function getArticles(
   return { article: articles, message, count };
 }
 
-// export async function searchArticlesByTitle(
-//   title: string,
-//   isUserLoggedAndVerified: boolean
-// ) {
-//   let articles;
-//   let message = "Fetched articles successfully.";
-//   const Title = title[0].toUpperCase() + title.slice(1);
-//   if (isUserLoggedAndVerified) {
-//     articles = await prisma.article.findMany({
-//       where: {
-//         isPublished: true,
-//         OR: [
-//           {
-//             content: {
-//               path: ["blocks", "0", "data", "text"],
-//               string_contains: `${title}`,
-//             },
-//           },
-//           {
-//             content: {
-//               path: ["blocks", "1", "data", "text"],
-//               string_contains: `${title}`,
-//             },
-//           },
-//           {
-//             content: {
-//               path: ["blocks", "2", "data", "text"],
-//               string_contains: `${title}`,
-//             },
-//           },
-//           {
-//             content: {
-//               path: ["blocks", "3", "data", "text"],
-//               string_contains: `${title}`,
-//             },
-//           },
-//           {
-//             content: {
-//               path: ["blocks", "0", "data", "text"],
-//               string_contains: `${Title}`,
-//             },
-//           },
-//           {
-//             content: {
-//               path: ["blocks", "1", "data", "text"],
-//               string_contains: `${Title}`,
-//             },
-//           },
-//           {
-//             content: {
-//               path: ["blocks", "2", "data", "text"],
-//               string_contains: `${Title}`,
-//             },
-//           },
-//           {
-//             content: {
-//               path: ["blocks", "3", "data", "text"],
-//               string_contains: `${Title}`,
-//             },
-//           },
-//         ],
-//       },
-//     });
-//   } else {
-//     articles = await prisma.article.findMany({
-//       where: {
-//         isPublished: true,
-//         type: "PUBLIC",
-//         OR: [
-//           {
-//             content: {
-//               path: ["blocks", "0", "data", "text"],
-//               string_contains: `${title}`,
-//             },
-//           },
-//           {
-//             content: {
-//               path: ["blocks", "1", "data", "text"],
-//               string_contains: `${title}`,
-//             },
-//           },
-//           {
-//             content: {
-//               path: ["blocks", "2", "data", "text"],
-//               string_contains: `${title}`,
-//             },
-//           },
-//           {
-//             content: {
-//               path: ["blocks", "3", "data", "text"],
-//               string_contains: `${title}`,
-//             },
-//           },
-//           {
-//             content: {
-//               path: ["blocks", "0", "data", "text"],
-//               string_contains: `${Title}`,
-//             },
-//           },
-//           {
-//             content: {
-//               path: ["blocks", "1", "data", "text"],
-//               string_contains: `${Title}`,
-//             },
-//           },
-//           {
-//             content: {
-//               path: ["blocks", "2", "data", "text"],
-//               string_contains: `${Title}`,
-//             },
-//           },
-//           {
-//             content: {
-//               path: ["blocks", "3", "data", "text"],
-//               string_contains: `${Title}`,
-//             },
-//           },
-//         ],
-//       },
-//     });
-//   }
-//   console.log(articles);
-//   return { articles, message };
-// }
 export async function searchArticlesByTitle(
   title: string,
   isUserLoggedAndVerified: boolean
