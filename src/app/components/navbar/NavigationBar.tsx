@@ -181,6 +181,10 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
     // Load Theme
     <html lang="en" data-theme={theme}>
       <head>
+        <meta
+          name="google-site-verification"
+          content="GiRxBNmqYcE6BBltbX6bo5Y-L8Ng6xMGm2Il4u8bGoM"
+        />
         <link
           rel="apple-touch-icon"
           sizes="180x180"
