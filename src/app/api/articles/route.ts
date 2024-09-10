@@ -3,6 +3,7 @@ import { Category, Subcategory } from "@/lib/models";
 import {
   deletedArticleById,
   getArticleById,
+  getArticleCount,
   getArticles,
   insertArticleByUsername,
   updateArticleById,
@@ -11,6 +12,7 @@ import { createResponse } from "@/lib/session";
 import { isAuth } from "@/lib/utils";
 import { ArticleType } from "@prisma/client";
 import { NextRequest } from "next/server";
+import { revalidatePath } from "next/cache";
 
 /**
  * Insert & Update Articles/
@@ -52,6 +54,12 @@ export async function POST(request: NextRequest) {
           selectedSubcategory
         )
       : await insertArticleByUsername(currentUser?.username);
+    if (articleId) {
+      const { count } = await getArticleCount();
+      for (let i = 0; i < count; i++) {
+        revalidatePath(`/articles/sitemap/sitemap_${i}.xml`);
+      }
+    }
     return createResponse(
       response,
       JSON.stringify({

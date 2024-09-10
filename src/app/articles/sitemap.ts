@@ -16,10 +16,8 @@ export async function generateSitemaps() {
 
     if (res.ok) {
       const { count }: { count: number } = await res.json();
-      // Calculate the number of sitemaps needed (50,000 URLs per sitemap)
-      const numberOfSitemaps = Math.ceil(count / 50000);
+      const numberOfSitemaps = Math.ceil(count / 50000); // 50,000 URLs per sitemap
 
-      // Create the sitemap IDs
       for (let i = 0; i < numberOfSitemaps; i++) {
         sitemaps.push({ id: `sitemap_${i}` });
       }
@@ -38,7 +36,7 @@ export default async function sitemap({
   id: string;
 }): Promise<MetadataRoute.Sitemap> {
   const _id = parseInt(id.split("_")[1], 10); // Extract numeric ID
-  const skip = _id * 50000; // Calculate skip based on ID
+  const skip = _id * 50000; // Calculate pagination based on the ID
 
   try {
     const res = await fetch(
@@ -48,6 +46,7 @@ export default async function sitemap({
         headers: {
           "Content-Type": "application/json",
         },
+        next: { revalidate: 60 * 60 * 12 }, // Revalidate every 12 hour
       }
     );
 
@@ -55,7 +54,7 @@ export default async function sitemap({
       const { articles }: { articles: Article[] } = await res.json();
       return articles.map((article) => ({
         url: `${process.env.BASE_URL}/articles/${article.id}/${article.slug}`,
-        lastModified: new Date(), // Assuming articles have an `updatedAt` field
+        lastModified: new Date(article.date),
       }));
     } else {
       console.error("Failed to fetch articles");
