@@ -64,6 +64,10 @@ export async function updateArticleById(
 ) {
   let article;
   let message;
+  // Revalidate sitemaps
+  await fetch(`${process.env.BASE_URL}/api/revalidate-sitemap`, {
+    method: "POST",
+  });
   const _data: OutputData = data as OutputData;
   const header = _data.blocks?.filter((value) => value.type === "header")[0];
   const slug: string | undefined = header ? header.data.text : undefined;
