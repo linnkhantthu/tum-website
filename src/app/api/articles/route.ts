@@ -58,6 +58,9 @@ export async function POST(request: NextRequest) {
       const { count } = await getArticleCount();
       for (let i = 0; i < count; i++) {
         revalidatePath(`/articles/sitemap/sitemap_${i}.xml`);
+        await fetch(
+          `http://www.google.com/ping?sitemap=${process.env.BASE_URL}/articles/sitemap/sitemap_${i}.xml`
+        );
       }
     }
     return createResponse(
