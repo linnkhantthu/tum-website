@@ -3,7 +3,7 @@ import type { MetadataRoute } from "next";
 
 export async function generateSitemaps() {
   // Get Total Number of articles and divide by 50000
-  return [{ id: 0 }];
+  return [{ id: `sitemap_${0}` }];
 }
 
 export default async function sitemap({
