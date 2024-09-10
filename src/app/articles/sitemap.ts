@@ -12,10 +12,11 @@ export default async function sitemap({
   id: string;
 }): Promise<MetadataRoute.Sitemap> {
   // Google's limit is 50,000 URLs per sitemap
+  const _id = parseInt(id.split("_")[1]);
   const res = await fetch(
-    `${process.env.BASE_URL}/api/articles?isPublished=${true}&skip=${id}&take=${
-      id + 50000
-    }`,
+    `${
+      process.env.BASE_URL
+    }/api/articles?isPublished=${true}&skip=${_id}&take=${_id + 50000}`,
     {
       method: "GET",
       headers: {

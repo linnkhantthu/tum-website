@@ -110,6 +110,7 @@ export async function GET(request: NextRequest) {
           skip
         )
       : await getArticles(take, true, isLoggedIn, currentUser?.verified!, skip);
+
   return createResponse(
     response,
     JSON.stringify({

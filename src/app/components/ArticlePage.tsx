@@ -56,7 +56,11 @@ function ArticlePage({ id, slug }: { id: string; slug: string }) {
   };
 
   useEffect(() => {
-    fetchArticle();
+    if (id !== "undefined") {
+      fetchArticle();
+    } else {
+      setIsLoading(false);
+    }
   }, []);
   return isLoading ? (
     <div className="flex flex-col h-full justify-center">
@@ -75,7 +79,7 @@ function ArticlePage({ id, slug }: { id: string; slug: string }) {
       publishedDate={publishedDate}
     />
   ) : (
-    <div className="text-center mt-3">{message}</div>
+    <div className="text-center mt-3">{message || "404 not Found."}</div>
   );
 }
 export default ArticlePage;
