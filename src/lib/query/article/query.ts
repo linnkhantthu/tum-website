@@ -70,7 +70,7 @@ export async function updateArticleById(
   let article;
   let message;
   const _data: OutputData = data as OutputData;
-  const header = _data.blocks?.filter((value) => value.type === "header")[0];
+  const header = _data?.blocks?.filter((value) => value.type === "header")[0];
   const slug: string | undefined = header ? header.data.text : undefined;
   try {
     article = await prisma.article.update({
@@ -101,7 +101,7 @@ export async function updateArticleById(
         isPublished: isPublished,
         type: articleType,
         date: new Date(),
-        slug: slug?.replaceAll(" ", "-"),
+        slug: slug?.replaceAll(" ", "-").toLowerCase(),
         categoryId: selectedCategory?.id,
         subcategoryId: selectedSubcategory?.id || null,
       },
@@ -381,6 +381,9 @@ export async function getArticles(
         take: take,
         where: {
           isPublished: isPublished,
+        },
+        orderBy: {
+          date: "desc",
         },
         select: {
           id: true,
