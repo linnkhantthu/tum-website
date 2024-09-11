@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
     const { emailOrUsername, password } = await request.json();
     const user = await getUserByEmailOrUsername(emailOrUsername);
 
-    if (user && hashPassword.decrypt(user.password) === password) {
+    if (user && (await hashPassword.compare(password, user.password))) {
       const { sessionId } = await insertSessionIdByEmail(user.email);
       if (sessionId) {
         session.user = {

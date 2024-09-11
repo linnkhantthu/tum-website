@@ -1,6 +1,6 @@
 import EmailTemplate from "@/emails/EmailTemplate";
 import prisma from "@/db";
-import { Results, User } from "@/lib/models";
+import { Results } from "@/lib/models";
 import {
   HashPassword,
   generateToken,
@@ -240,7 +240,7 @@ export async function insertUser(
 
       if (isUserAdmin !== null || isUserStudent !== null) {
         // Encrypt Password
-        const encryptedPassword = hashPassword.encrypt(password);
+        const hashedPassword = await hashPassword.hash(password);
 
         try {
           const user = await prisma.user.create({
@@ -252,7 +252,7 @@ export async function insertUser(
               dob: fmtedDob,
               nrcNo: nrcNo,
               role: isUserAdmin !== null ? "ADMIN" : "USER",
-              password: encryptedPassword,
+              password: hashedPassword,
               // Generate Verification Token
               verifyToken: generateToken(),
               // Set Verification Expire Time
@@ -420,7 +420,7 @@ export async function updatePasswordByResetPasswordToken(
 ) {
   const hashPassword = new HashPassword();
   if (token && password) {
-    const encryptedPassword = hashPassword.encrypt(password);
+    const hashedPassword = await hashPassword.hash(password);
     const user = await prisma.user.update({
       where: {
         resetPasswordToken: token,
@@ -429,7 +429,7 @@ export async function updatePasswordByResetPasswordToken(
         },
       },
       data: {
-        password: encryptedPassword,
+        password: hashedPassword,
         resetPasswordTokenExpire: new Date(),
       },
     });

@@ -4,6 +4,7 @@ import nodemailer from "nodemailer";
 import { getSession } from "./session";
 import { getUserByUsername } from "./query/user/query";
 import { Auth, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import bcrypt from "bcrypt";
 
 export function generateToken(): string {
   return crypto.randomBytes(16).toString("hex");
@@ -20,34 +21,53 @@ export function getDateNow(): Date {
   return now;
 }
 
+// export class HashPassword {
+//   private readonly ENC: Buffer;
+//   private readonly IV: string;
+//   private readonly ALGO: string;
+
+//   constructor() {
+//     this.IV = process.env.IV!;
+//     this.ALGO = process.env.ALGO!;
+//     const secret = process.env.SECRET_KEY!;
+//     const key = crypto
+//       .createHash("sha256")
+//       .update(String(secret))
+//       .digest("base64");
+//     this.ENC = Buffer.from(key, "base64");
+//   }
+
+//   encrypt(text: string) {
+//     let cipher = crypto.createCipheriv(this.ALGO, this.ENC, this.IV);
+//     let encrypted = cipher.update(text, "utf8", "base64");
+//     encrypted += cipher.final("base64");
+//     return encrypted;
+//   }
+
+//   decrypt = (text: string) => {
+//     let decipher = crypto.createDecipheriv(this.ALGO, this.ENC, this.IV);
+//     let decrypted = decipher.update(text, "base64", "utf8");
+//     return decrypted + decipher.final("utf8");
+//   };
+// }
+
 export class HashPassword {
-  private readonly ENC: Buffer;
-  private readonly IV: string;
-  private readonly ALGO: string;
+  private readonly SALT_ROUNDS: number;
 
   constructor() {
-    this.IV = process.env.IV!;
-    this.ALGO = process.env.ALGO!;
-    const secret = process.env.SECRET_KEY!;
-    const key = crypto
-      .createHash("sha256")
-      .update(String(secret))
-      .digest("base64");
-    this.ENC = Buffer.from(key, "base64");
+    this.SALT_ROUNDS = 10; // You can adjust the number of salt rounds for more security
   }
 
-  encrypt(text: string) {
-    let cipher = crypto.createCipheriv(this.ALGO, this.ENC, this.IV);
-    let encrypted = cipher.update(text, "utf8", "base64");
-    encrypted += cipher.final("base64");
-    return encrypted;
+  async hash(password: string): Promise<string> {
+    const salt = await bcrypt.genSalt(this.SALT_ROUNDS);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    return hashedPassword;
   }
 
-  decrypt = (text: string) => {
-    let decipher = crypto.createDecipheriv(this.ALGO, this.ENC, this.IV);
-    let decrypted = decipher.update(text, "base64", "utf8");
-    return decrypted + decipher.final("utf8");
-  };
+  async compare(password: string, hashedPassword: string): Promise<boolean> {
+    const isMatch = await bcrypt.compare(password, hashedPassword);
+    return isMatch;
+  }
 }
 
 export async function sendMail(
@@ -77,25 +97,32 @@ export async function sendMailWithNodemailer(
   email: string,
   subject: string,
   template: JSX.Element
-): Promise<string> {
+): Promise<string | null> {
   const ReactDOMServer = (await import("react-dom/server")).default;
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    host: "smtp.gmail.com",
-    port: 587,
-    secure: false,
-    auth: {
-      user: process.env.MAIL_ADDRESS,
-      pass: process.env.MAIL_PASSWORD,
-    },
-  });
-  const info = await transporter.sendMail({
-    from: "linn@dimensions.com",
-    to: email,
-    subject: subject,
-    html: ReactDOMServer.renderToString(template),
-  });
-  return info.messageId;
+  try {
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false, // true for 465, false for other ports
+      auth: {
+        user: process.env.MAIL_ADDRESS, // Your email address
+        pass: process.env.MAIL_PASSWORD, // Your email password
+      },
+    });
+
+    const info = await transporter.sendMail({
+      from: process.env.MAIL_ADDRESS, // Sender email address
+      to: email, // Recipient's email
+      subject: subject, // Subject line
+      html: ReactDOMServer.renderToString(template), // Rendered JSX template
+    });
+
+    return info.messageId; // Return the messageId if successful
+  } catch (error) {
+    console.error("Error sending email: ", error);
+    return null; // Return null or handle error as needed
+  }
 }
 
 export async function isAuth(request: Request, response: Response) {
