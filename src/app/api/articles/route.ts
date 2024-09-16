@@ -58,12 +58,6 @@ export async function POST(request: NextRequest) {
       const { count } = await getArticleCount();
       for (let i = 0; i < count; i++) {
         revalidatePath(`/articles/sitemap/sitemap_${i}.xml`);
-        const response = await fetch(
-          `http://www.google.com/ping?sitemap=${encodeURIComponent(
-            `${process.env.BASE_URL}/articles/sitemap/sitemap_${i}.xml`
-          )}`
-        );
-
         if (response.ok) {
           console.log("Sitemap submitted successfully");
         } else {
