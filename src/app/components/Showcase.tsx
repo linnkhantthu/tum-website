@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import { MdAdd } from "react-icons/md";
 
 function Showcase() {
   const [currentImage, setCurrentImage] = useState<string>();
@@ -51,7 +52,14 @@ function Showcase() {
           <div className="carousel w-full border rounded border-neutral">
             <div className="carousel-item relative w-full h-64">
               <div className="flex flex-row w-full items-center justify-center">
-                <img src={currentImage} className="image-full h-64" />
+                {currentImage ? (
+                  <img src={currentImage} className="image-full h-64" />
+                ) : (
+                  <>
+                    Upload More
+                    <MdAdd />
+                  </>
+                )}
               </div>
               <div className="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
                 <a
@@ -65,7 +73,7 @@ function Showcase() {
                 <a
                   className="btn btn-circle"
                   onClick={() => {
-                    setIndex(index < maxIndex - 1 ? index + 1 : index);
+                    setIndex(index < maxIndex ? index + 1 : index);
                   }}
                 >
                   ❯
