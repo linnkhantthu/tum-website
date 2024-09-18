@@ -11,6 +11,9 @@ function Showcase() {
   const [maxIndex, setMaxIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const { isLoading: isUserLoading, isError, data } = useUser();
+  const [isUploading, setIsUploading] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   /**
    * Fetch Images for showcase
@@ -47,6 +50,7 @@ function Showcase() {
   }, [index]);
 
   const upload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsUploading(true);
     const files = (e.target as HTMLInputElement).files;
 
     if (files && files.length > 0) {
@@ -68,9 +72,11 @@ function Showcase() {
         console.error(error);
       }
     }
+    setIsUploading(false);
   };
 
   const deleteImage = async () => {
+    setIsDeleting(true);
     const filename = currentImage?.split("%2F")[1].split("?")[0];
     try {
       const res = await fetch("/api/showcase/", {
@@ -97,9 +103,11 @@ function Showcase() {
     } catch (error) {
       console.error(error);
     }
+    setIsDeleting(false);
   };
 
   const updateImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsUpdating(true);
     const filename = currentImage?.split("%2F")[1].split("?")[0];
     const files = (e.target as HTMLInputElement).files;
     if (files && files.length > 0) {
@@ -126,6 +134,7 @@ function Showcase() {
         console.error(error);
       }
     }
+    setIsUpdating(false);
   };
   return (
     <>
@@ -147,16 +156,17 @@ function Showcase() {
                       "Failed to check user session"
                     ) : data.user?.role === "ADMIN" ? (
                       <div className="flex flex-row w-full absolute justify-end gap-1 p-1">
-                        <div className="flex flex-row">
+                        <fieldset disabled={isUpdating}>
                           <input
                             type="file"
                             className="file-input file-input-bordered file-input-xs w-full max-w-xs"
                             onChange={updateImage}
                           />
-                        </div>
+                        </fieldset>
                         <button
                           className="btn btn-xs btn-error"
                           onClick={deleteImage}
+                          disabled={isDeleting}
                         >
                           <MdDelete />
                         </button>

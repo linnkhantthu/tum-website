@@ -1,10 +1,15 @@
 import React from "react";
 import { MdAdsClick } from "react-icons/md";
+import Loading from "../Loading";
 
-function Btn({ text }: { text: string }) {
+function Btn({ text, isSubmitting }: { text: string; isSubmitting?: boolean }) {
   return (
-    <button type="submit" className="btn btn-info mt-5 ">
-      {text} <MdAdsClick />
+    <button
+      type="submit"
+      className="btn btn-info mt-5 "
+      disabled={isSubmitting}
+    >
+      {text} {isSubmitting ? <Loading /> : <MdAdsClick />}
     </button>
   );
 }

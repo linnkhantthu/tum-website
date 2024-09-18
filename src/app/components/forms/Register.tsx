@@ -47,12 +47,15 @@ function RegisterForm({
   const [passwordError, passwordErrorController] = useState<string>();
   const [confirmPasswordError, confirmPasswordErrorController] =
     useState<string>();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   /**
    * Submit Registration form
    * @param e
    */
   const submitForm = async (e: FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
     emailErrorController(undefined);
     usernameErrorController(undefined);
     firstNameErrorController(undefined);
@@ -61,7 +64,7 @@ function RegisterForm({
     nrcNoErrorController(undefined);
     passwordErrorController(undefined);
     confirmPasswordErrorController(undefined);
-    e.preventDefault();
+
     if (
       email !== "" &&
       username !== "" &&
@@ -146,6 +149,7 @@ function RegisterForm({
         ...toasts,
       ]);
     }
+    setIsSubmitting(false);
   };
   return (
     <>
@@ -244,7 +248,7 @@ function RegisterForm({
           Already have an account?
         </span>
         <span></span>
-        <Btn text={"Register"} />
+        <Btn text={"Register"} isSubmitting={isSubmitting} />
       </form>
     </>
   );

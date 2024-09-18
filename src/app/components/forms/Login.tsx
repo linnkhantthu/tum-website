@@ -26,9 +26,11 @@ function LoginForm({
   const [emailOrUsernameError, emailOrUsernameErrorController] =
     useState<string>();
   const [passwordError, passwordErrorController] = useState<string>();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const submitForm = async (e: FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
     emailOrUsernameErrorController(undefined);
     passwordErrorController(undefined);
     if (passwordValidator(password, passwordErrorController)) {
@@ -76,6 +78,7 @@ function LoginForm({
         ]);
       }
     }
+    setIsSubmitting(false);
   };
   return (
     <>
@@ -120,7 +123,7 @@ function LoginForm({
           Forgot Password?
         </a>
         <span></span>
-        <Btn text={"Login"} />
+        <Btn text={"Login"} isSubmitting={isSubmitting} />
         <span></span>
         <span
           className="link "
