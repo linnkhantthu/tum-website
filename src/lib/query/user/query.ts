@@ -281,7 +281,7 @@ export async function insertUser(
                 lastName: user.lastName!,
                 token: user.verifyToken!,
                 host: host!,
-                path: "/auth/users/verify/",
+                path: "/users/auth/verify/",
                 buttonValue: "Verify",
               })
             );
@@ -375,10 +375,9 @@ export async function getUserByVerificationToken(verifyToken?: string) {
  * @returns User | undefined
  */
 export async function updateVerifiedByVerifyToken(verifyToken?: string) {
-  if (
-    verifyToken &&
-    (await getUserByVerifyTokenAndVerified(verifyToken, false))
-  ) {
+  // &&
+  //   (await getUserByVerifyTokenAndVerified(verifyToken, false))
+  if (verifyToken) {
     const data = await prisma.user.update({
       select: {
         id: true,

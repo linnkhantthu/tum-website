@@ -1,9 +1,7 @@
 import { NextRequest } from "next/server";
-import { Results, User } from "@/lib/models";
+import { Results } from "@/lib/models";
 import { createResponse, getSession } from "@/lib/session";
-import prisma from "@/db";
 import {
-  fetchUserByResetPasswordToken,
   getUserByVerificationToken,
   updateVerifiedByVerifyToken,
 } from "@/lib/query/user/query";

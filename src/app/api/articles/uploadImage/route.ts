@@ -13,12 +13,7 @@ import {
   deleteObject,
 } from "firebase/storage";
 import { app, storage } from "@/lib/firebase";
-import {
-  Auth,
-  getAuth,
-  signInWithEmailAndPassword,
-  signOut,
-} from "firebase/auth";
+import { getAuth } from "firebase/auth";
 
 export async function POST(request: NextRequest) {
   // Create response
@@ -38,7 +33,6 @@ export async function POST(request: NextRequest) {
       const { metadata, ref: ubRef } = await uploadBytes(storageRef, image);
       const url = await getDownloadURL(storageRef);
       await signOutFirebase(auth);
-      console.log("URL", url);
       return createResponse(
         response,
         JSON.stringify({
@@ -91,12 +85,10 @@ export async function DELETE(request: NextRequest) {
       await signOutFirebase(auth);
       return createResponse(
         response,
-        JSON.stringify(
-          JSON.stringify({
-            success: true,
-            message: "Deleted image successfully.",
-          })
-        ),
+        JSON.stringify({
+          success: true,
+          message: "Deleted image successfully.",
+        }),
         {
           status: 200,
         }
@@ -104,12 +96,10 @@ export async function DELETE(request: NextRequest) {
     } else {
       return createResponse(
         response,
-        JSON.stringify(
-          JSON.stringify({
-            success: false,
-            message: "SystemError: Failed to delete.",
-          })
-        ),
+        JSON.stringify({
+          success: false,
+          message: "SystemError: Failed to delete.",
+        }),
         {
           status: 500,
         }

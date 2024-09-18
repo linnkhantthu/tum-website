@@ -1,7 +1,6 @@
 import { NextRequest } from "next/server";
-import { Messages, Results } from "@/lib/models";
-import { createResponse, getSession } from "@/lib/session";
-import prisma from "@/db";
+import { Messages } from "@/lib/models";
+import { createResponse } from "@/lib/session";
 import EmailTemplate from "@/emails/EmailTemplate";
 import { insertVerifyTokenByEmail } from "@/lib/query/user/query";
 import { isAuth, sendMailWithNodemailer } from "@/lib/utils";
