@@ -187,7 +187,7 @@ function Showcase() {
                       </div>
                       <input
                         type="file"
-                        className="file-input file-input-sm file-input-bordered w-full max-w-xs"
+                        className="file-input file-input-bordered file-input-xs w-36"
                         onChange={upload}
                       />
                     </label>
