@@ -541,37 +541,80 @@ export async function searchArticlesByTitle(
 ) {
   let articles;
   let message = "Fetched articles successfully.";
-  //   SELECT * FROM "Article"
-  //     WHERE EXISTS (
-  //     SELECT 1
-  //     FROM jsonb_array_elements(content->'blocks') AS block
-  //     WHERE (block->'data'->>'text') ILIKE '%${title}%'
-  // );
+  // SELECT *
+  // FROM "Article"
+  // WHERE EXISTS (
+  // SELECT 1
+  // FROM jsonb_array_elements(content->'blocks') AS block
+  // WHERE
+  // -- Full-text search: prioritize exact phrase matches
+  // to_tsvector('english', block->'data'->>'text') @@ to_tsquery('${_title}')
+
+  // -- Partial matching: find similar terms or phrases
+  // OR block->'data'->>'text' ILIKE '%${title}%'
+
+  // -- Fuzzy matching: handle spelling errors and non-exact matches
+  // OR similarity(block->'data'->>'text', '${title}') > 0.2
+  // )
+  // ORDER BY
+  // -- Prioritize exact matches and then fuzzy matches
+  // ts_rank(to_tsvector('english', content->>'blocks'), to_tsquery('quick & brown & fox')) DESC,
+  // similarity((SELECT block->'data'->>'text' FROM jsonb_array_elements(content->'blocks') AS block LIMIT 1), '${title}') DESC;
   let _title = title.replaceAll(" ", "&");
   _title = _title.endsWith("&")
     ? _title.substring(0, _title.length - 1)
     : _title;
+  const typeCondition = isUserLoggedAndVerified
+    ? "('PUBLIC', 'PRIVATE')"
+    : "('PUBLIC')";
   articles = await prisma.$queryRawUnsafe(
     `
-SELECT *
+    SELECT *
 FROM "Article"
-WHERE EXISTS (
+WHERE
+type IN ${typeCondition}
+AND "isPublished" = ${true}
+AND EXISTS (
 SELECT 1
 FROM jsonb_array_elements(content->'blocks') AS block
 WHERE 
--- Full-text search: prioritize exact phrase matches
+-- Full-text search: prioritize exact phrase matches in 'text'
 to_tsvector('english', block->'data'->>'text') @@ to_tsquery('${_title}')
-        
--- Partial matching: find similar terms or phrases
-OR block->'data'->>'text' ILIKE '%${title}%'
-        
--- Fuzzy matching: handle spelling errors and non-exact matches
-OR similarity(block->'data'->>'text', '${title}') > 0.3
+          
+-- Full-text search in 'items' (array of strings)
+OR EXISTS (
+SELECT 1
+FROM jsonb_array_elements_text(block->'data'->'items') AS item
+WHERE to_tsvector('english', item) @@ to_tsquery('${_title}')
+)
+          
+-- Partial matching: find similar terms or phrases in 'text'
+OR block->'data'->>'text' ILIKE '%' || '${title}' || '%'
+          
+-- Partial matching in 'items' (array of strings)
+OR EXISTS (
+SELECT 1
+  FROM jsonb_array_elements_text(block->'data'->'items') AS item
+WHERE item ILIKE '%' || '${title}' || '%'
+)
+          
+-- Fuzzy matching: handle spelling errors and non-exact matches in 'text'
+OR similarity(block->'data'->>'text', '${title}') > 0.1
+
+-- Fuzzy matching for 'items' (array of strings)
+OR EXISTS (
+SELECT 1
+FROM jsonb_array_elements_text(block->'data'->'items') AS item
+WHERE similarity(item, '${title}') > 0.2
+)
 )
 ORDER BY 
 -- Prioritize exact matches and then fuzzy matches
-ts_rank(to_tsvector('english', content->>'blocks'), to_tsquery('quick & brown & fox')) DESC,
-similarity((SELECT block->'data'->>'text' FROM jsonb_array_elements(content->'blocks') AS block LIMIT 1), '${title}') DESC;`
+ts_rank(to_tsvector('english', content->>'blocks'), to_tsquery('${_title}')) DESC,
+      
+-- Order by similarity in 'text'
+similarity((SELECT block->'data'->>'text' FROM jsonb_array_elements(content->'blocks') AS block LIMIT 1), '${title}') DESC;
+`
   );
   // console.log("Result: ", articles);
   return { articles, message };
