@@ -221,7 +221,7 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
             >
               <MdInfoOutline />
               <Link
-                href={`/articles/${latestArticle?.id}`}
+                href={`/articles/${latestArticle?.id}/${latestArticle?.slug}`}
                 className="pl-2 line-clamp-1 link w-[95%]"
               >
                 {title}: {content}
