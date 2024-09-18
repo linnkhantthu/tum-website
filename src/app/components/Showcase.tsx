@@ -180,14 +180,14 @@ function Showcase() {
                 ) : isError ? (
                   "Falied to check user session"
                 ) : data.user?.role === "ADMIN" ? (
-                  <div className="absolute z-10">
-                    <label className="form-control w-full max-w-xs">
+                  <div className="absolute z-10 flex flex-row justify-center">
+                    <label className="form-control w-[45%] sm:w-full">
                       <div className="label">
                         <span className="label-text">Upload</span>
                       </div>
                       <input
                         type="file"
-                        className="file-input file-input-bordered file-input-xs w-36"
+                        className="file-input file-input-bordered file-input-xs"
                         onChange={upload}
                       />
                     </label>
