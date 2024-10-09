@@ -1,4 +1,3 @@
-import prisma from "@/db";
 import { Category, Subcategory } from "@/lib/models";
 import {
   deletedArticleById,

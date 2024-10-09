@@ -12,7 +12,7 @@ export default function Home() {
   const skeletonCount = [0, 0, 0, 0];
   useEffect(() => {
     // Fetch Articles
-    fetch(`/api/articles?isPublished=${true}&skip=${0}&take=-10`, {
+    fetch(`/api/articles?isPublished=${true}&skip=${0}&take=9`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

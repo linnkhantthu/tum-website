@@ -293,6 +293,9 @@ export async function getArticleById(
     } else {
       article = await prisma.article.findFirst({
         where: { AND: { id: id, type: "PUBLIC" } },
+        orderBy: {
+          date: "desc",
+        },
         select: {
           id: true,
           date: true,
@@ -461,6 +464,9 @@ export async function getArticles(
         where: {
           isPublished: true,
           type: "PUBLIC",
+        },
+        orderBy: {
+          date: "desc",
         },
         select: {
           id: true,
