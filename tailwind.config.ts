@@ -24,6 +24,15 @@ const config: Config = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      keyframes: {
+        "slide-left": {
+          "0%": { transform: "translateX(100%)" },
+          "100%": { transform: "translateX(-100%)" },
+        },
+      },
+      animation: {
+        "slide-left": "slide-left 60s linear infinite", // 10 seconds duration for smooth scroll
+      },
     },
   },
   plugins: [daisyui],

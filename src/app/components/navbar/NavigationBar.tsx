@@ -220,12 +220,14 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
               }
             >
               <MdInfoOutline />
-              <Link
-                href={`/articles/${latestArticle?.id}/${latestArticle?.slug}`}
-                className="pl-2 line-clamp-1 link w-[95%]"
-              >
-                {title}: {content}
-              </Link>
+              <div className="relative overflow-hidden w-[95%]">
+                <Link
+                  href={`/articles/${latestArticle?.id}/${latestArticle?.slug}`}
+                  className="inline-block whitespace-nowrap animate-slide-left"
+                >
+                  {title}: {content}
+                </Link>
+              </div>
               <span
                 className="absolute right-1 cursor-pointer"
                 onClick={() => setShowTopbar(false)}
