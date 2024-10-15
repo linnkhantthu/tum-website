@@ -23,6 +23,7 @@ import Input from "../forms/Input";
 function NavigationBar({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<string>();
   const [isLoading, setIsLoading] = useState(true);
+  const [isLatestArticleFetching, setIsLatestArticleFetching] = useState(true);
   const [toasts, setToasts] = useState<FlashMessage[]>([]);
   const [showTopbar, setShowTopbar] = useState(true);
   const [latestArticle, setLatestArticle] = useState<Article>();
@@ -45,7 +46,7 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
   };
 
   /**
-   * Fetch Articles
+   * Fetch latest article
    */
   const fetchLatestArticle = async () => {
     const res = await fetch("/api/articles?id=latest", {
@@ -79,6 +80,7 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
         ...toasts,
       ]);
     }
+    setIsLatestArticleFetching(false);
   };
 
   const searchArticles = async () => {
@@ -153,7 +155,8 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
       localStorage.setItem("theme", "dark");
     }
     // Fetch latest article
-    fetchLatestArticle().then(() => setIsLoading(false));
+    fetchLatestArticle();
+    setIsLoading(false);
   }, []);
 
   // Set theme values to the controllers when the theme was loaded from localstorage
@@ -211,11 +214,13 @@ function NavigationBar({ children }: { children: React.ReactNode }) {
       <html lang="en" data-theme={theme}>
         <body className="m-0 h-full" suppressHydrationWarning={true}>
           {/* Topbar */}
-          {title && content ? (
+          {isLatestArticleFetching ? (
+            <Loading />
+          ) : title && content ? (
             <div
               className={
                 showTopbar
-                  ? "flex flex-row absolute z-20 h-6 items-center bg-info text-info-content w-full pl-2 opacity-85"
+                  ? "flex flex-row absolute z-20 h-6 items-center bg-info text-info-content w-full opacity-85"
                   : "hidden"
               }
             >
